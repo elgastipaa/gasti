@@ -70,7 +70,7 @@
     .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 14px 20px; display: none; }
     .reshdr.on { display: flex; align-items: center; gap: 14px; }
     .rcod { font-size: 30px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
-    .rbadge { margin-left: auto; display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .rbadge { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
 
     /* PILLS */
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
@@ -145,6 +145,8 @@
     .s-other   .price-table th { background: #D8DDE0; color: #37474F; }
     .s-other   .price-table td { border-top-color: #C8D0D4; color: #263238; }
 
+    .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+    .tog-btn:active { background: rgba(255,255,255,.28); }
     .fade-in { animation: fi .25s ease both; }
     @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
@@ -218,6 +220,7 @@
   <div class="reshdr" id="reshdr">
     <div class="rcod" id="rcod">-</div>
     <span class="rbadge" id="rbadge">0 acciones</span>
+    <button class="tog-btn" id="btn-tog">&#9660;&#9660;</button>
   </div>
 
   <div class="segswrap" id="segswrap"></div>
@@ -276,6 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
     el.addEventListener('input', function() {
       el.value = el.value.replace(/\D/g,'').slice(-1);
       if (el.value && i < 3) { document.getElementById(pids[i+1]).focus(); }
+      if (el.value && i === 3) { setTimeout(doLogin, 80); }
     });
     el.addEventListener('keydown', function(e) {
       if (e.key === 'Backspace' && !el.value && i > 0) { document.getElementById(pids[i-1]).focus(); }
@@ -528,6 +532,8 @@ document.addEventListener('DOMContentLoaded', function() {
     hideEst();
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
+    allOpen = false;
+    var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
   }
 
   function renderResultado(codigo, acciones, preciosData) {
@@ -642,6 +648,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  var allOpen = false;
+  document.getElementById('btn-tog').addEventListener('click', function() {
+    allOpen = !allOpen;
+    var blocks = document.querySelectorAll('.segblock');
+    for (var b = 0; b < blocks.length; b++) {
+      if (allOpen) { blocks[b].classList.add('open'); }
+      else { blocks[b].classList.remove('open'); }
+    }
+    document.getElementById('btn-tog').innerHTML = allOpen ? '&#9650;&#9650;' : '&#9660;&#9660;';
+  });
 
   document.getElementById('p0').focus();
 
