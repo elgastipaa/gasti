@@ -171,7 +171,7 @@
     <div class="ltitle">Acciones Comerciales</div>
     <div class="lsub">Ingresa tu PIN para consultar las acciones de cada cliente.</div>
     <div class="pin-row">
-      <input class="pin-box" id="p0" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="pin-box" id="p0" type="password" inputmode="numeric" maxlength="1" autocomplete="off" autofocus>
       <input class="pin-box" id="p1" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
       <input class="pin-box" id="p2" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
       <input class="pin-box" id="p3" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
@@ -543,11 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('rcod').textContent = codigo;
     document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
 
-    acciones.sort(function(a, b) {
-      var ia = SEG_ORDER.indexOf(a.key);
-      var ib = SEG_ORDER.indexOf(b.key);
-      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
-    });
+    /* Order preserved from sheet column order */
 
     var wrap = document.getElementById('segswrap');
     var html = '';
