@@ -165,7 +165,8 @@
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
     .segpill { display: flex; align-items: stretch; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--sc-border); }
     .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 13px 14px; white-space: nowrap; color: var(--sc); background: var(--sl); min-width: 90px; flex-shrink: 0; border-right: 1.5px solid var(--sc-border); display: flex; align-items: center; }
-    .detval { font-size: 13px; font-weight: 500; font-family: 'DM Mono', monospace; padding: 13px 16px; color: var(--sc-txt); background: var(--sl-light); flex: 1; word-break: break-word; line-height: 1.5; }
+    .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; background: var(--sl-light); flex: 1; }
+    .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--sc); background: var(--sl); border: 1.5px solid var(--sc-border); border-radius: 20px; padding: 4px 11px; white-space: nowrap; }
     .s-core    { --sc: #003DA5; --sl: #D6E8FF; --sl-light: #EAF2FF; --sc-border: #A8CAEF; --sc-txt: #0C447C; }
     .s-ac      { --sc: #6A1B9A; --sl: #E8D5F7; --sl-light: #F5EEFF; --sc-border: #CBA8E8; --sc-txt: #4A1275; }
     .s-latones { --sc: #E65100; --sl: #FFD9BE; --sl-light: #FFF4EC; --sc-border: #F5C4A0; --sc-txt: #993C1D; }
@@ -259,6 +260,8 @@
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
   var STORE = 'qac3';
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
@@ -302,7 +305,7 @@
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
       var err = document.getElementById('lerr');
-      err.textContent = 'PIN incorrecto. Intentá de nuevo.';
+      err.textContent = 'PIN incorrecto. Intenta de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
       document.getElementById('p0').focus();
       setTimeout(function() { err.textContent = ''; }, 3000);
@@ -378,7 +381,7 @@
       var iCod = 0;
       for (var i = 0; i < headers.length; i++) {
         var h = headers[i].toLowerCase().trim();
-        if (/^pdv$|c[oó]d|cliente|codigo|código/.test(h)) { iCod = i; break; }
+        if (/^pdv$|c[od]|cliente|codigo|codigo/.test(h)) { iCod = i; break; }
       }
 
       // Resto de columnas = segmentos
@@ -404,7 +407,7 @@
         return;
       }
 
-      var VACIAS = ['', '-', '—', 'n/a', 'na', 'sin accion', 'sin acción'];
+      var VACIAS = ['', '-', '-', 'n/a', 'na', 'sin accion', 'sin accion'];
       var acciones = [];
       for (var k = 0; k < segCols.length; k++) {
         var detalle = (fila[segCols[k].i] || '').trim();
@@ -431,9 +434,15 @@
         var acc = acciones[a];
         var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
         var delay = (a * 0.07) + 's';
-        html += '<div class="segpill ' + meta.css + ' fade-in" style="animation-delay:' + delay + '">';
+        html += '<div class="segpill ' + meta.css + ' fade-in" style="animation-delay:' + delay + '>';
         html += '<div class="segtit">' + escHtml(meta.label) + '</div>';
-        html += '<div class="detval">' + escHtml(acc.detalle) + '</div>';
+        html += '<div class="detval">';
+        var bubbles = acc.detalle.split('|');
+        for (var p = 0; p < bubbles.length; p++) {
+          var bub = bubbles[p].trim();
+          if (bub) html += '<span class="bubble">' + escHtml(bub) + '</span>';
+        }
+        html += '</div>';
         html += '</div>';
       }
       wrap.innerHTML = html;
@@ -445,7 +454,7 @@
       showEst('error');
       if (e.message.indexOf('fetch') !== -1 || e.message.indexOf('Failed') !== -1 || e.message.indexOf('Load') !== -1) {
         document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
-        document.getElementById('esub').innerHTML = 'Verificá que el Sheet sea publico:<br><br>Compartir → "Cualquiera con el vinculo" → Lector<br><br>Error: ' + e.message;
+        document.getElementById('esub').innerHTML = 'Verifica que el Sheet sea publico:<br><br>Compartir -> "Cualquiera con el vinculo" -> Lector<br><br>Error: ' + e.message;
       } else {
         document.getElementById('etitle').textContent = 'Error al leer el Sheet';
         document.getElementById('esub').textContent = e.message;
@@ -472,6 +481,13 @@
   }
 
   document.getElementById('p0').focus();
+
+    // Expose functions used in onclick attributes
+    window.checkPin  = checkPin;
+    window.logout    = logout;
+    window.buscar    = buscar;
+    window.guardarCfg = guardarCfg;
+  });
 </script>
 </body>
 </html>
