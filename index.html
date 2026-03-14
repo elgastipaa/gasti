@@ -151,14 +151,14 @@
     /* RESULTADO */
     .reshdr {
       margin: 20px 16px 4px; background: var(--azul);
-      border-radius: 14px; padding: 18px 20px; display: none;
+      border-radius: 14px; padding: 14px 20px; display: none;
     }
-    .reshdr.on { display: block; }
-    .rlbl { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; }
-    .rcod { font-size: 34px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; margin: 2px 0 8px; }
+    .reshdr.on { display: flex; align-items: center; gap: 14px; }
+    .rcod { font-size: 30px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
     .rbadge {
+      margin-left: auto;
       display: inline-block; background: var(--dorado); color: var(--azul);
-      font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap;
     }
 
     /* CARDS - pill layout */
@@ -216,19 +216,7 @@
     </div>
   </div>
 
-  <div class="cfgwrap">
-    <button class="cfgtoggle" onclick="document.getElementById('cfgbody').classList.toggle('open')">⚙️ Configuración</button>
-    <div class="cfgbody" id="cfgbody">
-      <label class="clbl">ID del Google Sheet</label>
-      <input class="cinput" id="cid" placeholder="ID del Sheet">
-      <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
-      <label class="clbl">Nombre de la pestaña</label>
-      <input class="cinput" id="ctab" placeholder="Acciones">
-      <label class="clbl">PIN (4 dígitos)</label>
-      <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
-      <button class="csave" onclick="guardarCfg()">💾 Guardar</button>
-    </div>
-  </div>
+  
 
   <div class="estado eloading" id="st-loading">
     <div class="spinner"></div>
@@ -247,13 +235,27 @@
     <div class="esub" id="evacsub">Este cliente no tiene acciones activas.</div>
   </div>
 
-  <div class="reshdr" id="reshdr">
-    <div class="rlbl">Código PDV</div>
+    <div class="reshdr" id="reshdr">
     <div class="rcod" id="rcod">—</div>
     <span class="rbadge" id="rbadge">0 acciones</span>
   </div>
 
   <div class="segswrap" id="segswrap"></div>
+
+  <div class="cfgwrap">
+    <button class="cfgtoggle" onclick="document.getElementById('cfgbody').classList.toggle('open')">&#9881;&#65039; Configuración</button>
+    <div class="cfgbody" id="cfgbody">
+      <label class="clbl">ID del Google Sheet</label>
+      <input class="cinput" id="cid" placeholder="ID del Sheet">
+      <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
+      <label class="clbl">Nombre de la pestaña</label>
+      <input class="cinput" id="ctab" placeholder="Acciones">
+      <label class="clbl">PIN (4 dígitos)</label>
+      <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
+      <button class="csave" onclick="guardarCfg()">&#128190; Guardar</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
