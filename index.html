@@ -7,15 +7,15 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --azul:    #001F5B;
-      --azul-m:  #003DA5;
-      --dorado:  #F5A800;
-      --gris-f:  #F2F5FA;
-      --gris-b:  #DDE3EE;
-      --txt:     #1A1A2E;
-      --txt-s:   #5A6478;
-      --rojo:    #C0392B;
-      --rojo-l:  #FDECEA;
+      --azul:   #001F5B;
+      --azul-m: #003DA5;
+      --dorado: #F5A800;
+      --gris-f: #F2F5FA;
+      --gris-b: #DDE3EE;
+      --txt:    #1A1A2E;
+      --txt-s:  #5A6478;
+      --rojo:   #C0392B;
+      --rojo-l: #FDECEA;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris-f); color: var(--txt); min-height: 100vh; padding-bottom: 48px; }
@@ -75,36 +75,75 @@
     /* PILLS */
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
 
-    .segpill { display: flex; align-items: stretch; border-radius: 12px; overflow: hidden; border-width: 1.5px; border-style: solid; }
+    .segblock { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border-width: 1.5px; border-style: solid; }
+    .segpill { display: flex; align-items: stretch; cursor: pointer; user-select: none; -webkit-user-select: none; }
     .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; min-width: 96px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; }
     .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; flex: 1; }
     .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; border-radius: 20px; padding: 4px 11px; white-space: nowrap; border-width: 1.5px; border-style: solid; }
+    .pill-chevron { font-size: 11px; padding: 0 12px 0 4px; display: flex; align-items: center; flex-shrink: 0; transition: transform .2s; opacity: .5; }
+    .segblock.open .pill-chevron { transform: rotate(180deg); }
 
-    /* Segment colours — border, title bg, title text, body bg, bubble bg, bubble border, bubble text */
+    /* PRICE TABLE */
+    .price-table-wrap { display: none; border-top-width: 1.5px; border-top-style: solid; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .segblock.open .price-table-wrap { display: block; }
+    .price-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .price-table th { padding: 8px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap; }
+    .price-table th:first-child { text-align: left; }
+    .price-table th:nth-child(2) { text-align: left; }
+    .price-table td { padding: 8px 10px; border-top-width: 1px; border-top-style: solid; text-align: right; white-space: nowrap; font-family: 'DM Mono', monospace; font-size: 12px; }
+    .price-table td:first-child { text-align: left; font-family: 'DM Sans', monospace; font-size: 11px; opacity: .6; }
+    .price-table td:nth-child(2) { text-align: left; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 12px; opacity: 1; max-width: 140px; white-space: normal; word-break: break-word; }
+    .price-table tr:last-child td { border-bottom: none; }
+    .no-precios { padding: 12px 14px; font-size: 12px; font-style: italic; opacity: .6; }
+
+    /* Segment colours */
     .s-core    { border-color: #A8CAEF; }
     .s-core    .segtit { background: #D6E8FF; color: #003DA5; border-right-color: #A8CAEF; }
     .s-core    .detval { background: #EAF2FF; }
     .s-core    .bubble { background: #D6E8FF; border-color: #A8CAEF; color: #003DA5; }
+    .s-core    .price-table-wrap { border-top-color: #A8CAEF; background: #EAF2FF; }
+    .s-core    .price-table th { background: #D6E8FF; color: #003DA5; }
+    .s-core    .price-table td { border-top-color: #C5DCEF; color: #0C447C; }
+    .s-core    .price-table td:first-child { color: #5A6478; }
+    .s-core    .price-table td:nth-child(2) { color: #1A1A2E; }
 
     .s-ac      { border-color: #CBA8E8; }
     .s-ac      .segtit { background: #E8D5F7; color: #6A1B9A; border-right-color: #CBA8E8; }
     .s-ac      .detval { background: #F5EEFF; }
     .s-ac      .bubble { background: #E8D5F7; border-color: #CBA8E8; color: #6A1B9A; }
+    .s-ac      .price-table-wrap { border-top-color: #CBA8E8; background: #F5EEFF; }
+    .s-ac      .price-table th { background: #E8D5F7; color: #6A1B9A; }
+    .s-ac      .price-table td { border-top-color: #DCC5EF; color: #4A1275; }
+    .s-ac      .price-table td:first-child { color: #5A6478; }
+    .s-ac      .price-table td:nth-child(2) { color: #1A1A2E; }
 
     .s-latones { border-color: #F5C4A0; }
     .s-latones .segtit { background: #FFD9BE; color: #E65100; border-right-color: #F5C4A0; }
     .s-latones .detval { background: #FFF4EC; }
     .s-latones .bubble { background: #FFD9BE; border-color: #F5C4A0; color: #993C1D; }
+    .s-latones .price-table-wrap { border-top-color: #F5C4A0; background: #FFF4EC; }
+    .s-latones .price-table th { background: #FFD9BE; color: #993C1D; }
+    .s-latones .price-table td { border-top-color: #F5D4C0; color: #993C1D; }
+    .s-latones .price-table td:first-child { color: #5A6478; }
+    .s-latones .price-table td:nth-child(2) { color: #1A1A2E; }
 
     .s-value   { border-color: #9AD4B4; }
     .s-value   .segtit { background: #C2EDD3; color: #1A7A3C; border-right-color: #9AD4B4; }
     .s-value   .detval { background: #EDFAF3; }
     .s-value   .bubble { background: #C2EDD3; border-color: #9AD4B4; color: #0F5229; }
+    .s-value   .price-table-wrap { border-top-color: #9AD4B4; background: #EDFAF3; }
+    .s-value   .price-table th { background: #C2EDD3; color: #0F5229; }
+    .s-value   .price-table td { border-top-color: #B0DCC4; color: #0F5229; }
+    .s-value   .price-table td:first-child { color: #5A6478; }
+    .s-value   .price-table td:nth-child(2) { color: #1A1A2E; }
 
     .s-other   { border-color: #B0BEC5; }
     .s-other   .segtit { background: #D8DDE0; color: #37474F; border-right-color: #B0BEC5; }
     .s-other   .detval { background: #ECEFF1; }
     .s-other   .bubble { background: #D8DDE0; border-color: #B0BEC5; color: #263238; }
+    .s-other   .price-table-wrap { border-top-color: #B0BEC5; background: #ECEFF1; }
+    .s-other   .price-table th { background: #D8DDE0; color: #37474F; }
+    .s-other   .price-table td { border-top-color: #C8D0D4; color: #263238; }
 
     .fade-in { animation: fi .25s ease both; }
     @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -189,8 +228,10 @@
       <label class="clbl">ID del Google Sheet</label>
       <input class="cinput" id="cid" placeholder="ID del Sheet">
       <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
-      <label class="clbl">Nombre de la pestana</label>
+      <label class="clbl">Nombre pestana acciones</label>
       <input class="cinput" id="ctab" placeholder="Acciones">
+      <label class="clbl">Nombre pestana precios</label>
+      <input class="cinput" id="ctabp" placeholder="Precios">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
       <button class="csave" id="btn-save">Guardar</button>
@@ -201,12 +242,13 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-  var STORE = 'qac4';
+  var STORE = 'qac5';
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
-    pin:     saved.pin     || '1234',
-    sheetId: saved.sheetId || '1nCfGVswB0JrwFhoh65oNRP9IqdW2jsME1WoDayjLb8k',
-    tab:     saved.tab     || 'Acciones'
+    pin:      saved.pin      || '1234',
+    sheetId:  saved.sheetId  || '1nCfGVswB0JrwFhoh65oNRP9IqdW2jsME1WoDayjLb8k',
+    tab:      saved.tab      || 'Acciones',
+    tabPrec:  saved.tabPrec  || 'Precios'
   };
 
   var SEG_MAP = {
@@ -218,21 +260,25 @@ document.addEventListener('DOMContentLoaded', function() {
     'latones':    { css: 's-latones', label: 'Latones'    },
     'value':      { css: 's-value',   label: 'Value'      }
   };
-
   var SEG_ORDER = ['core', 'above core', 'above_core', 'abovecore', 'ac', 'latones', 'value'];
 
-  var DEMO = 'PDV,Core,latones\n3485,"0b 3.5% | 6b 7.5% | 20b 8.5%","1b 3% | 3b 5%"\n1420,"0b 3.5% | 3b 6.5%",\n20039,"0b 3.5% | 2b 6% | 5b 8.5%","1b 3% | 3b 5% | 8b 7%"\n';
+  /* Prices cache: { 'core': [ {sku, detalle, precios: {'3,5%': '$96,5', ...} }, ...], ... } */
+  var preciosCache = null;
 
-  /* PIN */
-  var pids = ['p0', 'p1', 'p2', 'p3'];
+  /* Demo data for preview */
+  var DEMO_ACCIONES = 'PDV,Core,latones\n3485,"0b 3,5% | 6b 7,5% | 20b 8,5%","1b 3% | 3b 5%"\n1420,"0b 3,5% | 3b 6,5%",\n20039,"0b 3,5% | 2b 6% | 5b 8,5%","1b 3% | 3b 5% | 8b 7%"\n';
+  var DEMO_PRECIOS  = 'Segmento,SKU,Detalle,3,5%,6,5%,7,5%,8,5%\nCore,7634,Brahma lata 473ml,$96.50,$93.50,$92.50,$91.50\nCore,7635,Quilmes lata 473ml,$97.00,$94.00,$93.00,$92.00\nCore,7636,Stella lata 473ml,$101.00,$97.50,$96.50,$95.50\nlatones,8001,Brahma lata 250ml,$72.00,,,$68.00\nlatones,8002,Quilmes lata 250ml,$73.00,,,$69.00\n';
+
+  /* -- PIN -- */
+  var pids = ['p0','p1','p2','p3'];
   pids.forEach(function(id, i) {
     var el = document.getElementById(id);
     el.addEventListener('input', function() {
-      el.value = el.value.replace(/\D/g, '').slice(-1);
-      if (el.value && i < 3) { document.getElementById(pids[i + 1]).focus(); }
+      el.value = el.value.replace(/\D/g,'').slice(-1);
+      if (el.value && i < 3) { document.getElementById(pids[i+1]).focus(); }
     });
     el.addEventListener('keydown', function(e) {
-      if (e.key === 'Backspace' && !el.value && i > 0) { document.getElementById(pids[i - 1]).focus(); }
+      if (e.key === 'Backspace' && !el.value && i > 0) { document.getElementById(pids[i-1]).focus(); }
       if (e.key === 'Enter') { doLogin(); }
     });
   });
@@ -240,13 +286,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-entrar').addEventListener('click', doLogin);
   document.getElementById('btn-salir').addEventListener('click', doLogout);
   document.getElementById('btn-buscar').addEventListener('click', doBuscar);
-  document.getElementById('btn-cfg').addEventListener('click', function() {
-    document.getElementById('cfgbody').classList.toggle('open');
-  });
+  document.getElementById('codinput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { doBuscar(); } });
+  document.getElementById('btn-cfg').addEventListener('click', function() { document.getElementById('cfgbody').classList.toggle('open'); });
   document.getElementById('btn-save').addEventListener('click', doSave);
-  document.getElementById('codinput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { doBuscar(); }
-  });
 
   function doLogin() {
     var val = pids.map(function(id) { return document.getElementById(id).value; }).join('');
@@ -255,6 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('app').style.display = 'block';
       document.getElementById('cid').value = cfg.sheetId;
       document.getElementById('ctab').value = cfg.tab;
+      document.getElementById('ctabp').value = cfg.tabPrec;
       document.getElementById('cpin').value = cfg.pin;
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
@@ -278,17 +321,21 @@ document.addEventListener('DOMContentLoaded', function() {
   function doSave() {
     var sid = document.getElementById('cid').value.trim();
     var tab = document.getElementById('ctab').value.trim();
+    var tabp = document.getElementById('ctabp').value.trim();
     var pin = document.getElementById('cpin').value.trim();
     if (sid) { cfg.sheetId = sid; }
     if (tab) { cfg.tab = tab; }
+    if (tabp) { cfg.tabPrec = tabp; }
     if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
+    preciosCache = null;
     document.getElementById('cfgbody').classList.remove('open');
     alert('Configuracion guardada');
   }
 
-  function fetchCSV() {
-    var url = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(cfg.tab);
+  /* -- FETCH -- */
+  function fetchSheet(tabName) {
+    var url = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(tabName);
     return fetch(url, { cache: 'no-store' }).then(function(res) {
       if (!res.ok) { throw new Error('HTTP ' + res.status); }
       return res.text();
@@ -302,9 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = [];
     var lines = txt.trim().split('\n');
     for (var li = 0; li < lines.length; li++) {
-      var cols = [];
-      var cur = '';
-      var inQ = false;
+      var cols = []; var cur = ''; var inQ = false;
       var line = lines[li];
       for (var ci = 0; ci < line.length; ci++) {
         var ch = line[ci];
@@ -318,34 +363,158 @@ document.addEventListener('DOMContentLoaded', function() {
     return rows;
   }
 
+  /* Parse precios sheet into cache object keyed by segment (lowercase) */
+  function parsePreciosCSV(txt) {
+    var rows = parseCSV(txt);
+    if (rows.length < 2) { return {}; }
+    var headers = rows[0];
+    /* Find column indices */
+    var iSeg = -1; var iSku = -1; var iDet = -1;
+    for (var i = 0; i < headers.length; i++) {
+      var h = headers[i].toLowerCase().trim();
+      if (/segmento|segment/.test(h)) { iSeg = i; }
+      else if (/^sku$|cod.*prod|codigo.*prod/.test(h)) { iSku = i; }
+      else if (/detalle|producto|descripcion|descripci/.test(h)) { iDet = i; }
+    }
+    /* Fallback by position if not found */
+    if (iSeg < 0) { iSeg = 0; }
+    if (iSku < 0) { iSku = 1; }
+    if (iDet < 0) { iDet = 2; }
+
+    /* Price columns: everything after detalle col, with header like "3,5%" */
+    var priceCols = [];
+    for (var j = 0; j < headers.length; j++) {
+      if (j === iSeg || j === iSku || j === iDet) { continue; }
+      var hdr = headers[j].trim();
+      if (hdr) { priceCols.push({ i: j, label: hdr }); }
+    }
+
+    var result = {};
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      var seg = (row[iSeg] || '').trim().toLowerCase();
+      if (!seg) { continue; }
+      if (!result[seg]) { result[seg] = { cols: priceCols, rows: [] }; }
+      var precios = {};
+      for (var p = 0; p < priceCols.length; p++) {
+        precios[priceCols[p].label] = (row[priceCols[p].i] || '').trim();
+      }
+      result[seg].rows.push({
+        sku:     (row[iSku] || '').trim(),
+        detalle: (row[iDet] || '').trim(),
+        precios: precios
+      });
+    }
+    return result;
+  }
+
+  /* Extract percentage labels from bubble string "0b 3,5% | 6b 7,5% | 20b 8,5%" -> ["3,5%","7,5%","8,5%"] */
+  function extraerPorcentajes(detalleStr) {
+    var parts = detalleStr.split('|');
+    var result = [];
+    for (var i = 0; i < parts.length; i++) {
+      var m = parts[i].match(/(\d+[,.]?\d*)\s*%/);
+      if (m) {
+        /* Normalize: replace . with , for matching */
+        var pct = m[1].replace('.', ',') + '%';
+        result.push(pct);
+      }
+    }
+    return result;
+  }
+
+  /* Normalize a percentage string for comparison: "3.5%" -> "3,5%" */
+  function normPct(s) {
+    return s.trim().replace('.', ',').toLowerCase();
+  }
+
+  /* Build price table HTML for a segment given its accion detalle string */
+  function buildPriceTable(segKey, detalleStr, preciosData) {
+    if (!preciosData) { return '<div class="no-precios">Cargando precios...</div>'; }
+
+    /* Find matching segment in prices (try exact, then partial) */
+    var segData = preciosData[segKey];
+    if (!segData) {
+      var keys = Object.keys(preciosData);
+      for (var k = 0; k < keys.length; k++) {
+        if (keys[k].indexOf(segKey) !== -1 || segKey.indexOf(keys[k]) !== -1) {
+          segData = preciosData[keys[k]];
+          break;
+        }
+      }
+    }
+    if (!segData || !segData.rows || segData.rows.length === 0) {
+      return '<div class="no-precios">Sin precios cargados para este segmento.</div>';
+    }
+
+    /* Get percentage labels from client's bubbles */
+    var clientPcts = extraerPorcentajes(detalleStr);
+    /* Normalize for comparison */
+    var clientPctsNorm = {};
+    for (var i = 0; i < clientPcts.length; i++) {
+      clientPctsNorm[normPct(clientPcts[i])] = clientPcts[i];
+    }
+
+    /* Filter price columns to only those matching client's percentages */
+    var visibleCols = [];
+    for (var c = 0; c < segData.cols.length; c++) {
+      var colNorm = normPct(segData.cols[c].label);
+      if (clientPctsNorm[colNorm] !== undefined) {
+        visibleCols.push(segData.cols[c]);
+      }
+    }
+
+    if (visibleCols.length === 0) {
+      return '<div class="no-precios">No hay columnas de precios que coincidan con los descuentos del cliente.</div>';
+    }
+
+    /* Build table */
+    var html = '<table class="price-table">';
+    html += '<thead><tr>';
+    html += '<th>SKU</th>';
+    html += '<th>Producto</th>';
+    for (var vc = 0; vc < visibleCols.length; vc++) {
+      html += '<th>' + escHtml(visibleCols[vc].label) + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    for (var rr = 0; rr < segData.rows.length; rr++) {
+      var prod = segData.rows[rr];
+      html += '<tr>';
+      html += '<td>' + escHtml(prod.sku) + '</td>';
+      html += '<td>' + escHtml(prod.detalle) + '</td>';
+      for (var vv = 0; vv < visibleCols.length; vv++) {
+        var precio = prod.precios[visibleCols[vv].label] || '-';
+        html += '<td>' + escHtml(precio) + '</td>';
+      }
+      html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    return html;
+  }
+
   function escHtml(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function showEst(t) {
-    ['loading', 'error', 'vacio'].forEach(function(x) {
-      document.getElementById('st-' + x).classList.remove('on');
-    });
-    document.getElementById('st-' + t).classList.add('on');
+    ['loading','error','vacio'].forEach(function(x) { document.getElementById('st-'+x).classList.remove('on'); });
+    document.getElementById('st-'+t).classList.add('on');
   }
-
   function hideEst() {
-    ['loading', 'error', 'vacio'].forEach(function(x) {
-      document.getElementById('st-' + x).classList.remove('on');
-    });
+    ['loading','error','vacio'].forEach(function(x) { document.getElementById('st-'+x).classList.remove('on'); });
   }
-
   function resetUI() {
     hideEst();
-    document.getElementById('reshdr').classList.remove('on', 'fade-in');
+    document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
   }
 
-  function renderResultado(codigo, acciones) {
+  function renderResultado(codigo, acciones, preciosData) {
     hideEst();
-
     var reshdr = document.getElementById('reshdr');
-    reshdr.classList.add('on', 'fade-in');
+    reshdr.classList.add('on','fade-in');
     document.getElementById('rcod').textContent = codigo;
     document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
 
@@ -361,53 +530,49 @@ document.addEventListener('DOMContentLoaded', function() {
       var acc = acciones[i];
       var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
       var delay = (i * 0.07) + 's';
+      var priceTableHtml = buildPriceTable(acc.key, acc.detalle, preciosData);
 
-      html += '<div class="segpill ' + meta.css + ' fade-in" style="animation-delay:' + delay + '">';
+      html += '<div class="segblock ' + meta.css + ' fade-in" style="animation-delay:' + delay + '">';
+
+      /* Pill row (clickable) */
+      html += '<div class="segpill" onclick="this.closest(\'.segblock\').classList.toggle(\'open\')">';
       html += '<div class="segtit">' + escHtml(meta.label) + '</div>';
       html += '<div class="detval">';
-
       var parts = acc.detalle.split('|');
       for (var p = 0; p < parts.length; p++) {
         var part = parts[p].trim();
-        if (part) {
-          html += '<span class="bubble">' + escHtml(part) + '</span>';
-        }
+        if (part) { html += '<span class="bubble">' + escHtml(part) + '</span>'; }
       }
-
       html += '</div>';
+      html += '<span class="pill-chevron">&#9660;</span>';
+      html += '</div>';
+
+      /* Price table (hidden until open) */
+      html += '<div class="price-table-wrap">' + priceTableHtml + '</div>';
+
       html += '</div>';
     }
     wrap.innerHTML = html;
   }
 
-  function procesarCSV(raw, codigo) {
+  function procesarAccionesCSV(raw, codigo) {
     var rows = parseCSV(raw);
-    if (rows.length < 2) { throw new Error('El Sheet esta vacio.'); }
-
+    if (rows.length < 2) { throw new Error('La hoja de acciones esta vacia.'); }
     var headers = rows[0];
     var iCod = 0;
     for (var i = 0; i < headers.length; i++) {
       var h = headers[i].toLowerCase().trim();
       if (/^pdv$/.test(h) || /cod|cliente|codigo/.test(h)) { iCod = i; break; }
     }
-
     var segCols = [];
     for (var j = 0; j < headers.length; j++) {
-      if (j !== iCod && headers[j].trim() !== '') {
-        segCols.push({ i: j, raw: headers[j].trim() });
-      }
+      if (j !== iCod && headers[j].trim() !== '') { segCols.push({ i: j, raw: headers[j].trim() }); }
     }
-
     var fila = null;
     for (var r = 1; r < rows.length; r++) {
-      if ((rows[r][iCod] || '').toString().trim() === codigo) {
-        fila = rows[r];
-        break;
-      }
+      if ((rows[r][iCod] || '').toString().trim() === codigo) { fila = rows[r]; break; }
     }
-
     if (!fila) { return null; }
-
     var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
     var acciones = [];
     for (var k = 0; k < segCols.length; k++) {
@@ -422,23 +587,31 @@ document.addEventListener('DOMContentLoaded', function() {
   function doBuscar() {
     var codigo = document.getElementById('codinput').value.trim();
     if (!codigo) { document.getElementById('codinput').focus(); return; }
-
     resetUI();
     showEst('loading');
 
-    fetchCSV().then(function(raw) {
-      var acciones = procesarCSV(raw, codigo);
+    /* Fetch both sheets in parallel */
+    var fetchAcciones = fetchSheet(cfg.tab);
+    var fetchPrecios  = preciosCache
+      ? Promise.resolve(preciosCache)
+      : fetchSheet(cfg.tabPrec).then(function(txt) {
+          preciosCache = parsePreciosCSV(txt);
+          return preciosCache;
+        }).catch(function() { return null; });
 
+    Promise.all([fetchAcciones, fetchPrecios]).then(function(results) {
+      var rawAcciones = results[0];
+      var preciosData = results[1];
+      var acciones = procesarAccionesCSV(rawAcciones, codigo);
       if (!acciones || acciones.length === 0) {
         showEst('vacio');
         document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones activas en el periodo actual.';
         return;
       }
-      renderResultado(codigo, acciones);
-
+      renderResultado(codigo, acciones, preciosData);
     }).catch(function(e) {
       showEst('error');
-      if (e.message.indexOf('fetch') !== -1 || e.message.indexOf('Failed') !== -1 || e.message.indexOf('Load') !== -1 || e.message.indexOf('network') !== -1) {
+      if (/fetch|Failed|Load|network/i.test(e.message)) {
         document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
         document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
       } else {
