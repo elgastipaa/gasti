@@ -425,7 +425,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* Normalize a percentage string for comparison: "3.5%" -> "3,5%" */
   function normPct(s) {
+    /* Normalize percentage string for matching:
+       - replace . with ,
+       - remove trailing zeros after comma: "4,0%" -> "4,0%", kept as-is
+       - lowercase and trim */
     return s.trim().replace('.', ',').toLowerCase();
+  }
+  /* Two percentages match if their normalized forms are equal,
+     OR if one is the numeric equivalent of the other (e.g. "4%" == "4,0%") */
+  function pctsMatch(a, b) {
+    var na = normPct(a);
+    var nb = normPct(b);
+    if (na === nb) { return true; }
+    /* Try parsing as floats: "4,0%" and "4%" both parse to 4 */
+    var fa = parseFloat(na.replace(',', '.').replace('%', ''));
+    var fb = parseFloat(nb.replace(',', '.').replace('%', ''));
+    return !isNaN(fa) && !isNaN(fb) && fa === fb;
   }
 
   /* Build price table HTML for a segment given its accion detalle string */
@@ -457,11 +472,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Filter price columns to only those matching client's percentages */
     var visibleCols = [];
-    for (var c = 0; c < segData.cols.length; c++) {
-      var colNorm = normPct(segData.cols[c].label);
-      if (clientPctsNorm[colNorm] !== undefined) {
-        visibleCols.push(segData.cols[c]);
+    for (var cc = 0; cc < segData.cols.length; cc++) {
+      var matched = false;
+      for (var ci2 = 0; ci2 < clientPcts.length; ci2++) {
+        if (pctsMatch(segData.cols[cc].label, clientPcts[ci2])) {
+          matched = true;
+          break;
+        }
       }
+      if (matched) { visibleCols.push(segData.cols[cc]); }
     }
 
     if (visibleCols.length === 0) {
@@ -570,7 +589,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var fila = null;
     for (var r = 1; r < rows.length; r++) {
-      if ((rows[r][iCod] || '').toString().trim() === codigo) { fila = rows[r]; break; }
+      var rawCod = (rows[r][iCod] || '').toString().trim();
+        /* Strip trailing .0 from numeric codes exported as floats */
+        var normCod = rawCod.replace(/\.0+$/, '');
+        if (normCod === codigo) { fila = rows[r]; break; }
     }
     if (!fila) { return null; }
     var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
