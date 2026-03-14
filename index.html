@@ -7,174 +7,118 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --azul: #001F5B;
-      --azul-m: #003DA5;
-      --dorado: #F5A800;
-      --gris-f: #F2F5FA;
-      --gris-b: #DDE3EE;
-      --txt: #1A1A2E;
-      --txt-s: #5A6478;
-      --rojo: #C0392B;
-      --rojo-l: #FDECEA;
+      --azul:    #001F5B;
+      --azul-m:  #003DA5;
+      --dorado:  #F5A800;
+      --gris-f:  #F2F5FA;
+      --gris-b:  #DDE3EE;
+      --txt:     #1A1A2E;
+      --txt-s:   #5A6478;
+      --rojo:    #C0392B;
+      --rojo-l:  #FDECEA;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris-f); color: var(--txt); min-height: 100vh; padding-bottom: 48px; }
 
     /* LOGIN */
-    #login {
-      min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-      background: var(--azul);
-    }
-    .lcard {
-      background: #fff;
-      border-radius: 28px;
-      padding: 40px 28px 32px;
-      width: 100%; max-width: 360px;
-      text-align: center;
-      box-shadow: 0 24px 64px rgba(0,0,0,.3);
-    }
-    .lbadge {
-      display: inline-block;
-      background: var(--azul);
-      color: var(--dorado);
-      font-size: 11px; font-weight: 800; letter-spacing: 1px;
-      padding: 5px 14px; border-radius: 20px;
-      margin-bottom: 22px; text-transform: uppercase;
-    }
+    #login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--azul); }
+    .lcard { background: #fff; border-radius: 28px; padding: 40px 28px 32px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.3); }
+    .lbadge { display: inline-block; background: var(--azul); color: var(--dorado); font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; text-transform: uppercase; }
     .ltitle { font-size: 23px; font-weight: 700; color: var(--azul); letter-spacing: -.5px; margin-bottom: 6px; }
     .lsub { font-size: 13px; color: var(--txt-s); line-height: 1.5; margin-bottom: 30px; }
     .pin-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 22px; }
-    .pin-box {
-      width: 56px; height: 64px;
-      border: 2px solid var(--gris-b); border-radius: 16px;
-      font-size: 28px; font-weight: 700; font-family: 'DM Mono', monospace;
-      text-align: center; color: var(--azul); background: var(--gris-f);
-      outline: none; transition: all .18s; -webkit-appearance: none;
-    }
+    .pin-box { width: 56px; height: 64px; border: 2px solid var(--gris-b); border-radius: 16px; font-size: 28px; font-weight: 700; font-family: 'DM Mono', monospace; text-align: center; color: var(--azul); background: var(--gris-f); outline: none; transition: all .18s; -webkit-appearance: none; }
     .pin-box:focus { border-color: var(--azul-m); background: #fff; box-shadow: 0 0 0 4px rgba(0,61,165,.1); }
-    .btn-ok {
-      width: 100%; background: var(--azul); color: #fff; border: none;
-      padding: 17px; border-radius: 14px; font-size: 15px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s;
-    }
+    .btn-ok { width: 100%; background: var(--azul); color: #fff; border: none; padding: 17px; border-radius: 14px; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
     .btn-ok:active { transform: scale(.97); }
     .lerr { color: var(--rojo); font-size: 13px; font-weight: 500; margin-top: 12px; min-height: 20px; }
 
     /* APP */
     #app { display: none; }
 
-    .topbar {
-      background: var(--azul); padding: 18px 18px 14px;
-      position: sticky; top: 0; z-index: 50;
-      box-shadow: 0 2px 14px rgba(0,0,0,.18);
-    }
+    /* TOPBAR */
+    .topbar { background: var(--azul); padding: 18px 18px 14px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 14px rgba(0,0,0,.18); }
     .trow { display: flex; align-items: center; justify-content: space-between; }
     .tbrand { display: flex; align-items: center; gap: 10px; }
-    .tbadge {
-      background: var(--dorado); color: var(--azul);
-      font-size: 10px; font-weight: 800; letter-spacing: .8px;
-      padding: 3px 10px; border-radius: 6px; text-transform: uppercase;
-    }
+    .tbadge { background: var(--dorado); color: var(--azul); font-size: 10px; font-weight: 800; letter-spacing: .8px; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; }
     .tname { color: #fff; font-size: 15px; font-weight: 600; }
-    .texit {
-      background: rgba(255,255,255,.12); border: none;
-      color: rgba(255,255,255,.7); font-size: 12px; font-family: 'DM Sans', sans-serif;
-      padding: 7px 13px; border-radius: 9px; cursor: pointer;
-    }
+    .texit { background: rgba(255,255,255,.12); border: none; color: rgba(255,255,255,.7); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 7px 13px; border-radius: 9px; cursor: pointer; }
     .tsub { color: rgba(255,255,255,.4); font-size: 11px; margin-top: 5px; }
 
     /* SEARCH */
     .swrap { padding: 20px 16px 0; }
     .slbl { font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 9px; }
     .srow { display: flex; gap: 10px; }
-    .sinput {
-      flex: 1; min-width: 0;
-      background: #fff; border: 2px solid var(--gris-b); border-radius: 14px;
-      padding: 15px 18px; font-size: 22px; font-weight: 700;
-      font-family: 'DM Mono', monospace; color: var(--azul);
-      outline: none; letter-spacing: 2px; transition: all .18s; -webkit-appearance: none;
-    }
+    .sinput { flex: 1; min-width: 0; background: #fff; border: 2px solid var(--gris-b); border-radius: 14px; padding: 15px 18px; font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); outline: none; letter-spacing: 2px; transition: all .18s; -webkit-appearance: none; }
     .sinput::placeholder { color: var(--gris-b); font-weight: 400; font-size: 16px; letter-spacing: 0; }
     .sinput:focus { border-color: var(--azul-m); box-shadow: 0 0 0 3px rgba(0,61,165,.09); }
-    .sbtn {
-      background: var(--azul); color: #fff; border: none; border-radius: 14px;
-      width: 56px; font-size: 22px; cursor: pointer; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; transition: all .15s;
-    }
+    .sbtn { background: var(--azul); color: #fff; border: none; border-radius: 14px; width: 56px; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
     .sbtn:active { transform: scale(.93); }
-
-    /* CONFIG */
-    .cfgwrap { margin: 14px 16px 0; }
-    .cfgtoggle {
-      background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s);
-      font-size: 12px; font-family: 'DM Sans', sans-serif;
-      padding: 8px 14px; border-radius: 10px; cursor: pointer; width: 100%; text-align: left;
-    }
-    .cfgbody {
-      display: none; background: #fff; border-radius: 14px;
-      padding: 18px; margin-top: 10px;
-      box-shadow: 0 2px 16px rgba(0,31,91,.08);
-    }
-    .cfgbody.open { display: block; }
-    .clbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
-    .cinput {
-      width: 100%; border: 1.5px solid var(--gris-b); border-radius: 10px;
-      padding: 11px 13px; font-size: 12px; font-family: 'DM Mono', monospace;
-      outline: none; background: var(--gris-f); color: var(--txt);
-      margin-bottom: 12px; transition: all .18s;
-    }
-    .cinput:focus { border-color: var(--azul-m); background: #fff; }
-    .chint { font-size: 11px; color: var(--txt-s); margin: -8px 0 12px; line-height: 1.5; }
-    .csave {
-      width: 100%; background: var(--azul); color: #fff; border: none;
-      padding: 13px; border-radius: 11px; font-size: 13px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif; cursor: pointer;
-    }
 
     /* ESTADOS */
     .estado { margin: 20px 16px; border-radius: 14px; padding: 28px 20px; text-align: center; display: none; }
     .estado.on { display: block; }
     .eloading { background: #FFFBF0; }
-    .eerror { background: var(--rojo-l); }
-    .evacio { background: #fff; border: 2px dashed var(--gris-b); }
-    .spinner {
-      display: inline-block; width: 30px; height: 30px;
-      border: 3px solid rgba(245,168,0,.25); border-top-color: var(--dorado);
-      border-radius: 50%; animation: spin .65s linear infinite; margin-bottom: 12px;
-    }
+    .eerror   { background: var(--rojo-l); }
+    .evacio   { background: #fff; border: 2px dashed var(--gris-b); }
+    .spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid rgba(245,168,0,.25); border-top-color: var(--dorado); border-radius: 50%; animation: spin .65s linear infinite; margin-bottom: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .etitle { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
     .esub { font-size: 13px; color: var(--txt-s); line-height: 1.6; }
 
-    /* RESULTADO */
-    .reshdr {
-      margin: 20px 16px 4px; background: var(--azul);
-      border-radius: 14px; padding: 14px 20px; display: none;
-    }
+    /* RESULT HEADER */
+    .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 14px 20px; display: none; }
     .reshdr.on { display: flex; align-items: center; gap: 14px; }
     .rcod { font-size: 30px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
-    .rbadge {
-      margin-left: auto;
-      display: inline-block; background: var(--dorado); color: var(--azul);
-      font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap;
-    }
+    .rbadge { margin-left: auto; display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
 
-    /* CARDS - pill layout */
+    /* PILLS */
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
-    .segpill { display: flex; align-items: stretch; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--sc-border); }
-    .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 13px 14px; white-space: nowrap; color: var(--sc); background: var(--sl); min-width: 90px; flex-shrink: 0; border-right: 1.5px solid var(--sc-border); display: flex; align-items: center; }
-    .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; background: var(--sl-light); flex: 1; }
-    .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--sc); background: var(--sl); border: 1.5px solid var(--sc-border); border-radius: 20px; padding: 4px 11px; white-space: nowrap; }
-    .s-core    { --sc: #003DA5; --sl: #D6E8FF; --sl-light: #EAF2FF; --sc-border: #A8CAEF; --sc-txt: #0C447C; }
-    .s-ac      { --sc: #6A1B9A; --sl: #E8D5F7; --sl-light: #F5EEFF; --sc-border: #CBA8E8; --sc-txt: #4A1275; }
-    .s-latones { --sc: #E65100; --sl: #FFD9BE; --sl-light: #FFF4EC; --sc-border: #F5C4A0; --sc-txt: #993C1D; }
-    .s-value   { --sc: #1A7A3C; --sl: #C2EDD3; --sl-light: #EDFAF3; --sc-border: #9AD4B4; --sc-txt: #0F5229; }
-    .s-other   { --sc: #37474F; --sl: #D8DDE0; --sl-light: #ECEFF1; --sc-border: #B0BEC5; --sc-txt: #263238; }
+
+    .segpill { display: flex; align-items: stretch; border-radius: 12px; overflow: hidden; border-width: 1.5px; border-style: solid; }
+    .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; min-width: 96px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; }
+    .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; flex: 1; }
+    .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; border-radius: 20px; padding: 4px 11px; white-space: nowrap; border-width: 1.5px; border-style: solid; }
+
+    /* Segment colours — border, title bg, title text, body bg, bubble bg, bubble border, bubble text */
+    .s-core    { border-color: #A8CAEF; }
+    .s-core    .segtit { background: #D6E8FF; color: #003DA5; border-right-color: #A8CAEF; }
+    .s-core    .detval { background: #EAF2FF; }
+    .s-core    .bubble { background: #D6E8FF; border-color: #A8CAEF; color: #003DA5; }
+
+    .s-ac      { border-color: #CBA8E8; }
+    .s-ac      .segtit { background: #E8D5F7; color: #6A1B9A; border-right-color: #CBA8E8; }
+    .s-ac      .detval { background: #F5EEFF; }
+    .s-ac      .bubble { background: #E8D5F7; border-color: #CBA8E8; color: #6A1B9A; }
+
+    .s-latones { border-color: #F5C4A0; }
+    .s-latones .segtit { background: #FFD9BE; color: #E65100; border-right-color: #F5C4A0; }
+    .s-latones .detval { background: #FFF4EC; }
+    .s-latones .bubble { background: #FFD9BE; border-color: #F5C4A0; color: #993C1D; }
+
+    .s-value   { border-color: #9AD4B4; }
+    .s-value   .segtit { background: #C2EDD3; color: #1A7A3C; border-right-color: #9AD4B4; }
+    .s-value   .detval { background: #EDFAF3; }
+    .s-value   .bubble { background: #C2EDD3; border-color: #9AD4B4; color: #0F5229; }
+
+    .s-other   { border-color: #B0BEC5; }
+    .s-other   .segtit { background: #D8DDE0; color: #37474F; border-right-color: #B0BEC5; }
+    .s-other   .detval { background: #ECEFF1; }
+    .s-other   .bubble { background: #D8DDE0; border-color: #B0BEC5; color: #263238; }
 
     .fade-in { animation: fi .25s ease both; }
-    @keyframes fi { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* CONFIG */
+    .cfgwrap { margin: 20px 16px 0; }
+    .cfgtoggle { background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 8px 14px; border-radius: 10px; cursor: pointer; width: 100%; text-align: left; }
+    .cfgbody { display: none; background: #fff; border-radius: 14px; padding: 18px; margin-top: 10px; box-shadow: 0 2px 16px rgba(0,31,91,.08); }
+    .cfgbody.open { display: block; }
+    .clbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .cinput { width: 100%; border: 1.5px solid var(--gris-b); border-radius: 10px; padding: 11px 13px; font-size: 12px; font-family: 'DM Mono', monospace; outline: none; background: var(--gris-f); color: var(--txt); margin-bottom: 12px; transition: all .18s; }
+    .cinput:focus { border-color: var(--azul-m); background: #fff; }
+    .chint { font-size: 11px; color: var(--txt-s); margin: -8px 0 12px; line-height: 1.5; }
+    .csave { width: 100%; background: var(--azul); color: #fff; border: none; padding: 13px; border-radius: 11px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -184,14 +128,14 @@
   <div class="lcard">
     <div class="lbadge">Quilmes Dist.</div>
     <div class="ltitle">Acciones Comerciales</div>
-    <div class="lsub">Ingresá tu PIN para consultar las acciones de cada cliente.</div>
+    <div class="lsub">Ingresa tu PIN para consultar las acciones de cada cliente.</div>
     <div class="pin-row">
       <input class="pin-box" id="p0" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
       <input class="pin-box" id="p1" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
       <input class="pin-box" id="p2" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
       <input class="pin-box" id="p3" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
     </div>
-    <button class="btn-ok" onclick="checkPin()">Entrar</button>
+    <button class="btn-ok" id="btn-entrar">Entrar</button>
     <div class="lerr" id="lerr"></div>
   </div>
 </div>
@@ -204,65 +148,60 @@
         <div class="tbadge">Quilmes</div>
         <div class="tname">Acciones Comerciales</div>
       </div>
-      <button class="texit" onclick="logout()">Salir</button>
+      <button class="texit" id="btn-salir">Salir</button>
     </div>
-    <div class="tsub">Consultá las acciones activas de tu cliente</div>
+    <div class="tsub">Consulta las acciones activas de tu cliente</div>
   </div>
 
   <div class="swrap">
-    <div class="slbl">Código de cliente (PDV)</div>
+    <div class="slbl">Codigo de cliente (PDV)</div>
     <div class="srow">
-      <input class="sinput" id="codinput" type="text" inputmode="numeric" placeholder="Ej: 3485" autocomplete="off" onkeydown="if(event.key==='Enter')buscar()">
-      <button class="sbtn" onclick="buscar()">🔍</button>
+      <input class="sinput" id="codinput" type="text" inputmode="numeric" placeholder="Ej: 3485" autocomplete="off">
+      <button class="sbtn" id="btn-buscar">&#128269;</button>
     </div>
   </div>
 
-  
-
   <div class="estado eloading" id="st-loading">
     <div class="spinner"></div>
-    <div class="etitle">Buscando cliente…</div>
+    <div class="etitle">Buscando cliente...</div>
     <div class="esub">Consultando Google Sheets</div>
   </div>
-
   <div class="estado eerror" id="st-error">
     <div class="etitle" id="etitle">Error</div>
-    <div class="esub" id="esub">—</div>
+    <div class="esub" id="esub">-</div>
   </div>
-
   <div class="estado evacio" id="st-vacio">
-    <div style="font-size:32px;margin-bottom:10px">📋</div>
+    <div style="font-size:32px;margin-bottom:10px">&#128203;</div>
     <div class="etitle">Sin acciones asignadas</div>
     <div class="esub" id="evacsub">Este cliente no tiene acciones activas.</div>
   </div>
 
-    <div class="reshdr" id="reshdr">
-    <div class="rcod" id="rcod">—</div>
+  <div class="reshdr" id="reshdr">
+    <div class="rcod" id="rcod">-</div>
     <span class="rbadge" id="rbadge">0 acciones</span>
   </div>
 
   <div class="segswrap" id="segswrap"></div>
 
   <div class="cfgwrap">
-    <button class="cfgtoggle" onclick="document.getElementById('cfgbody').classList.toggle('open')">&#9881;&#65039; Configuración</button>
+    <button class="cfgtoggle" id="btn-cfg">&#9881; Configuracion</button>
     <div class="cfgbody" id="cfgbody">
       <label class="clbl">ID del Google Sheet</label>
       <input class="cinput" id="cid" placeholder="ID del Sheet">
       <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
-      <label class="clbl">Nombre de la pestaña</label>
+      <label class="clbl">Nombre de la pestana</label>
       <input class="cinput" id="ctab" placeholder="Acciones">
-      <label class="clbl">PIN (4 dígitos)</label>
+      <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
-      <button class="csave" onclick="guardarCfg()">&#128190; Guardar</button>
+      <button class="csave" id="btn-save">Guardar</button>
     </div>
   </div>
-
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
 
-  var STORE = 'qac3';
+  var STORE = 'qac4';
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
     pin:     saved.pin     || '1234',
@@ -280,21 +219,36 @@
     'value':      { css: 's-value',   label: 'Value'      }
   };
 
-  // PIN
-  var pids = ['p0','p1','p2','p3'];
+  var SEG_ORDER = ['core', 'above core', 'above_core', 'abovecore', 'ac', 'latones', 'value'];
+
+  var DEMO = 'PDV,Core,latones\n3485,"0b 3.5% | 6b 7.5% | 20b 8.5%","1b 3% | 3b 5%"\n1420,"0b 3.5% | 3b 6.5%",\n20039,"0b 3.5% | 2b 6% | 5b 8.5%","1b 3% | 3b 5% | 8b 7%"\n';
+
+  /* PIN */
+  var pids = ['p0', 'p1', 'p2', 'p3'];
   pids.forEach(function(id, i) {
     var el = document.getElementById(id);
     el.addEventListener('input', function() {
-      el.value = el.value.replace(/\D/g,'').slice(-1);
-      if (el.value && i < 3) document.getElementById(pids[i+1]).focus();
+      el.value = el.value.replace(/\D/g, '').slice(-1);
+      if (el.value && i < 3) { document.getElementById(pids[i + 1]).focus(); }
     });
     el.addEventListener('keydown', function(e) {
-      if (e.key === 'Backspace' && !el.value && i > 0) document.getElementById(pids[i-1]).focus();
-      if (e.key === 'Enter') checkPin();
+      if (e.key === 'Backspace' && !el.value && i > 0) { document.getElementById(pids[i - 1]).focus(); }
+      if (e.key === 'Enter') { doLogin(); }
     });
   });
 
-  function checkPin() {
+  document.getElementById('btn-entrar').addEventListener('click', doLogin);
+  document.getElementById('btn-salir').addEventListener('click', doLogout);
+  document.getElementById('btn-buscar').addEventListener('click', doBuscar);
+  document.getElementById('btn-cfg').addEventListener('click', function() {
+    document.getElementById('cfgbody').classList.toggle('open');
+  });
+  document.getElementById('btn-save').addEventListener('click', doSave);
+  document.getElementById('codinput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { doBuscar(); }
+  });
+
+  function doLogin() {
     var val = pids.map(function(id) { return document.getElementById(id).value; }).join('');
     if (val === cfg.pin) {
       document.getElementById('login').style.display = 'none';
@@ -305,14 +259,14 @@
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
       var err = document.getElementById('lerr');
-      err.textContent = 'PIN incorrecto. Intenta de nuevo.';
+      err.textContent = 'PIN incorrecto. Intentalo de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
       document.getElementById('p0').focus();
       setTimeout(function() { err.textContent = ''; }, 3000);
     }
   }
 
-  function logout() {
+  function doLogout() {
     document.getElementById('app').style.display = 'none';
     document.getElementById('login').style.display = 'flex';
     pids.forEach(function(id) { document.getElementById(id).value = ''; });
@@ -321,13 +275,13 @@
     setTimeout(function() { document.getElementById('p0').focus(); }, 100);
   }
 
-  function guardarCfg() {
+  function doSave() {
     var sid = document.getElementById('cid').value.trim();
     var tab = document.getElementById('ctab').value.trim();
     var pin = document.getElementById('cpin').value.trim();
-    if (sid) cfg.sheetId = sid;
-    if (tab) cfg.tab = tab;
-    if (pin.length === 4) cfg.pin = pin;
+    if (sid) { cfg.sheetId = sid; }
+    if (tab) { cfg.tab = tab; }
+    if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
     document.getElementById('cfgbody').classList.remove('open');
     alert('Configuracion guardada');
@@ -336,10 +290,10 @@
   function fetchCSV() {
     var url = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(cfg.tab);
     return fetch(url, { cache: 'no-store' }).then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok) { throw new Error('HTTP ' + res.status); }
       return res.text();
     }).then(function(txt) {
-      if (txt.trim().charAt(0) === '<') throw new Error('El Sheet no es publico o el ID es incorrecto.');
+      if (txt.trim().charAt(0) === '<') { throw new Error('El Sheet no es publico o el ID es incorrecto.'); }
       return txt;
     });
   }
@@ -348,10 +302,10 @@
     var rows = [];
     var lines = txt.trim().split('\n');
     for (var li = 0; li < lines.length; li++) {
-      var line = lines[li];
       var cols = [];
       var cur = '';
       var inQ = false;
+      var line = lines[li];
       for (var ci = 0; ci < line.length; ci++) {
         var ch = line[ci];
         if (ch === '"') { inQ = !inQ; }
@@ -364,7 +318,108 @@
     return rows;
   }
 
-  function buscar() {
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function showEst(t) {
+    ['loading', 'error', 'vacio'].forEach(function(x) {
+      document.getElementById('st-' + x).classList.remove('on');
+    });
+    document.getElementById('st-' + t).classList.add('on');
+  }
+
+  function hideEst() {
+    ['loading', 'error', 'vacio'].forEach(function(x) {
+      document.getElementById('st-' + x).classList.remove('on');
+    });
+  }
+
+  function resetUI() {
+    hideEst();
+    document.getElementById('reshdr').classList.remove('on', 'fade-in');
+    document.getElementById('segswrap').innerHTML = '';
+  }
+
+  function renderResultado(codigo, acciones) {
+    hideEst();
+
+    var reshdr = document.getElementById('reshdr');
+    reshdr.classList.add('on', 'fade-in');
+    document.getElementById('rcod').textContent = codigo;
+    document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
+
+    acciones.sort(function(a, b) {
+      var ia = SEG_ORDER.indexOf(a.key);
+      var ib = SEG_ORDER.indexOf(b.key);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+
+    var wrap = document.getElementById('segswrap');
+    var html = '';
+    for (var i = 0; i < acciones.length; i++) {
+      var acc = acciones[i];
+      var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
+      var delay = (i * 0.07) + 's';
+
+      html += '<div class="segpill ' + meta.css + ' fade-in" style="animation-delay:' + delay + '">';
+      html += '<div class="segtit">' + escHtml(meta.label) + '</div>';
+      html += '<div class="detval">';
+
+      var parts = acc.detalle.split('|');
+      for (var p = 0; p < parts.length; p++) {
+        var part = parts[p].trim();
+        if (part) {
+          html += '<span class="bubble">' + escHtml(part) + '</span>';
+        }
+      }
+
+      html += '</div>';
+      html += '</div>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  function procesarCSV(raw, codigo) {
+    var rows = parseCSV(raw);
+    if (rows.length < 2) { throw new Error('El Sheet esta vacio.'); }
+
+    var headers = rows[0];
+    var iCod = 0;
+    for (var i = 0; i < headers.length; i++) {
+      var h = headers[i].toLowerCase().trim();
+      if (/^pdv$/.test(h) || /cod|cliente|codigo/.test(h)) { iCod = i; break; }
+    }
+
+    var segCols = [];
+    for (var j = 0; j < headers.length; j++) {
+      if (j !== iCod && headers[j].trim() !== '') {
+        segCols.push({ i: j, raw: headers[j].trim() });
+      }
+    }
+
+    var fila = null;
+    for (var r = 1; r < rows.length; r++) {
+      if ((rows[r][iCod] || '').toString().trim() === codigo) {
+        fila = rows[r];
+        break;
+      }
+    }
+
+    if (!fila) { return null; }
+
+    var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
+    var acciones = [];
+    for (var k = 0; k < segCols.length; k++) {
+      var detalle = (fila[segCols[k].i] || '').trim();
+      if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
+        acciones.push({ key: segCols[k].raw.toLowerCase(), label: segCols[k].raw, detalle: detalle });
+      }
+    }
+    return acciones;
+  }
+
+  function doBuscar() {
     var codigo = document.getElementById('codinput').value.trim();
     if (!codigo) { document.getElementById('codinput').focus(); return; }
 
@@ -372,89 +427,20 @@
     showEst('loading');
 
     fetchCSV().then(function(raw) {
-      var rows = parseCSV(raw);
-      if (rows.length < 2) throw new Error('El Sheet esta vacio o no tiene datos.');
+      var acciones = procesarCSV(raw, codigo);
 
-      var headers = rows[0];
-
-      // Encontrar columna PDV/cliente
-      var iCod = 0;
-      for (var i = 0; i < headers.length; i++) {
-        var h = headers[i].toLowerCase().trim();
-        if (/^pdv$|c[od]|cliente|codigo|codigo/.test(h)) { iCod = i; break; }
-      }
-
-      // Resto de columnas = segmentos
-      var segCols = [];
-      for (var j = 0; j < headers.length; j++) {
-        if (j !== iCod && headers[j].trim() !== '') {
-          segCols.push({ i: j, raw: headers[j].trim() });
-        }
-      }
-
-      // Buscar fila del cliente
-      var fila = null;
-      for (var r = 1; r < rows.length; r++) {
-        if ((rows[r][iCod] || '').toString().trim() === codigo) {
-          fila = rows[r];
-          break;
-        }
-      }
-
-      if (!fila) {
+      if (!acciones || acciones.length === 0) {
         showEst('vacio');
         document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones activas en el periodo actual.';
         return;
       }
-
-      var VACIAS = ['', '-', '-', 'n/a', 'na', 'sin accion', 'sin accion'];
-      var acciones = [];
-      for (var k = 0; k < segCols.length; k++) {
-        var detalle = (fila[segCols[k].i] || '').trim();
-        if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
-          acciones.push({ key: segCols[k].raw.toLowerCase(), label: segCols[k].raw, detalle: detalle });
-        }
-      }
-
-      if (acciones.length === 0) {
-        showEst('vacio');
-        document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones asignadas este periodo.';
-        return;
-      }
-
-      hideEst();
-
-      document.getElementById('reshdr').classList.add('on', 'fade-in');
-      document.getElementById('rcod').textContent = codigo;
-      document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
-
-      var wrap = document.getElementById('segswrap');
-      var html = '';
-      for (var a = 0; a < acciones.length; a++) {
-        var acc = acciones[a];
-        var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
-        var delay = (a * 0.07) + 's';
-        html += '<div class="segpill ' + meta.css + ' fade-in" style="animation-delay:' + delay + '>';
-        html += '<div class="segtit">' + escHtml(meta.label) + '</div>';
-        html += '<div class="detval">';
-        var bubbles = acc.detalle.split('|');
-        for (var p = 0; p < bubbles.length; p++) {
-          var bub = bubbles[p].trim();
-          if (bub) html += '<span class="bubble">' + escHtml(bub) + '</span>';
-        }
-        html += '</div>';
-        html += '</div>';
-      }
-      wrap.innerHTML = html;
-
-      var first = wrap.querySelector('.segcard');
-      if (first) first.classList.add('open');
+      renderResultado(codigo, acciones);
 
     }).catch(function(e) {
       showEst('error');
-      if (e.message.indexOf('fetch') !== -1 || e.message.indexOf('Failed') !== -1 || e.message.indexOf('Load') !== -1) {
+      if (e.message.indexOf('fetch') !== -1 || e.message.indexOf('Failed') !== -1 || e.message.indexOf('Load') !== -1 || e.message.indexOf('network') !== -1) {
         document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
-        document.getElementById('esub').innerHTML = 'Verifica que el Sheet sea publico:<br><br>Compartir -> "Cualquiera con el vinculo" -> Lector<br><br>Error: ' + e.message;
+        document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
       } else {
         document.getElementById('etitle').textContent = 'Error al leer el Sheet';
         document.getElementById('esub').textContent = e.message;
@@ -462,32 +448,9 @@
     });
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function showEst(t) {
-    hideEst();
-    document.getElementById('st-' + t).classList.add('on');
-  }
-  function hideEst() {
-    ['loading','error','vacio'].forEach(function(t) {
-      document.getElementById('st-' + t).classList.remove('on');
-    });
-  }
-  function resetUI() {
-    hideEst();
-    document.getElementById('reshdr').classList.remove('on','fade-in');
-    document.getElementById('segswrap').innerHTML = '';
-  }
-
   document.getElementById('p0').focus();
 
-    // Expose functions used in onclick attributes
-    window.checkPin  = checkPin;
-    window.logout    = logout;
-    window.buscar    = buscar;
-    window.guardarCfg = guardarCfg;
-  });
+});
 </script>
 </body>
 </html>
