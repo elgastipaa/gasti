@@ -474,14 +474,24 @@ document.addEventListener('DOMContentLoaded', function() {
       clientPctsNorm[normPct(clientPcts[i])] = clientPcts[i];
     }
 
-    /* Filter price columns to only those matching client's percentages */
+    /* Filter price columns: match by percentage OR by column header appearing in any bubble */
+    var bubbleTexts = [];
+    var rawParts = detalleStr.split('|');
+    for (var bp = 0; bp < rawParts.length; bp++) { bubbleTexts.push(rawParts[bp].trim().toLowerCase()); }
+
     var visibleCols = [];
     for (var cc = 0; cc < segData.cols.length; cc++) {
       var matched = false;
+      var colLabel = segData.cols[cc].label;
+      /* Try percentage match first */
       for (var ci2 = 0; ci2 < clientPcts.length; ci2++) {
-        if (pctsMatch(segData.cols[cc].label, clientPcts[ci2])) {
-          matched = true;
-          break;
+        if (pctsMatch(colLabel, clientPcts[ci2])) { matched = true; break; }
+      }
+      /* If not matched by %, try: any bubble contains this column header (e.g. bubble "Especial Lata" contains col "Especial") */
+      if (!matched) {
+        var colLabelLow = colLabel.toLowerCase();
+        for (var bi = 0; bi < bubbleTexts.length; bi++) {
+          if (bubbleTexts[bi].indexOf(colLabelLow) !== -1) { matched = true; break; }
         }
       }
       if (matched) { visibleCols.push(segData.cols[cc]); }
@@ -543,7 +553,23 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('rcod').textContent = codigo;
     document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
 
-    /* Order preserved from sheet column order */
+    /* Segments with prices first, without prices last - preserve relative order within each group */
+    var withPrices = [];
+    var withoutPrices = [];
+    for (var si = 0; si < acciones.length; si++) {
+      var sd = preciosData ? preciosData[acciones[si].key] : null;
+      if (!sd) {
+        var keys2 = preciosData ? Object.keys(preciosData) : [];
+        for (var ki = 0; ki < keys2.length; ki++) {
+          if (keys2[ki].indexOf(acciones[si].key) !== -1 || acciones[si].key.indexOf(keys2[ki]) !== -1) {
+            sd = preciosData[keys2[ki]]; break;
+          }
+        }
+      }
+      if (sd && sd.rows && sd.rows.length > 0) { withPrices.push(acciones[si]); }
+      else { withoutPrices.push(acciones[si]); }
+    }
+    acciones = withPrices.concat(withoutPrices);
 
     var wrap = document.getElementById('segswrap');
     var html = '';
