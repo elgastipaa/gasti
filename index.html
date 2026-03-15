@@ -455,10 +455,20 @@ document.addEventListener('DOMContentLoaded', function() {
     var segData = preciosData[segKey];
     if (!segData) {
       var keys = Object.keys(preciosData);
+      /* Pass 1: substring match */
       for (var k = 0; k < keys.length; k++) {
         if (keys[k].indexOf(segKey) !== -1 || segKey.indexOf(keys[k]) !== -1) {
-          segData = preciosData[keys[k]];
-          break;
+          segData = preciosData[keys[k]]; break;
+        }
+      }
+    }
+    if (!segData) {
+      /* Pass 2: first word of segKey matches a precios key (e.g. "value lata" -> "value") */
+      var firstWord = segKey.split(' ')[0];
+      var keys3 = Object.keys(preciosData);
+      for (var k3 = 0; k3 < keys3.length; k3++) {
+        if (keys3[k3] === firstWord || keys3[k3].indexOf(firstWord) === 0) {
+          segData = preciosData[keys3[k3]]; break;
         }
       }
     }
@@ -642,12 +652,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Fetch both sheets in parallel */
     var fetchAcciones = fetchSheet(cfg.tab);
-    var fetchPrecios  = preciosCache
-      ? Promise.resolve(preciosCache)
-      : fetchSheet(cfg.tabPrec).then(function(txt) {
-          preciosCache = parsePreciosCSV(txt);
-          return preciosCache;
-        }).catch(function() { return null; });
+    var fetchPrecios = fetchSheet(cfg.tabPrec).then(function(txt) {
+      return parsePreciosCSV(txt);
+    }).catch(function() { return null; });
 
     Promise.all([fetchAcciones, fetchPrecios]).then(function(results) {
       var rawAcciones = results[0];
