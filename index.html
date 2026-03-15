@@ -96,54 +96,24 @@
     .price-table tr:last-child td { border-bottom: none; }
     .no-precios { padding: 12px 14px; font-size: 12px; font-style: italic; opacity: .6; }
 
-    /* Segment colours */
-    .s-core    { border-color: #A8CAEF; }
-    .s-core    .segtit { background: #D6E8FF; color: #003DA5; border-right-color: #A8CAEF; }
-    .s-core    .detval { background: #EAF2FF; }
-    .s-core    .bubble { background: #D6E8FF; border-color: #A8CAEF; color: #003DA5; }
-    .s-core    .price-table-wrap { border-top-color: #A8CAEF; background: #EAF2FF; }
-    .s-core    .price-table th { background: #D6E8FF; color: #003DA5; }
-    .s-core    .price-table td { border-top-color: #C5DCEF; color: #0C447C; }
-    .s-core    .price-table td:first-child { color: #5A6478; }
-    .s-core    .price-table td:nth-child(2) { color: #1A1A2E; }
-
-    .s-ac      { border-color: #CBA8E8; }
-    .s-ac      .segtit { background: #E8D5F7; color: #6A1B9A; border-right-color: #CBA8E8; }
-    .s-ac      .detval { background: #F5EEFF; }
-    .s-ac      .bubble { background: #E8D5F7; border-color: #CBA8E8; color: #6A1B9A; }
-    .s-ac      .price-table-wrap { border-top-color: #CBA8E8; background: #F5EEFF; }
-    .s-ac      .price-table th { background: #E8D5F7; color: #6A1B9A; }
-    .s-ac      .price-table td { border-top-color: #DCC5EF; color: #4A1275; }
-    .s-ac      .price-table td:first-child { color: #5A6478; }
-    .s-ac      .price-table td:nth-child(2) { color: #1A1A2E; }
-
-    .s-latones { border-color: #F5C4A0; }
-    .s-latones .segtit { background: #FFD9BE; color: #E65100; border-right-color: #F5C4A0; }
-    .s-latones .detval { background: #FFF4EC; }
-    .s-latones .bubble { background: #FFD9BE; border-color: #F5C4A0; color: #993C1D; }
-    .s-latones .price-table-wrap { border-top-color: #F5C4A0; background: #FFF4EC; }
-    .s-latones .price-table th { background: #FFD9BE; color: #993C1D; }
-    .s-latones .price-table td { border-top-color: #F5D4C0; color: #993C1D; }
-    .s-latones .price-table td:first-child { color: #5A6478; }
-    .s-latones .price-table td:nth-child(2) { color: #1A1A2E; }
-
-    .s-value   { border-color: #9AD4B4; }
-    .s-value   .segtit { background: #C2EDD3; color: #1A7A3C; border-right-color: #9AD4B4; }
-    .s-value   .detval { background: #EDFAF3; }
-    .s-value   .bubble { background: #C2EDD3; border-color: #9AD4B4; color: #0F5229; }
-    .s-value   .price-table-wrap { border-top-color: #9AD4B4; background: #EDFAF3; }
-    .s-value   .price-table th { background: #C2EDD3; color: #0F5229; }
-    .s-value   .price-table td { border-top-color: #B0DCC4; color: #0F5229; }
-    .s-value   .price-table td:first-child { color: #5A6478; }
-    .s-value   .price-table td:nth-child(2) { color: #1A1A2E; }
-
-    .s-other   { border-color: #B0BEC5; }
-    .s-other   .segtit { background: #D8DDE0; color: #37474F; border-right-color: #B0BEC5; }
-    .s-other   .detval { background: #ECEFF1; }
-    .s-other   .bubble { background: #D8DDE0; border-color: #B0BEC5; color: #263238; }
-    .s-other   .price-table-wrap { border-top-color: #B0BEC5; background: #ECEFF1; }
-    .s-other   .price-table th { background: #D8DDE0; color: #37474F; }
-    .s-other   .price-table td { border-top-color: #C8D0D4; color: #263238; }
+    /* Segment colours - applied dynamically via JS, CSS vars per element */
+    .s-dyn { border-color: var(--s-border); }
+    .s-dyn .segtit { background: var(--s-mid); color: var(--s-dark); border-right-color: var(--s-border); }
+    .s-dyn .detval { background: var(--s-light); }
+    .s-dyn .bubble { background: var(--s-mid); border-color: var(--s-border); color: var(--s-dark); }
+    .s-dyn .price-table-wrap { border-top-color: var(--s-border); background: var(--s-light); }
+    .s-dyn .price-table th { background: var(--s-mid); color: var(--s-dark); }
+    .s-dyn .price-table td { border-top-color: var(--s-border); color: var(--s-dark); }
+    .s-dyn .price-table td:first-child { color: #5A6478; }
+    .s-dyn .price-table td:nth-child(2) { color: #1A1A2E; }
+    /* Grey for segments without prices */
+    .s-grey { border-color: #C8D0D8; }
+    .s-grey .segtit { background: #DDE3EE; color: #5A6478; border-right-color: #C8D0D8; }
+    .s-grey .detval { background: #EEF1F6; }
+    .s-grey .bubble { background: #DDE3EE; border-color: #C8D0D8; color: #5A6478; }
+    .s-grey .price-table-wrap { border-top-color: #C8D0D8; background: #EEF1F6; }
+    .s-grey .price-table th { background: #DDE3EE; color: #5A6478; }
+    .s-grey .price-table td { border-top-color: #D4DAE4; color: #5A6478; }
 
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
@@ -264,6 +234,35 @@ document.addEventListener('DOMContentLoaded', function() {
     'value':      { css: 's-value',   label: 'Value'      }
   };
   var SEG_ORDER = ['core', 'above core', 'above_core', 'abovecore', 'ac', 'latones', 'value'];
+
+  /* Colour palette: [light-bg, mid-bg, border, dark-text] */
+  /* Index 0 reserved for CORE (always blue). Rest rotate for others. */
+  var PALETTE = [
+    ['#EAF2FF','#D6E8FF','#A8CAEF','#003DA5'],  /* 0 blue    - CORE */
+    ['#FFF4EC','#FFD9BE','#F5C4A0','#B34500'],  /* 1 orange  */
+    ['#EDFAF3','#C2EDD3','#9AD4B4','#0F5229'],  /* 2 green   */
+    ['#F5EEFF','#E8D5F7','#CBA8E8','#4A1275'],  /* 3 purple  */
+    ['#FFF9E6','#FFE9A0','#F5D060','#7A5500'],  /* 4 amber   */
+    ['#E6FAF8','#B8EDE8','#7FD4CC','#0A5A55'],  /* 5 teal    */
+    ['#FDECEA','#F9C4C0','#EF9490','#8B1A17'],  /* 6 red     */
+    ['#EAF6FF','#B8DFF7','#7ABDE8','#0A3F6B'],  /* 7 sky     */
+    ['#F0FDE8','#CCEFB0','#9ED87A','#2D6010'],  /* 8 lime    */
+    ['#FFF0F8','#F7C8E8','#EE96D0','#7A1855'],  /* 9 pink    */
+    ['#FFF8F0','#FFD8A8','#F5B070','#7A3A00'],  /* 10 peach  */
+    ['#F0F8FF','#C8DCEE','#90B8DC','#1A3E5C'],  /* 11 steel  */
+  ];
+  var segColorMap = {};   /* segKey -> palette index */
+  var colorCounter = 1;  /* start at 1, 0 reserved for core */
+
+  function getSegPalette(segKey) {
+    var normKey = segKey.toLowerCase();
+    if (/^core$/.test(normKey)) { return PALETTE[0]; }
+    if (segColorMap[normKey] === undefined) {
+      segColorMap[normKey] = colorCounter % (PALETTE.length - 1) + 1;
+      colorCounter++;
+    }
+    return PALETTE[segColorMap[normKey]];
+  }
 
   /* Prices cache: { 'core': [ {sku, detalle, precios: {'3,5%': '$96,5', ...} }, ...], ... } */
   var preciosCache = null;
@@ -553,6 +552,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
     allOpen = false;
+    segColorMap = {}; colorCounter = 1;
     var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
   }
 
@@ -576,8 +576,8 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
       }
-      if (sd && sd.rows && sd.rows.length > 0) { withPrices.push(acciones[si]); }
-      else { withoutPrices.push(acciones[si]); }
+      if (sd && sd.rows && sd.rows.length > 0) { acciones[si].hasPrices = true; withPrices.push(acciones[si]); }
+      else { acciones[si].hasPrices = false; withoutPrices.push(acciones[si]); }
     }
     acciones = withPrices.concat(withoutPrices);
 
@@ -587,9 +587,15 @@ document.addEventListener('DOMContentLoaded', function() {
       var acc = acciones[i];
       var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
       var delay = (i * 0.07) + 's';
+      var hasPrices = acc.hasPrices;
       var priceTableHtml = buildPriceTable(acc.key, acc.detalle, preciosData);
 
-      html += '<div class="segblock ' + meta.css + ' fade-in" style="animation-delay:' + delay + '">';
+      var pal = hasPrices ? getSegPalette(acc.key) : null;
+      var dynStyle = pal
+        ? ' style="--s-light:' + pal[0] + ';--s-mid:' + pal[1] + ';--s-border:' + pal[2] + ';--s-dark:' + pal[3] + ';animation-delay:' + delay + '"'
+        : ' style="animation-delay:' + delay + '"';
+      var dynClass = pal ? 's-dyn' : 's-grey';
+      html += '<div class="segblock ' + dynClass + ' fade-in"' + dynStyle + '>';
 
       /* Pill row (clickable) */
       html += '<div class="segpill" onclick="this.closest(\'.segblock\').classList.toggle(\'open\')">';
