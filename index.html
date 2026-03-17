@@ -19,7 +19,7 @@
       --verde:  #1A7A3C;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--gris-f); color: var(--txt); min-height: 100vh; padding-bottom: 48px; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--gris-f); color: var(--txt); min-height: 100vh; padding-bottom: 80px; }
 
     /* LOGIN */
     #login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--azul); }
@@ -125,7 +125,7 @@
     @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
     /* CONFIG */
-    .cfgwrap { margin: 20px 16px 0; }
+    .cfgwrap { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1.5px solid var(--gris-b); padding: 10px 16px 12px; z-index: 40; box-shadow: 0 -2px 12px rgba(0,31,91,.07); }
     .cfgtoggle { background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 8px 14px; border-radius: 10px; cursor: pointer; width: 100%; text-align: left; }
     .cfgbody { display: none; background: #fff; border-radius: 14px; padding: 18px; margin-top: 10px; box-shadow: 0 2px 16px rgba(0,31,91,.08); }
     .cfgbody.open { display: block; }
@@ -211,16 +211,16 @@
     .calc-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
     .calc-overlay.on { display: block; }
     .calc-sheet {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      background: #fff; border-radius: 24px 24px 0 0; z-index: 101;
-      padding: 0 0 40px;
-      box-shadow: 0 -8px 40px rgba(0,31,91,.18);
-      transform: translateY(100%);
+      display: none; position: fixed; top: 0; left: 0; right: 0;
+      background: #fff; border-radius: 0 0 24px 24px; z-index: 101;
+      padding: 0 0 20px;
+      box-shadow: 0 8px 40px rgba(0,31,91,.18);
+      transform: translateY(-100%);
       transition: transform .32s cubic-bezier(.4,0,.2,1);
     }
     .calc-sheet.on { display: block; }
     .calc-sheet.open { transform: translateY(0); }
-    .calc-handle { width: 40px; height: 4px; background: var(--gris-b); border-radius: 2px; margin: 14px auto 0; }
+    .calc-handle { width: 40px; height: 4px; background: var(--gris-b); border-radius: 2px; margin: 0 auto 10px; }
     .calc-title { font-size: 15px; font-weight: 700; color: var(--azul); text-align: center; padding: 14px 20px 4px; letter-spacing: -.3px; }
     .calc-body { padding: 12px 20px 0; }
     .calc-field { margin-bottom: 14px; }
@@ -309,7 +309,7 @@
   <!-- CALCULADORA -->
   <div class="calc-overlay" id="calc-overlay"></div>
   <div class="calc-sheet" id="calc-sheet">
-    <div class="calc-handle"></div>
+    <div style="padding-top: env(safe-area-inset-top, 12px); padding-top: 12px;"></div>
     <div class="calc-title" id="calc-title">Calculadora de precios<span id="calc-title-indicator" style="display:none;font-size:10px;font-weight:700;color:var(--rojo);margin-left:8px;vertical-align:middle;"></span></div>
     <div class="calc-body">
       <div class="calc-row-2">
