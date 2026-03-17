@@ -16,6 +16,7 @@
       --txt-s:  #5A6478;
       --rojo:   #C0392B;
       --rojo-l: #FDECEA;
+      --verde:  #1A7A3C;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'DM Sans', sans-serif; background: var(--gris-f); color: var(--txt); min-height: 100vh; padding-bottom: 48px; }
@@ -42,6 +43,7 @@
     .tbrand { display: flex; align-items: center; gap: 10px; }
     .tbadge { background: var(--dorado); color: var(--azul); font-size: 10px; font-weight: 800; letter-spacing: .8px; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; }
     .tname { color: #fff; font-size: 15px; font-weight: 600; }
+    .tdistri { color: rgba(255,255,255,.5); font-size: 11px; margin-left: 6px; font-weight: 400; }
     .texit { background: rgba(255,255,255,.12); border: none; color: rgba(255,255,255,.7); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 7px 13px; border-radius: 9px; cursor: pointer; }
     .tsub { color: rgba(255,255,255,.4); font-size: 11px; margin-top: 5px; }
 
@@ -71,10 +73,11 @@
     .reshdr.on { display: flex; align-items: center; gap: 14px; }
     .rcod { font-size: 30px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
     .rbadge { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+    .tog-btn:active { background: rgba(255,255,255,.28); }
 
     /* PILLS */
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
-
     .segblock { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border-width: 1.5px; border-style: solid; }
     .segpill { display: flex; align-items: stretch; cursor: pointer; user-select: none; -webkit-user-select: none; }
     .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; min-width: 96px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; }
@@ -84,19 +87,21 @@
     .segblock.open .pill-chevron { transform: rotate(180deg); }
 
     /* PRICE TABLE */
-    .price-table-wrap { display: none; border-top-width: 1.5px; border-top-style: solid; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .price-table-wrap { display: none; border-top-width: 1.5px; border-top-style: solid; position: relative; }
     .segblock.open .price-table-wrap { display: block; }
+    .price-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    /* Scroll fade indicator on right edge */
+    .price-scroll-fade { position: absolute; top: 0; right: 0; bottom: 0; width: 32px; pointer-events: none; border-radius: 0 0 12px 0; }
     .price-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     .price-table th { padding: 8px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; text-align: right; white-space: nowrap; }
     .price-table th:first-child { text-align: left; }
     .price-table th:nth-child(2) { text-align: left; }
-    .price-table td { padding: 8px 10px; border-top-width: 1px; border-top-style: solid; text-align: right; white-space: nowrap; font-family: 'DM Mono', monospace; font-size: 12px; }
-    .price-table td:first-child { text-align: left; font-family: 'DM Sans', monospace; font-size: 11px; opacity: .6; }
-    .price-table td:nth-child(2) { text-align: left; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 12px; opacity: 1; max-width: 140px; white-space: normal; word-break: break-word; }
-    .price-table tr:last-child td { border-bottom: none; }
+    .price-table td { padding: 9px 10px; border-top-width: 1px; border-top-style: solid; text-align: right; white-space: nowrap; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; }
+    .price-table td:first-child { text-align: left; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400; opacity: .6; }
+    .price-table td:nth-child(2) { text-align: left; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 12px; opacity: 1; max-width: 130px; white-space: normal; word-break: break-word; }
     .no-precios { padding: 12px 14px; font-size: 12px; font-style: italic; opacity: .6; }
 
-    /* Segment colours - applied dynamically via JS, CSS vars per element */
+    /* Segment colours */
     .s-dyn { border-color: var(--s-border); }
     .s-dyn .segtit { background: var(--s-mid); color: var(--s-dark); border-right-color: var(--s-border); }
     .s-dyn .detval { background: var(--s-light); }
@@ -104,19 +109,18 @@
     .s-dyn .price-table-wrap { border-top-color: var(--s-border); background: var(--s-light); }
     .s-dyn .price-table th { background: var(--s-mid); color: var(--s-dark); }
     .s-dyn .price-table td { border-top-color: var(--s-border); color: var(--s-dark); }
-    .s-dyn .price-table td:first-child { color: #5A6478; }
-    .s-dyn .price-table td:nth-child(2) { color: #1A1A2E; }
-    /* Grey for segments without prices */
+    .s-dyn .price-table td:first-child { color: var(--txt-s); }
+    .s-dyn .price-table td:nth-child(2) { color: var(--txt); }
+    .s-dyn .price-scroll-fade { background: linear-gradient(to right, transparent, var(--s-light)); }
     .s-grey { border-color: #C8D0D8; }
-    .s-grey .segtit { background: #DDE3EE; color: #5A6478; border-right-color: #C8D0D8; }
+    .s-grey .segtit { background: #DDE3EE; color: var(--txt-s); border-right-color: #C8D0D8; }
     .s-grey .detval { background: #EEF1F6; }
-    .s-grey .bubble { background: #DDE3EE; border-color: #C8D0D8; color: #5A6478; }
+    .s-grey .bubble { background: #DDE3EE; border-color: #C8D0D8; color: var(--txt-s); }
     .s-grey .price-table-wrap { border-top-color: #C8D0D8; background: #EEF1F6; }
-    .s-grey .price-table th { background: #DDE3EE; color: #5A6478; }
-    .s-grey .price-table td { border-top-color: #D4DAE4; color: #5A6478; }
+    .s-grey .price-table th { background: #DDE3EE; color: var(--txt-s); }
+    .s-grey .price-table td { border-top-color: #D4DAE4; color: var(--txt-s); }
+    .s-grey .price-scroll-fade { background: linear-gradient(to right, transparent, #EEF1F6); }
 
-    .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
-    .tog-btn:active { background: rgba(255,255,255,.28); }
     .fade-in { animation: fi .25s ease both; }
     @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
@@ -129,7 +133,15 @@
     .cinput { width: 100%; border: 1.5px solid var(--gris-b); border-radius: 10px; padding: 11px 13px; font-size: 12px; font-family: 'DM Mono', monospace; outline: none; background: var(--gris-f); color: var(--txt); margin-bottom: 12px; transition: all .18s; }
     .cinput:focus { border-color: var(--azul-m); background: #fff; }
     .chint { font-size: 11px; color: var(--txt-s); margin: -8px 0 12px; line-height: 1.5; }
-    .csave { width: 100%; background: var(--azul); color: #fff; border: none; padding: 13px; border-radius: 11px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+    .cfg-row { display: flex; gap: 8px; margin-top: 4px; }
+    .csave { flex: 1; background: var(--azul); color: #fff; border: none; padding: 13px; border-radius: 11px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
+    .csave:active { transform: scale(.97); }
+    .crefresh { background: var(--gris-f); color: var(--txt-s); border: 1.5px solid var(--gris-b); padding: 13px 16px; border-radius: 11px; font-size: 16px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .crefresh:active { transform: scale(.97); background: var(--gris-b); }
+    .crefresh.spinning { animation: spin .6s linear infinite; }
+    .cfg-status { font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; font-weight: 500; }
+    .cfg-status.ok  { color: var(--verde); }
+    .cfg-status.err { color: var(--rojo); }
   </style>
 </head>
 <body>
@@ -157,7 +169,7 @@
     <div class="trow">
       <div class="tbrand">
         <div class="tbadge">Quilmes</div>
-        <div class="tname">Acciones Comerciales</div>
+        <div class="tname">Acciones Comerciales<span class="tdistri" id="tdistri"></span></div>
       </div>
       <button class="texit" id="btn-salir">Salir</button>
     </div>
@@ -174,8 +186,8 @@
 
   <div class="estado eloading" id="st-loading">
     <div class="spinner"></div>
-    <div class="etitle">Buscando cliente...</div>
-    <div class="esub">Consultando Google Sheets</div>
+    <div class="etitle" id="loading-title">Buscando cliente...</div>
+    <div class="esub" id="loading-sub">Consultando Google Sheets</div>
   </div>
   <div class="estado eerror" id="st-error">
     <div class="etitle" id="etitle">Error</div>
@@ -201,13 +213,21 @@
       <label class="clbl">ID del Google Sheet</label>
       <input class="cinput" id="cid" placeholder="ID del Sheet">
       <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
-      <label class="clbl">Nombre pestana acciones</label>
+      <label class="clbl">Nombre pestana Acciones</label>
       <input class="cinput" id="ctab" placeholder="Acciones">
-      <label class="clbl">Nombre pestana precios</label>
-      <input class="cinput" id="ctabp" placeholder="Precios">
+      <label class="clbl">Nombre pestana Precios</label>
+      <input class="cinput" id="ctabprec" placeholder="Precios">
+      <label class="clbl">Nombre pestana LDP</label>
+      <input class="cinput" id="ctabldp" placeholder="LDP">
+      <label class="clbl">Nombre pestana Config</label>
+      <input class="cinput" id="ctabcfg" placeholder="Config">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
-      <button class="csave" id="btn-save">Guardar</button>
+      <div class="cfg-row">
+        <button class="csave" id="btn-save">Guardar</button>
+        <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
+      </div>
+      <div class="cfg-status" id="cfg-status"></div>
     </div>
   </div>
 </div>
@@ -215,63 +235,49 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-  var STORE = 'qac5';
+  /* -- STORE ------------------------------------------------------- */
+  var STORE = 'qac6';
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
     pin:      saved.pin      || '1234',
-    sheetId:  saved.sheetId  || '1nCfGVswB0JrwFhoh65oNRP9IqdW2jsME1WoDayjLb8k',
+    sheetId:  saved.sheetId  || '',
     tab:      saved.tab      || 'Acciones',
-    tabPrec:  saved.tabPrec  || 'Precios'
+    tabPrec:  saved.tabPrec  || 'Precios',
+    tabLdp:   saved.tabLdp   || 'LDP',
+    tabCfg:   saved.tabCfg   || 'Config'
   };
 
-  var SEG_MAP = {
-    'core':       { css: 's-core',    label: 'Core'       },
-    'above core': { css: 's-ac',      label: 'Above Core' },
-    'above_core': { css: 's-ac',      label: 'Above Core' },
-    'abovecore':  { css: 's-ac',      label: 'Above Core' },
-    'ac':         { css: 's-ac',      label: 'Above Core' },
-    'latones':    { css: 's-latones', label: 'Latones'    },
-    'value':      { css: 's-value',   label: 'Value'      }
-  };
-  var SEG_ORDER = ['core', 'above core', 'above_core', 'abovecore', 'ac', 'latones', 'value'];
+  /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
+  var cache = { ldp: null, precios: null, distri: 1, nombre: '' };
 
-  /* Colour palette: [light-bg, mid-bg, border, dark-text] */
-  /* Index 0 reserved for CORE (always blue). Rest rotate for others. */
+  /* -- PALETA DE COLORES ------------------------------------------- */
   var PALETTE = [
-    ['#EAF2FF','#D6E8FF','#A8CAEF','#003DA5'],  /* 0 blue    - CORE */
-    ['#FFF4EC','#FFD9BE','#F5C4A0','#B34500'],  /* 1 orange  */
-    ['#EDFAF3','#C2EDD3','#9AD4B4','#0F5229'],  /* 2 green   */
-    ['#F5EEFF','#E8D5F7','#CBA8E8','#4A1275'],  /* 3 purple  */
-    ['#FFF9E6','#FFE9A0','#F5D060','#7A5500'],  /* 4 amber   */
-    ['#E6FAF8','#B8EDE8','#7FD4CC','#0A5A55'],  /* 5 teal    */
-    ['#FDECEA','#F9C4C0','#EF9490','#8B1A17'],  /* 6 red     */
-    ['#EAF6FF','#B8DFF7','#7ABDE8','#0A3F6B'],  /* 7 sky     */
-    ['#F0FDE8','#CCEFB0','#9ED87A','#2D6010'],  /* 8 lime    */
-    ['#FFF0F8','#F7C8E8','#EE96D0','#7A1855'],  /* 9 pink    */
-    ['#FFF8F0','#FFD8A8','#F5B070','#7A3A00'],  /* 10 peach  */
-    ['#F0F8FF','#C8DCEE','#90B8DC','#1A3E5C'],  /* 11 steel  */
+    ['#EAF2FF','#D6E8FF','#A8CAEF','#003DA5'],
+    ['#FFF4EC','#FFD9BE','#F5C4A0','#B34500'],
+    ['#EDFAF3','#C2EDD3','#9AD4B4','#0F5229'],
+    ['#F5EEFF','#E8D5F7','#CBA8E8','#4A1275'],
+    ['#FFF9E6','#FFE9A0','#F5D060','#7A5500'],
+    ['#E6FAF8','#B8EDE8','#7FD4CC','#0A5A55'],
+    ['#FDECEA','#F9C4C0','#EF9490','#8B1A17'],
+    ['#EAF6FF','#B8DFF7','#7ABDE8','#0A3F6B'],
+    ['#F0FDE8','#CCEFB0','#9ED87A','#2D6010'],
+    ['#FFF0F8','#F7C8E8','#EE96D0','#7A1855'],
+    ['#FFF8F0','#FFD8A8','#F5B070','#7A3A00'],
+    ['#F0F8FF','#C8DCEE','#90B8DC','#1A3E5C']
   ];
-  var segColorMap = {};   /* segKey -> palette index */
-  var colorCounter = 1;  /* start at 1, 0 reserved for core */
+  var segColorMap = {};
+  var colorCounter = 1;
 
   function getSegPalette(segKey) {
-    var normKey = segKey.toLowerCase();
-    if (/^core$/.test(normKey)) { return PALETTE[0]; }
-    if (segColorMap[normKey] === undefined) {
-      segColorMap[normKey] = colorCounter % (PALETTE.length - 1) + 1;
+    if (/^core$/.test(segKey.toLowerCase())) { return PALETTE[0]; }
+    if (segColorMap[segKey] === undefined) {
+      segColorMap[segKey] = colorCounter % (PALETTE.length - 1) + 1;
       colorCounter++;
     }
-    return PALETTE[segColorMap[normKey]];
+    return PALETTE[segColorMap[segKey]];
   }
 
-  /* Prices cache: { 'core': [ {sku, detalle, precios: {'3,5%': '$96,5', ...} }, ...], ... } */
-  var preciosCache = null;
-
-  /* Demo data for preview */
-  var DEMO_ACCIONES = 'PDV,Core,latones\n3485,"0b 3,5% | 6b 7,5% | 20b 8,5%","1b 3% | 3b 5%"\n1420,"0b 3,5% | 3b 6,5%",\n20039,"0b 3,5% | 2b 6% | 5b 8,5%","1b 3% | 3b 5% | 8b 7%"\n';
-  var DEMO_PRECIOS  = 'Segmento,SKU,Detalle,3,5%,6,5%,7,5%,8,5%\nCore,7634,Brahma lata 473ml,$96.50,$93.50,$92.50,$91.50\nCore,7635,Quilmes lata 473ml,$97.00,$94.00,$93.00,$92.00\nCore,7636,Stella lata 473ml,$101.00,$97.50,$96.50,$95.50\nlatones,8001,Brahma lata 250ml,$72.00,,,$68.00\nlatones,8002,Quilmes lata 250ml,$73.00,,,$69.00\n';
-
-  /* -- PIN -- */
+  /* -- PIN --------------------------------------------------------- */
   var pids = ['p0','p1','p2','p3'];
   pids.forEach(function(id, i) {
     var el = document.getElementById(id);
@@ -292,6 +298,18 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('codinput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { doBuscar(); } });
   document.getElementById('btn-cfg').addEventListener('click', function() { document.getElementById('cfgbody').classList.toggle('open'); });
   document.getElementById('btn-save').addEventListener('click', doSave);
+  document.getElementById('btn-refresh').addEventListener('click', doRefresh);
+  document.getElementById('btn-tog').addEventListener('click', function() {
+    allOpen = !allOpen;
+    var blocks = document.querySelectorAll('.segblock');
+    for (var b = 0; b < blocks.length; b++) {
+      if (allOpen) { blocks[b].classList.add('open'); }
+      else { blocks[b].classList.remove('open'); }
+    }
+    document.getElementById('btn-tog').innerHTML = allOpen ? '&#9650;&#9650;' : '&#9660;&#9660;';
+  });
+
+  var allOpen = false;
 
   function doLogin() {
     var val = pids.map(function(id) { return document.getElementById(id).value; }).join('');
@@ -300,8 +318,11 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('app').style.display = 'block';
       document.getElementById('cid').value = cfg.sheetId;
       document.getElementById('ctab').value = cfg.tab;
-      document.getElementById('ctabp').value = cfg.tabPrec;
+      document.getElementById('ctabprec').value = cfg.tabPrec;
+      document.getElementById('ctabldp').value = cfg.tabLdp;
+      document.getElementById('ctabcfg').value = cfg.tabCfg;
       document.getElementById('cpin').value = cfg.pin;
+      cargarCacheEstaticoSiNecesario();
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
       var err = document.getElementById('lerr');
@@ -324,222 +345,410 @@ document.addEventListener('DOMContentLoaded', function() {
   function doSave() {
     var sid = document.getElementById('cid').value.trim();
     var tab = document.getElementById('ctab').value.trim();
-    var tabp = document.getElementById('ctabp').value.trim();
-    var pin = document.getElementById('cpin').value.trim();
-    if (sid) { cfg.sheetId = sid; }
-    if (tab) { cfg.tab = tab; }
+    var tabp = document.getElementById('ctabprec').value.trim();
+    var tabl = document.getElementById('ctabldp').value.trim();
+    var tabc = document.getElementById('ctabcfg').value.trim();
+    var pin  = document.getElementById('cpin').value.trim();
+    if (sid)  { cfg.sheetId = sid; }
+    if (tab)  { cfg.tab = tab; }
     if (tabp) { cfg.tabPrec = tabp; }
+    if (tabl) { cfg.tabLdp = tabl; }
+    if (tabc) { cfg.tabCfg = tabc; }
     if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
-    preciosCache = null;
+    /* Invalidar cache cuando cambia config */
+    cache.ldp = null; cache.precios = null;
     document.getElementById('cfgbody').classList.remove('open');
-    alert('Configuracion guardada');
+    setCfgStatus('Guardado', 'ok');
   }
 
-  /* -- FETCH -- */
+  function setCfgStatus(msg, type) {
+    var el = document.getElementById('cfg-status');
+    el.textContent = msg;
+    el.className = 'cfg-status ' + (type || '');
+    setTimeout(function() { el.textContent = ''; el.className = 'cfg-status'; }, 3000);
+  }
+
+  /* -- CACHE ESTATICO (LDP + Precios + Config) --------------------- */
+  function cargarCacheEstaticoSiNecesario() {
+    if (cache.ldp && cache.precios) { return Promise.resolve(); }
+    return cargarCacheEstatico();
+  }
+
+  function cargarCacheEstatico() {
+    return Promise.all([
+      fetchSheet(cfg.tabLdp),
+      fetchSheet(cfg.tabPrec),
+      fetchSheet(cfg.tabCfg).catch(function() { return null; })
+    ]).then(function(results) {
+      cache.ldp     = parseLDP(results[0]);
+      cache.precios = parsePreciosHoja(results[1]);
+      if (results[2]) { parseConfig(results[2]); }
+      var nd = document.getElementById('tdistri');
+      if (cache.nombre) { nd.textContent = ' - ' + cache.nombre; }
+      else { nd.textContent = ''; }
+    }).catch(function() {
+      /* Si falla el cache, la app funciona igual pero sin precios */
+      cache.ldp = {}; cache.precios = {};
+    });
+  }
+
+  function doRefresh() {
+    var btn = document.getElementById('btn-refresh');
+    btn.classList.add('spinning');
+    btn.disabled = true;
+    cache.ldp = null; cache.precios = null;
+    cargarCacheEstatico().then(function() {
+      btn.classList.remove('spinning');
+      btn.disabled = false;
+      setCfgStatus('Precios actualizados', 'ok');
+    }).catch(function() {
+      btn.classList.remove('spinning');
+      btn.disabled = false;
+      setCfgStatus('Error al actualizar', 'err');
+    });
+  }
+
+  /* -- FETCH ------------------------------------------------------- */
   function fetchSheet(tabName) {
-    var url = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(tabName);
+    var url = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId +
+              '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(tabName);
     return fetch(url, { cache: 'no-store' }).then(function(res) {
       if (!res.ok) { throw new Error('HTTP ' + res.status); }
       return res.text();
     }).then(function(txt) {
-      if (txt.trim().charAt(0) === '<') { throw new Error('El Sheet no es publico o el ID es incorrecto.'); }
+      if (txt.trim().charAt(0) === '<') { throw new Error('Sheet no publico o ID incorrecto.'); }
       return txt;
     });
   }
 
   function parseCSV(txt) {
-    var rows = [];
-    var lines = txt.trim().split('\n');
+    var rows = []; var lines = txt.trim().split('\n');
     for (var li = 0; li < lines.length; li++) {
-      var cols = []; var cur = ''; var inQ = false;
-      var line = lines[li];
+      var cols = []; var cur = ''; var inQ = false; var line = lines[li];
       for (var ci = 0; ci < line.length; ci++) {
         var ch = line[ci];
         if (ch === '"') { inQ = !inQ; }
         else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
         else { cur += ch; }
       }
-      cols.push(cur.trim());
-      rows.push(cols);
+      cols.push(cur.trim()); rows.push(cols);
     }
     return rows;
   }
 
-  /* Parse precios sheet into cache object keyed by segment (lowercase) */
-  function parsePreciosCSV(txt) {
+  /* -- PARSE CONFIG ------------------------------------------------ */
+  /* Config sheet: col A = Nombre distri, col B = Internos (1 = descuento aplica a internos, 2 = no aplica)
+     Fila 1: encabezados (se ignoran). Fila 2: datos del distribuidor. */
+  function parseConfig(txt) {
+    var rows = parseCSV(txt);
+    /* Buscar primera fila con datos reales (saltar encabezado) */
+    for (var i = 0; i < rows.length; i++) {
+      var nombre = (rows[i][0] || '').trim();
+      var tipo   = (rows[i][1] || '').trim();
+      /* Saltar si parece encabezado */
+      if (/nombre|distri|intern/i.test(nombre)) { continue; }
+      if (nombre) { cache.nombre = nombre; }
+      if (tipo === '2') { cache.distri = 2; } else { cache.distri = 1; }
+      break;
+    }
+  }
+
+  /* -- PARSE LDP --------------------------------------------------- */
+  /* LDP sheet: SKU | Detalle | Neto | Internos */
+  function parseLDP(txt) {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
-    var headers = rows[0];
-    /* Find column indices */
-    var iSeg = -1; var iSku = -1; var iDet = -1;
-    for (var i = 0; i < headers.length; i++) {
-      var h = headers[i].toLowerCase().trim();
-      if (/segmento|segment/.test(h)) { iSeg = i; }
-      else if (/^sku$|cod.*prod|codigo.*prod/.test(h)) { iSku = i; }
-      else if (/detalle|producto|descripcion|descripci/.test(h)) { iDet = i; }
+    var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
+    var iSku  = hdr.findIndex(function(h) { return /^sku$|cod/.test(h); });
+    var iDet  = hdr.findIndex(function(h) { return /detalle|producto|descripcion/.test(h); });
+    var iNeto = hdr.findIndex(function(h) { return /neto/.test(h); });
+    var iInt  = hdr.findIndex(function(h) { return /interno/.test(h); });
+    if (iSku  < 0) { iSku  = 0; }
+    if (iDet  < 0) { iDet  = 1; }
+    if (iNeto < 0) { iNeto = 2; }
+    if (iInt  < 0) { iInt  = 3; }
+    var result = {};
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      var sku = (row[iSku] || '').toString().trim().replace(/\.0+$/, '');
+      if (!sku) { continue; }
+      var neto  = parseFloat((row[iNeto] || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
+      var inter = parseFloat((row[iInt]  || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
+      result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter };
     }
-    /* Fallback by position if not found */
+    return result;
+  }
+
+  /* -- PARSE PRECIOS ----------------------------------------------- */
+  /* Precios sheet: Segmento | SKU
+     Solo asignacion - precios se calculan desde LDP */
+  function parsePreciosHoja(txt) {
+    var rows = parseCSV(txt);
+    if (rows.length < 2) { return {}; }
+    var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
+    var iSeg = hdr.findIndex(function(h) { return /segmento|segment/.test(h); });
+    var iSku = hdr.findIndex(function(h) { return /^sku$|cod/.test(h); });
     if (iSeg < 0) { iSeg = 0; }
     if (iSku < 0) { iSku = 1; }
-    if (iDet < 0) { iDet = 2; }
-
-    /* Price columns: everything after detalle col, with header like "3,5%" */
-    var priceCols = [];
-    for (var j = 0; j < headers.length; j++) {
-      if (j === iSeg || j === iSku || j === iDet) { continue; }
-      var hdr = headers[j].trim();
-      if (hdr) { priceCols.push({ i: j, label: hdr }); }
-    }
-
     var result = {};
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
       var seg = (row[iSeg] || '').trim().toLowerCase();
-      if (!seg) { continue; }
-      if (!result[seg]) { result[seg] = { cols: priceCols, rows: [] }; }
-      var precios = {};
-      for (var p = 0; p < priceCols.length; p++) {
-        precios[priceCols[p].label] = (row[priceCols[p].i] || '').trim();
-      }
-      result[seg].rows.push({
-        sku:     (row[iSku] || '').trim(),
-        detalle: (row[iDet] || '').trim(),
-        precios: precios
-      });
+      var sku = (row[iSku] || '').toString().trim().replace(/\.0+$/, '');
+      if (!seg || !sku) { continue; }
+      if (!result[seg]) { result[seg] = []; }
+      result[seg].push(sku);
     }
     return result;
   }
 
-  /* Extract percentage labels from bubble string "0b 3,5% | 6b 7,5% | 20b 8,5%" -> ["3,5%","7,5%","8,5%"] */
+  /* -- CALCULAR PRECIO --------------------------------------------- */
+  /* Distri 1: (Neto + Internos + Neto*0.21) * (1 - dto)
+     Distri 2: (Neto + Neto*0.21) * (1 - dto) + Internos */
+  function calcPrecio(neto, internos, dto) {
+    var d = dto / 100;
+    if (cache.distri === 2) {
+      return (neto + neto * 0.21) * (1 - d) + internos;
+    }
+    return (neto + internos + neto * 0.21) * (1 - d);
+  }
+
+  function fmtPrecio(n) {
+    return '$' + Math.round(n).toLocaleString('es-AR');
+  }
+
+  /* -- EXTRAER PORCENTAJES ---------------------------------------- */
   function extraerPorcentajes(detalleStr) {
-    var parts = detalleStr.split('|');
-    var result = [];
+    var parts = detalleStr.split('|'); var result = [];
     for (var i = 0; i < parts.length; i++) {
       var m = parts[i].match(/(\d+[,.]?\d*)\s*%/);
-      if (m) {
-        /* Normalize: replace . with , for matching */
-        var pct = m[1].replace('.', ',') + '%';
-        result.push(pct);
-      }
+      if (m) { result.push(parseFloat(m[1].replace(',','.'))); }
+      else   { result.push(null); }
     }
     return result;
   }
 
-  /* Normalize a percentage string for comparison: "3.5%" -> "3,5%" */
-  function normPct(s) {
-    /* Normalize percentage string for matching:
-       - replace . with ,
-       - remove trailing zeros after comma: "4,0%" -> "4,0%", kept as-is
-       - lowercase and trim */
-    return s.trim().replace('.', ',').toLowerCase();
-  }
-  /* Two percentages match if their normalized forms are equal,
-     OR if one is the numeric equivalent of the other (e.g. "4%" == "4,0%") */
-  function pctsMatch(a, b) {
-    var na = normPct(a);
-    var nb = normPct(b);
-    if (na === nb) { return true; }
-    /* Try parsing as floats: "4,0%" and "4%" both parse to 4 */
-    var fa = parseFloat(na.replace(',', '.').replace('%', ''));
-    var fb = parseFloat(nb.replace(',', '.').replace('%', ''));
-    return !isNaN(fa) && !isNaN(fb) && fa === fb;
-  }
+  /* -- BUILD PRICE TABLE ------------------------------------------- */
+  function buildPriceTable(segKey, detalleStr) {
+    var ldp     = cache.ldp;
+    var precios = cache.precios;
+    if (!ldp || !precios) { return '<div class="no-precios">Precios no cargados. Usa el boton refresh en Configuracion.</div>'; }
 
-  /* Build price table HTML for a segment given its accion detalle string */
-  function buildPriceTable(segKey, detalleStr, preciosData) {
-    if (!preciosData) { return '<div class="no-precios">Cargando precios...</div>'; }
-
-    /* Find matching segment in prices (try exact, then partial) */
-    var segData = preciosData[segKey];
-    if (!segData) {
-      var keys = Object.keys(preciosData);
-      /* Pass 1: substring match */
+    /* Obtener SKUs del segmento */
+    var segSkus = null;
+    if (precios[segKey]) {
+      segSkus = precios[segKey];
+    } else {
+      /* Match parcial */
+      var keys = Object.keys(precios);
       for (var k = 0; k < keys.length; k++) {
         if (keys[k].indexOf(segKey) !== -1 || segKey.indexOf(keys[k]) !== -1) {
-          segData = preciosData[keys[k]]; break;
+          segSkus = precios[keys[k]]; break;
+        }
+      }
+      if (!segSkus) {
+        var fw = segKey.split(' ')[0];
+        for (var k2 = 0; k2 < keys.length; k2++) {
+          if (keys[k2] === fw || keys[k2].indexOf(fw) === 0) {
+            segSkus = precios[keys[k2]]; break;
+          }
         }
       }
     }
-    if (!segData) {
-      /* Pass 2: first word of segKey matches a precios key (e.g. "value lata" -> "value") */
-      var firstWord = segKey.split(' ')[0];
-      var keys3 = Object.keys(preciosData);
-      for (var k3 = 0; k3 < keys3.length; k3++) {
-        if (keys3[k3] === firstWord || keys3[k3].indexOf(firstWord) === 0) {
-          segData = preciosData[keys3[k3]]; break;
-        }
-      }
-    }
-    if (!segData || !segData.rows || segData.rows.length === 0) {
-      return '<div class="no-precios">Sin precios cargados para este segmento.</div>';
+    if (!segSkus || segSkus.length === 0) {
+      return '<div class="no-precios">Sin precios asignados para este segmento.</div>';
     }
 
-    /* Get percentage labels from client's bubbles */
-    var clientPcts = extraerPorcentajes(detalleStr);
-    /* Normalize for comparison */
-    var clientPctsNorm = {};
-    for (var i = 0; i < clientPcts.length; i++) {
-      clientPctsNorm[normPct(clientPcts[i])] = clientPcts[i];
+    /* Porcentajes del cliente para este segmento */
+    var dtos = extraerPorcentajes(detalleStr);
+    var parts = detalleStr.split('|');
+
+    /* Encabezados de columnas: una por burbuja con % */
+    var colHeaders = [];
+    for (var p = 0; p < parts.length; p++) {
+      if (dtos[p] !== null) { colHeaders.push({ label: parts[p].trim(), dto: dtos[p] }); }
+    }
+    if (colHeaders.length === 0) {
+      return '<div class="no-precios">Sin descuentos validos para calcular precios.</div>';
     }
 
-    /* Filter price columns: match by percentage OR by column header appearing in any bubble */
-    var bubbleTexts = [];
-    var rawParts = detalleStr.split('|');
-    for (var bp = 0; bp < rawParts.length; bp++) { bubbleTexts.push(rawParts[bp].trim().toLowerCase()); }
-
-    var visibleCols = [];
-    for (var cc = 0; cc < segData.cols.length; cc++) {
-      var matched = false;
-      var colLabel = segData.cols[cc].label;
-      /* Try percentage match first */
-      for (var ci2 = 0; ci2 < clientPcts.length; ci2++) {
-        if (pctsMatch(colLabel, clientPcts[ci2])) { matched = true; break; }
-      }
-      /* If not matched by %, try: any bubble contains this column header (e.g. bubble "Especial Lata" contains col "Especial") */
-      if (!matched) {
-        var colLabelLow = colLabel.toLowerCase();
-        for (var bi = 0; bi < bubbleTexts.length; bi++) {
-          if (bubbleTexts[bi].indexOf(colLabelLow) !== -1) { matched = true; break; }
-        }
-      }
-      if (matched) { visibleCols.push(segData.cols[cc]); }
+    /* Filas de productos */
+    var productRows = [];
+    for (var s = 0; s < segSkus.length; s++) {
+      var sku = segSkus[s];
+      var prod = ldp[sku];
+      if (!prod) { continue; }
+      productRows.push({ sku: sku, detalle: prod.detalle, neto: prod.neto, internos: prod.internos });
+    }
+    if (productRows.length === 0) {
+      return '<div class="no-precios">SKUs del segmento no encontrados en la LDP.</div>';
     }
 
-    if (visibleCols.length === 0) {
-      return '<div class="no-precios">No hay columnas de precios que coincidan con los descuentos del cliente.</div>';
-    }
-
-    /* Build table */
-    var html = '<table class="price-table">';
-    html += '<thead><tr>';
-    html += '<th>SKU</th>';
-    html += '<th>Producto</th>';
-    for (var vc = 0; vc < visibleCols.length; vc++) {
-      html += '<th>' + escHtml(visibleCols[vc].label) + '</th>';
+    /* Construir tabla */
+    var html = '<table class="price-table"><thead><tr>';
+    html += '<th>SKU</th><th>Producto</th>';
+    for (var h = 0; h < colHeaders.length; h++) {
+      html += '<th>' + escHtml(colHeaders[h].label) + '</th>';
     }
     html += '</tr></thead><tbody>';
-
-    for (var rr = 0; rr < segData.rows.length; rr++) {
-      var prod = segData.rows[rr];
-      html += '<tr>';
-      html += '<td>' + escHtml(prod.sku) + '</td>';
-      html += '<td>' + escHtml(prod.detalle) + '</td>';
-      for (var vv = 0; vv < visibleCols.length; vv++) {
-        var precio = prod.precios[visibleCols[vv].label] || '-';
-        html += '<td>' + escHtml(precio) + '</td>';
+    for (var rr = 0; rr < productRows.length; rr++) {
+      var pr = productRows[rr];
+      html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
+      for (var cc = 0; cc < colHeaders.length; cc++) {
+        var precio = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
+        html += '<td>' + fmtPrecio(precio) + '</td>';
       }
       html += '</tr>';
     }
-
     html += '</tbody></table>';
     return html;
   }
 
+  /* -- PROCESAR ACCIONES CSV --------------------------------------- */
+  function procesarAccionesCSV(raw, codigo) {
+    var rows = parseCSV(raw);
+    if (rows.length < 2) { throw new Error('Hoja de acciones vacia.'); }
+    var headers = rows[0];
+    var iCod = 0;
+    for (var i = 0; i < headers.length; i++) {
+      if (/^pdv$/.test(headers[i].toLowerCase().trim()) || /cod|cliente|codigo/.test(headers[i].toLowerCase())) {
+        iCod = i; break;
+      }
+    }
+    var segCols = [];
+    for (var j = 0; j < headers.length; j++) {
+      if (j !== iCod && headers[j].trim()) { segCols.push({ i: j, raw: headers[j].trim() }); }
+    }
+    var fila = null;
+    for (var r = 1; r < rows.length; r++) {
+      var rawCod = (rows[r][iCod] || '').toString().trim().replace(/\.0+$/, '');
+      if (rawCod === codigo) { fila = rows[r]; break; }
+    }
+    if (!fila) { return null; }
+    var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
+    var acciones = [];
+    for (var k = 0; k < segCols.length; k++) {
+      var detalle = (fila[segCols[k].i] || '').trim();
+      if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
+        acciones.push({ key: segCols[k].raw.toLowerCase(), label: segCols[k].raw, detalle: detalle });
+      }
+    }
+    return acciones;
+  }
+
+  /* -- RENDER RESULTADO -------------------------------------------- */
+  function renderResultado(codigo, acciones) {
+    hideEst();
+    document.getElementById('reshdr').classList.add('on','fade-in');
+    document.getElementById('rcod').textContent = codigo;
+    document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
+
+    /* Ordenar: con precios primero, sin precios al fondo */
+    var conPrecios = []; var sinPrecios = [];
+    for (var si = 0; si < acciones.length; si++) {
+      var segKey = acciones[si].key;
+      var tienePrecios = false;
+      if (cache.precios) {
+        if (cache.precios[segKey]) { tienePrecios = true; }
+        else {
+          var ks = Object.keys(cache.precios);
+          for (var ki = 0; ki < ks.length; ki++) {
+            if (ks[ki].indexOf(segKey) !== -1 || segKey.indexOf(ks[ki]) !== -1 || segKey.split(' ')[0] === ks[ki]) {
+              tienePrecios = true; break;
+            }
+          }
+        }
+      }
+      acciones[si].hasPrices = tienePrecios;
+      if (tienePrecios) { conPrecios.push(acciones[si]); }
+      else { sinPrecios.push(acciones[si]); }
+    }
+    acciones = conPrecios.concat(sinPrecios);
+
+    var wrap = document.getElementById('segswrap');
+    var html = '';
+    for (var i = 0; i < acciones.length; i++) {
+      var acc = acciones[i];
+      var pal = acc.hasPrices ? getSegPalette(acc.key) : null;
+      var dynCls = pal ? 's-dyn' : 's-grey';
+      var dynSty = pal
+        ? ' style="--s-light:' + pal[0] + ';--s-mid:' + pal[1] + ';--s-border:' + pal[2] + ';--s-dark:' + pal[3] + ';animation-delay:' + (i*0.07) + 's"'
+        : ' style="animation-delay:' + (i*0.07) + 's"';
+
+      /* Burbujas */
+      var bubblesHtml = '';
+      var parts = acc.detalle.split('|');
+      for (var p = 0; p < parts.length; p++) {
+        var part = parts[p].trim();
+        if (part) { bubblesHtml += '<span class="bubble">' + escHtml(part) + '</span>'; }
+      }
+
+      /* Tabla de precios */
+      var tableHtml = acc.hasPrices
+        ? buildPriceTable(acc.key, acc.detalle)
+        : '<div class="no-precios">Sin precios cargados para este segmento.</div>';
+
+      html += '<div class="segblock ' + dynCls + ' fade-in"' + dynSty + '>';
+      html += '<div class="segpill" onclick="this.closest(\'.segblock\').classList.toggle(\'open\')">';
+      html += '<div class="segtit">' + escHtml(acc.label) + '</div>';
+      html += '<div class="detval">' + bubblesHtml + '</div>';
+      html += '<span class="pill-chevron">&#9660;</span>';
+      html += '</div>';
+      html += '<div class="price-table-wrap">';
+      html += '<div class="price-scroll">' + tableHtml + '</div>';
+      html += '<div class="price-scroll-fade"></div>';
+      html += '</div>';
+      html += '</div>';
+    }
+    wrap.innerHTML = html;
+
+    /* Detectar si hay scroll horizontal en tablas */
+    setTimeout(function() {
+      var scrolls = wrap.querySelectorAll('.price-scroll');
+      for (var s = 0; s < scrolls.length; s++) {
+        var fade = scrolls[s].parentNode.querySelector('.price-scroll-fade');
+        if (fade) {
+          fade.style.display = scrolls[s].scrollWidth > scrolls[s].clientWidth ? 'block' : 'none';
+        }
+      }
+    }, 100);
+  }
+
+  /* -- BUSCAR ------------------------------------------------------ */
+  function doBuscar() {
+    var codigo = document.getElementById('codinput').value.trim();
+    if (!codigo) { document.getElementById('codinput').focus(); return; }
+    resetUI();
+    showEst('loading');
+
+    /* Primero asegurar cache estatico, luego buscar acciones */
+    cargarCacheEstaticoSiNecesario().then(function() {
+      return fetchSheet(cfg.tab);
+    }).then(function(rawAcciones) {
+      var acciones = procesarAccionesCSV(rawAcciones, codigo);
+      if (!acciones || acciones.length === 0) {
+        showEst('vacio');
+        document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones activas en el periodo actual.';
+        return;
+      }
+      renderResultado(codigo, acciones);
+    }).catch(function(e) {
+      showEst('error');
+      if (/fetch|Failed|Load|network/i.test(e.message)) {
+        document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
+        document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
+      } else {
+        document.getElementById('etitle').textContent = 'Error al leer el Sheet';
+        document.getElementById('esub').textContent = e.message;
+      }
+    });
+  }
+
+  /* -- HELPERS ----------------------------------------------------- */
   function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
-
   function showEst(t) {
     ['loading','error','vacio'].forEach(function(x) { document.getElementById('st-'+x).classList.remove('on'); });
     document.getElementById('st-'+t).classList.add('on');
@@ -556,147 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
   }
 
-  function renderResultado(codigo, acciones, preciosData) {
-    hideEst();
-    var reshdr = document.getElementById('reshdr');
-    reshdr.classList.add('on','fade-in');
-    document.getElementById('rcod').textContent = codigo;
-    document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
-
-    /* Segments with prices first, without prices last - preserve relative order within each group */
-    var withPrices = [];
-    var withoutPrices = [];
-    for (var si = 0; si < acciones.length; si++) {
-      var sd = preciosData ? preciosData[acciones[si].key] : null;
-      if (!sd) {
-        var keys2 = preciosData ? Object.keys(preciosData) : [];
-        for (var ki = 0; ki < keys2.length; ki++) {
-          if (keys2[ki].indexOf(acciones[si].key) !== -1 || acciones[si].key.indexOf(keys2[ki]) !== -1) {
-            sd = preciosData[keys2[ki]]; break;
-          }
-        }
-      }
-      if (sd && sd.rows && sd.rows.length > 0) { acciones[si].hasPrices = true; withPrices.push(acciones[si]); }
-      else { acciones[si].hasPrices = false; withoutPrices.push(acciones[si]); }
-    }
-    acciones = withPrices.concat(withoutPrices);
-
-    var wrap = document.getElementById('segswrap');
-    var html = '';
-    for (var i = 0; i < acciones.length; i++) {
-      var acc = acciones[i];
-      var meta = SEG_MAP[acc.key] || { css: 's-other', label: acc.label };
-      var delay = (i * 0.07) + 's';
-      var hasPrices = acc.hasPrices;
-      var priceTableHtml = buildPriceTable(acc.key, acc.detalle, preciosData);
-
-      var pal = hasPrices ? getSegPalette(acc.key) : null;
-      var dynStyle = pal
-        ? ' style="--s-light:' + pal[0] + ';--s-mid:' + pal[1] + ';--s-border:' + pal[2] + ';--s-dark:' + pal[3] + ';animation-delay:' + delay + '"'
-        : ' style="animation-delay:' + delay + '"';
-      var dynClass = pal ? 's-dyn' : 's-grey';
-      html += '<div class="segblock ' + dynClass + ' fade-in"' + dynStyle + '>';
-
-      /* Pill row (clickable) */
-      html += '<div class="segpill" onclick="this.closest(\'.segblock\').classList.toggle(\'open\')">';
-      html += '<div class="segtit">' + escHtml(meta.label) + '</div>';
-      html += '<div class="detval">';
-      var parts = acc.detalle.split('|');
-      for (var p = 0; p < parts.length; p++) {
-        var part = parts[p].trim();
-        if (part) { html += '<span class="bubble">' + escHtml(part) + '</span>'; }
-      }
-      html += '</div>';
-      html += '<span class="pill-chevron">&#9660;</span>';
-      html += '</div>';
-
-      /* Price table (hidden until open) */
-      html += '<div class="price-table-wrap">' + priceTableHtml + '</div>';
-
-      html += '</div>';
-    }
-    wrap.innerHTML = html;
-  }
-
-  function procesarAccionesCSV(raw, codigo) {
-    var rows = parseCSV(raw);
-    if (rows.length < 2) { throw new Error('La hoja de acciones esta vacia.'); }
-    var headers = rows[0];
-    var iCod = 0;
-    for (var i = 0; i < headers.length; i++) {
-      var h = headers[i].toLowerCase().trim();
-      if (/^pdv$/.test(h) || /cod|cliente|codigo/.test(h)) { iCod = i; break; }
-    }
-    var segCols = [];
-    for (var j = 0; j < headers.length; j++) {
-      if (j !== iCod && headers[j].trim() !== '') { segCols.push({ i: j, raw: headers[j].trim() }); }
-    }
-    var fila = null;
-    for (var r = 1; r < rows.length; r++) {
-      var rawCod = (rows[r][iCod] || '').toString().trim();
-        /* Strip trailing .0 from numeric codes exported as floats */
-        var normCod = rawCod.replace(/\.0+$/, '');
-        if (normCod === codigo) { fila = rows[r]; break; }
-    }
-    if (!fila) { return null; }
-    var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
-    var acciones = [];
-    for (var k = 0; k < segCols.length; k++) {
-      var detalle = (fila[segCols[k].i] || '').trim();
-      if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
-        acciones.push({ key: segCols[k].raw.toLowerCase(), label: segCols[k].raw, detalle: detalle });
-      }
-    }
-    return acciones;
-  }
-
-  function doBuscar() {
-    var codigo = document.getElementById('codinput').value.trim();
-    if (!codigo) { document.getElementById('codinput').focus(); return; }
-    resetUI();
-    showEst('loading');
-
-    /* Fetch both sheets in parallel */
-    var fetchAcciones = fetchSheet(cfg.tab);
-    var fetchPrecios = fetchSheet(cfg.tabPrec).then(function(txt) {
-      return parsePreciosCSV(txt);
-    }).catch(function() { return null; });
-
-    Promise.all([fetchAcciones, fetchPrecios]).then(function(results) {
-      var rawAcciones = results[0];
-      var preciosData = results[1];
-      var acciones = procesarAccionesCSV(rawAcciones, codigo);
-      if (!acciones || acciones.length === 0) {
-        showEst('vacio');
-        document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones activas en el periodo actual.';
-        return;
-      }
-      renderResultado(codigo, acciones, preciosData);
-    }).catch(function(e) {
-      showEst('error');
-      if (/fetch|Failed|Load|network/i.test(e.message)) {
-        document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
-        document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
-      } else {
-        document.getElementById('etitle').textContent = 'Error al leer el Sheet';
-        document.getElementById('esub').textContent = e.message;
-      }
-    });
-  }
-
-  var allOpen = false;
-  document.getElementById('btn-tog').addEventListener('click', function() {
-    allOpen = !allOpen;
-    var blocks = document.querySelectorAll('.segblock');
-    for (var b = 0; b < blocks.length; b++) {
-      if (allOpen) { blocks[b].classList.add('open'); }
-      else { blocks[b].classList.remove('open'); }
-    }
-    document.getElementById('btn-tog').innerHTML = allOpen ? '&#9650;&#9650;' : '&#9660;&#9660;';
-  });
-
   document.getElementById('p0').focus();
-
 });
 </script>
 </body>
