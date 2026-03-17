@@ -464,14 +464,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
     var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
-    var iSku = 0; var iDet = 1; var iUxb = -1; var iNeto = 2; var iInt = 3;
+    var iSku = 0; var iDet = 1; var iUxb = 2; var iNeto = 3; var iInt = 4;
     for (var hi = 0; hi < hdr.length; hi++) {
-      if (/^sku$|cod/.test(hdr[hi]))                          { iSku  = hi; }
-      if (/detalle|producto|descripcion/.test(hdr[hi]))       { iDet  = hi; }
-      if (/uxb/i.test(hdr[hi]))                               { iUxb  = hi; }
-      if (/neto/.test(hdr[hi]))                               { iNeto = hi; }
-      if (/interno/.test(hdr[hi]))                            { iInt  = hi; }
+      if (/^sku$|cod/.test(hdr[hi]))                               { iSku  = hi; }
+      if (/detalle|producto|descripcion/.test(hdr[hi]))            { iDet  = hi; }
+      if (/uxb/i.test(hdr[hi]))                                    { iUxb  = hi; }
+      if (/neto/.test(hdr[hi]))                                    { iNeto = hi; }
+      if (/interno/.test(hdr[hi]))                                 { iInt  = hi; }
     }
+    console.log('LDP cols: iSku=' + iSku + ' iDet=' + iDet + ' iUxb=' + iUxb + ' iNeto=' + iNeto + ' iInt=' + iInt);
     var result = {};
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
@@ -479,8 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!sku) { continue; }
       var neto  = parseFloat((row[iNeto] || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var inter = parseFloat((row[iInt]  || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
-      var uxbVal = (iUxb >= 0 && row[iUxb]) ? (parseFloat(row[iUxb].toString().replace(',','.')) || 1) : 1;
-      if (sku === '7634') { console.log('7634 uxb raw:', row[iUxb], '-> parsed:', uxbVal); }
+      var uxbVal = parseFloat((row[iUxb] || '1').toString().replace(',','.')) || 1;
+      if (sku === '7634' || uxbVal !== 1) { console.log('LDP SKU=' + sku + ' iUxb=' + iUxb + ' raw=' + row[iUxb] + ' uxb=' + uxbVal); }
       result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter, uxb: uxbVal };
     }
     return result;
@@ -606,6 +607,7 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
       for (var cc = 0; cc < colHeaders.length; cc++) {
         var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
+        console.log('SKU=' + pr.sku + ' uxb=' + pr.uxb + ' bulto=' + precioBulto);
         var precio = esUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
         html += '<td>' + fmtPrecio(precio) + '</td>';
       }
