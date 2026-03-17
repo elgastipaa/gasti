@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.disabled = false;
       setCfgStatus('Precios actualizados', 'ok');
       var cod = document.getElementById('codinput').value.trim();
-      if (cod && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
+      if (cod && document.getElementById('reshdr').classList.contains('on')) { doBuscar(true); }
     }).catch(function() {
       btn.classList.remove('spinning');
       btn.disabled = false;
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* -- BUILD PRICE TABLE ------------------------------------------- */
-  function buildPriceTable(segKey, detalleStr) {
+  function buildPriceTable(segKey, detalleStr, esUnitario) {
     var ldp     = cache.ldp;
     var precios = cache.precios;
     if (!ldp || !precios) { return '<div class="no-precios">Precios no cargados. Usa el boton refresh en Configuracion.</div>'; }
@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* Construir tabla */
-    var precioLabel = precioUnitario ? 'x unidad' : 'x bulto';
+    var precioLabel = esUnitario ? 'x unidad' : 'x bulto';
     var html = '<table class="price-table"><thead><tr>';
     html += '<th>SKU</th><th>Producto</th>';
     for (var h = 0; h < colHeaders.length; h++) {
@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
       for (var cc = 0; cc < colHeaders.length; cc++) {
         var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
-        var precio = precioUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
+        var precio = esUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
         html += '<td>' + fmtPrecio(precio) + '</td>';
       }
       html += '</tr>';
@@ -694,7 +694,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       /* Tabla de precios */
       var tableHtml = acc.hasPrices
-        ? buildPriceTable(acc.key, acc.detalle)
+        ? buildPriceTable(acc.key, acc.detalle, precioUnitario)
         : '<div class="no-precios">Sin precios cargados para este segmento.</div>';
 
       html += '<div class="segblock ' + dynCls + ' fade-in"' + dynSty + '>';
@@ -724,9 +724,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* -- BUSCAR ------------------------------------------------------ */
-  function doBuscar() {
+  function doBuscar(preservePills) {
     var codigo = document.getElementById('codinput').value.trim();
     if (!codigo) { document.getElementById('codinput').focus(); return; }
+    var savedPills = preservePills ? getOpenPills() : [];
     resetUI();
     showEst('loading');
 
@@ -741,6 +742,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       renderResultado(codigo, acciones);
+      if (savedPills.length > 0) { restoreOpenPills(savedPills); }
     }).catch(function(e) {
       showEst('error');
       if (/fetch|Failed|Load|network/i.test(e.message)) {
@@ -764,6 +766,22 @@ document.addEventListener('DOMContentLoaded', function() {
   function hideEst() {
     ['loading','error','vacio'].forEach(function(x) { document.getElementById('st-'+x).classList.remove('on'); });
   }
+  function getOpenPills() {
+    var open = [];
+    var blocks = document.querySelectorAll('.segblock');
+    for (var b = 0; b < blocks.length; b++) {
+      open.push(blocks[b].classList.contains('open'));
+    }
+    return open;
+  }
+
+  function restoreOpenPills(open) {
+    var blocks = document.querySelectorAll('.segblock');
+    for (var b = 0; b < blocks.length; b++) {
+      if (open[b]) { blocks[b].classList.add('open'); }
+    }
+  }
+
   function resetUI() {
     hideEst();
     document.getElementById('reshdr').classList.remove('on','fade-in');
@@ -780,7 +798,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.style.color = precioUnitario ? '#fff' : '';
     btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
     var codigo = document.getElementById('codinput').value.trim();
-    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
+    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(true); }
   });
 
   document.getElementById('p0').focus();
