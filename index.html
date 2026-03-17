@@ -587,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var sku = segSkus[s];
       var prod = ldp[sku];
       if (!prod) { continue; }
-      productRows.push({ sku: sku, detalle: prod.detalle, neto: prod.neto, internos: prod.internos });
+      productRows.push({ sku: sku, detalle: prod.detalle, neto: prod.neto, internos: prod.internos, uxb: prod.uxb });
     }
     if (productRows.length === 0) {
       return '<div class="no-precios">SKUs del segmento no encontrados en la LDP.</div>';
