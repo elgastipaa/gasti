@@ -143,77 +143,14 @@
     .cfg-status.ok  { color: var(--verde); }
     .cfg-status.err { color: var(--rojo); }
 
-    /* CALCULADORA */
-    .calc-overlay {
-      position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45);
-      z-index: 200; display: none; align-items: flex-end;
-    }
-    .calc-overlay.open { display: flex; }
-    .calc-sheet {
-      background: #fff; width: 100%; border-radius: 24px 24px 0 0;
-      padding: 0 0 40px; box-shadow: 0 -8px 40px rgba(0,0,0,.18);
-      animation: slideUp .25s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .calc-handle {
-      display: flex; justify-content: center; padding: 14px 0 6px;
-    }
-    .calc-handle-bar {
-      width: 40px; height: 4px; background: var(--gris-b); border-radius: 4px;
-    }
-    .calc-title {
-      font-size: 15px; font-weight: 700; color: var(--azul);
-      text-align: center; margin-bottom: 20px;
-    }
-    .calc-body { padding: 0 20px; }
-    .calc-lbl { font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; display: block; }
-    .calc-input {
-      width: 100%; border: 2px solid var(--gris-b); border-radius: 12px;
-      padding: 13px 16px; font-size: 18px; font-weight: 700;
-      font-family: 'DM Mono', monospace; color: var(--azul);
-      background: var(--gris-f); outline: none; margin-bottom: 14px;
-      transition: border-color .18s; -webkit-appearance: none;
-    }
-    .calc-input:focus { border-color: var(--azul-m); background: #fff; }
-    .calc-detalle {
-      background: var(--gris-f); border-radius: 10px; padding: 11px 14px;
-      font-size: 13px; color: var(--txt-s); margin-bottom: 14px;
-      min-height: 40px; font-style: italic;
-    }
-    .calc-row2 { display: flex; gap: 10px; margin-bottom: 20px; }
-    .calc-row2 > div { flex: 1; }
-    .calc-result-box {
-      border-radius: 14px; padding: 14px 16px; text-align: center;
-    }
-    .calc-result-box.bulto { background: var(--azul); }
-    .calc-result-box.unit  { background: #EAF2FF; }
-    .calc-result-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
-    .calc-result-box.bulto .calc-result-lbl { color: rgba(255,255,255,.6); }
-    .calc-result-box.unit  .calc-result-lbl { color: var(--azul-m); }
-    .calc-result-val { font-size: 20px; font-weight: 700; font-family: 'DM Mono', monospace; }
-    .calc-result-box.bulto .calc-result-val { color: #fff; }
-    .calc-result-box.unit  .calc-result-val { color: var(--azul); }
-    .calc-total-box {
-      background: var(--gris-f); border-radius: 14px; padding: 14px 18px;
-      display: flex; align-items: center; justify-content: space-between; margin-top: 14px;
-    }
-    .calc-total-lbl { font-size: 12px; color: var(--txt-s); font-weight: 500; }
-    .calc-bultos-row { display: flex; align-items: center; gap: 10px; }
-    .calc-bultos-btn {
-      width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--gris-b);
-      background: #fff; font-size: 20px; font-weight: 700; color: var(--azul);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; line-height: 1;
-    }
-    .calc-bultos-val { font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); min-width: 32px; text-align: center; }
-    .calc-total-val { font-size: 20px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); }
+
     /* CALCULADORA */
     .calc-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
     .calc-overlay.on { display: block; }
     .calc-sheet {
       display: none; position: fixed; top: 0; left: 0; right: 0;
       background: #fff; border-radius: 0 0 24px 24px; z-index: 101;
-      padding: 0 0 20px;
+      padding: 0 0 12px;
       box-shadow: 0 8px 40px rgba(0,31,91,.18);
       transform: translateY(-100%);
       transition: transform .32s cubic-bezier(.4,0,.2,1);
@@ -221,26 +158,26 @@
     .calc-sheet.on { display: block; }
     .calc-sheet.open { transform: translateY(0); }
     .calc-handle { width: 40px; height: 4px; background: var(--gris-b); border-radius: 2px; margin: 0 auto 10px; }
-    .calc-title { font-size: 15px; font-weight: 700; color: var(--azul); text-align: center; padding: 14px 20px 4px; letter-spacing: -.3px; }
-    .calc-body { padding: 12px 20px 0; }
-    .calc-field { margin-bottom: 14px; }
-    .calc-lbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
-    .calc-input { width: 100%; border: 2px solid var(--gris-b); border-radius: 12px; padding: 12px 14px; font-size: 16px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul); background: var(--gris-f); outline: none; transition: all .18s; }
+    .calc-title { font-size: 14px; font-weight: 700; color: var(--azul); text-align: center; padding: 8px 20px 2px; letter-spacing: -.3px; }
+    .calc-body { padding: 6px 16px 0; }
+    .calc-field { margin-bottom: 8px; }
+    .calc-lbl { display: block; font-size: 10px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 3px; }
+    .calc-input { width: 100%; border: 2px solid var(--gris-b); border-radius: 10px; padding: 8px 12px; font-size: 15px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul); background: var(--gris-f); outline: none; transition: all .18s; }
     .calc-input:focus { border-color: var(--azul-m); background: #fff; box-shadow: 0 0 0 3px rgba(0,61,165,.09); }
-    .calc-row-2 { display: flex; gap: 10px; }
-    .calc-detalle-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
-    .calc-detalle { font-size: 12px; color: var(--verde); font-weight: 600; padding: 12px 14px; background: var(--gris-f); border-radius: 12px; border: 2px solid var(--gris-b); min-height: 46px; word-break: break-word; }
+    .calc-row-2 { display: flex; gap: 8px; }
+    .calc-detalle-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+    .calc-detalle { font-size: 12px; color: var(--verde); font-weight: 600; padding: 7px 10px; background: var(--gris-f); border-radius: 10px; border: 2px solid var(--gris-b); min-height: 34px; word-break: break-word; }
     .calc-qty-row { display: flex; gap: 10px; align-items: center; }
-    .calc-qty-btn { width: 44px; height: 44px; border: 2px solid var(--gris-b); border-radius: 12px; background: var(--gris-f); font-size: 22px; font-weight: 600; color: var(--azul); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+    .calc-qty-btn { width: 34px; height: 34px; border: 2px solid var(--gris-b); border-radius: 10px; background: var(--gris-f); font-size: 18px; font-weight: 600; color: var(--azul); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
     .calc-qty-btn:active { background: var(--gris-b); transform: scale(.93); }
     .calc-qty-input { text-align: center; flex: 1; }
-    .calc-result { display: flex; gap: 8px; margin-top: 16px; }
-    .calc-result-box { flex: 1; background: var(--gris-f); border-radius: 12px; padding: 12px 10px; text-align: center; }
+    .calc-result { display: flex; gap: 6px; margin-top: 8px; }
+    .calc-result-box { flex: 1; background: var(--gris-f); border-radius: 10px; padding: 8px 8px; text-align: center; }
     .calc-result-total { flex: 1.3; background: var(--azul); }
-    .calc-result-lbl { font-size: 10px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .calc-result-lbl { font-size: 9px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
     .calc-result-total .calc-result-lbl { color: rgba(255,255,255,.6); }
-    .calc-result-val { font-size: 15px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); }
-    .calc-result-total .calc-result-val { color: var(--dorado); font-size: 16px; }
+    .calc-result-val { font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); }
+    .calc-result-total .calc-result-val { color: var(--dorado); font-size: 14px; }
   </style>
 </head>
 <body>
