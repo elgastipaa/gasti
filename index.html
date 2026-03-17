@@ -330,17 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var err = document.getElementById('lerr');
       err.textContent = 'PIN incorrecto. Intentalo de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
-      document.getElementById('btn-unitario').addEventListener('click', function() {
-    precioUnitario = !precioUnitario;
-    var btn = document.getElementById('btn-unitario');
-    btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
-    btn.style.color = precioUnitario ? '#fff' : '';
-    btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
-    var codigo = document.getElementById('codinput').value.trim();
-    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
-  });
-
-  document.getElementById('p0').focus();
+      document.getElementById('p0').focus();
       setTimeout(function() { err.textContent = ''; }, 3000);
     }
   }
@@ -604,14 +594,14 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Construir tabla */
     var precioLabel = precioUnitario ? 'x unidad' : 'x bulto';
     var html = '<table class="price-table"><thead><tr>';
-    html += '<th>SKU</th><th>Producto</th><th style="text-align:center">UxB</th>';
+    html += '<th>SKU</th><th>Producto</th>';
     for (var h = 0; h < colHeaders.length; h++) {
       html += '<th>' + escHtml(colHeaders[h].label) + '<br><span style="opacity:.65;font-size:9px;font-weight:400">' + precioLabel + '</span></th>';
     }
     html += '</tr></thead><tbody>';
     for (var rr = 0; rr < productRows.length; rr++) {
       var pr = productRows[rr];
-      html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td><td style="text-align:center">' + (pr.uxb || 1) + '</td>';
+      html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
       for (var cc = 0; cc < colHeaders.length; cc++) {
         var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
         var precio = precioUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
@@ -782,6 +772,16 @@ document.addEventListener('DOMContentLoaded', function() {
     segColorMap = {}; colorCounter = 1;
     var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
   }
+
+  document.getElementById('btn-unitario').addEventListener('click', function() {
+    precioUnitario = !precioUnitario;
+    var btn = document.getElementById('btn-unitario');
+    btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
+    btn.style.color = precioUnitario ? '#fff' : '';
+    btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
+    var codigo = document.getElementById('codinput').value.trim();
+    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
+  });
 
   document.getElementById('p0').focus();
 });
