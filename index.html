@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var hi = 0; hi < hdr.length; hi++) {
       if (/^sku$|cod/.test(hdr[hi]))                          { iSku  = hi; }
       if (/detalle|producto|descripcion/.test(hdr[hi]))       { iDet  = hi; }
-      if (/^uxb$|unid.*bult/.test(hdr[hi]))                  { iUxb  = hi; }
+      if (/uxb/i.test(hdr[hi]))                               { iUxb  = hi; }
       if (/neto/.test(hdr[hi]))                               { iNeto = hi; }
       if (/interno/.test(hdr[hi]))                            { iInt  = hi; }
     }
@@ -480,6 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var neto  = parseFloat((row[iNeto] || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var inter = parseFloat((row[iInt]  || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var uxbVal = (iUxb >= 0 && row[iUxb]) ? (parseFloat(row[iUxb].toString().replace(',','.')) || 1) : 1;
+      if (sku === '7634') { console.log('7634 uxb raw:', row[iUxb], '-> parsed:', uxbVal); }
       result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter, uxb: uxbVal };
     }
     return result;
