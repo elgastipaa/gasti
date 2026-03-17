@@ -208,7 +208,11 @@
   <div class="segswrap" id="segswrap"></div>
 
   <div class="cfgwrap">
-    <button class="cfgtoggle" id="btn-cfg">&#9881; Configuracion</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="cfgtoggle" id="btn-cfg" style="flex:1">&#9881; Configuracion</button>
+      <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
+      <button class="crefresh" id="btn-unitario" title="Precio por bulto / unitario">#</button>
+    </div>
     <div class="cfgbody" id="cfgbody">
       <label class="clbl">ID del Google Sheet</label>
       <input class="cinput" id="cid" placeholder="ID del Sheet">
@@ -223,10 +227,7 @@
       <input class="cinput" id="ctabcfg" placeholder="Config">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
-      <div class="cfg-row">
-        <button class="csave" id="btn-save">Guardar</button>
-        <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
-      </div>
+      <button class="csave" id="btn-save">Guardar</button>
       <div class="cfg-status" id="cfg-status"></div>
     </div>
   </div>
@@ -310,6 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   var allOpen = false;
+  var precioUnitario = false;
 
   function doLogin() {
     var val = pids.map(function(id) { return document.getElementById(id).value; }).join('');
@@ -328,7 +330,17 @@ document.addEventListener('DOMContentLoaded', function() {
       var err = document.getElementById('lerr');
       err.textContent = 'PIN incorrecto. Intentalo de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
-      document.getElementById('p0').focus();
+      document.getElementById('btn-unitario').addEventListener('click', function() {
+    precioUnitario = !precioUnitario;
+    var btn = document.getElementById('btn-unitario');
+    btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
+    btn.style.color = precioUnitario ? '#fff' : '';
+    btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
+    var codigo = document.getElementById('codinput').value.trim();
+    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
+  });
+
+  document.getElementById('p0').focus();
       setTimeout(function() { err.textContent = ''; }, 3000);
     }
   }
@@ -371,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- CACHE ESTATICO (LDP + Precios + Config) --------------------- */
   function cargarCacheEstaticoSiNecesario() {
-    if (cache.ldp && cache.precios) { return Promise.resolve(); }
+    if (cache.ldp && cache.precios && Object.keys(cache.ldp).length > 0) { return Promise.resolve(); }
     return cargarCacheEstatico();
   }
 
@@ -387,9 +399,9 @@ document.addEventListener('DOMContentLoaded', function() {
       var nd = document.getElementById('tdistri');
       if (cache.nombre) { nd.textContent = ' - ' + cache.nombre; }
       else { nd.textContent = ''; }
-    }).catch(function() {
-      /* Si falla el cache, la app funciona igual pero sin precios */
-      cache.ldp = {}; cache.precios = {};
+    }).catch(function(e) {
+      /* Mantener null para que el proximo buscar reintente */
+      cache.ldp = null; cache.precios = null;
     });
   }
 
@@ -402,6 +414,8 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.classList.remove('spinning');
       btn.disabled = false;
       setCfgStatus('Precios actualizados', 'ok');
+      var cod = document.getElementById('codinput').value.trim();
+      if (cod && document.getElementById('reshdr').classList.contains('on')) { doBuscar(); }
     }).catch(function() {
       btn.classList.remove('spinning');
       btn.disabled = false;
@@ -460,14 +474,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
     var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
-    var iSku  = hdr.findIndex(function(h) { return /^sku$|cod/.test(h); });
-    var iDet  = hdr.findIndex(function(h) { return /detalle|producto|descripcion/.test(h); });
-    var iNeto = hdr.findIndex(function(h) { return /neto/.test(h); });
-    var iInt  = hdr.findIndex(function(h) { return /interno/.test(h); });
-    if (iSku  < 0) { iSku  = 0; }
-    if (iDet  < 0) { iDet  = 1; }
-    if (iNeto < 0) { iNeto = 2; }
-    if (iInt  < 0) { iInt  = 3; }
+    var iSku = 0; var iDet = 1; var iUxb = -1; var iNeto = 2; var iInt = 3;
+    for (var hi = 0; hi < hdr.length; hi++) {
+      if (/^sku$|cod/.test(hdr[hi]))                          { iSku  = hi; }
+      if (/detalle|producto|descripcion/.test(hdr[hi]))       { iDet  = hi; }
+      if (/^uxb$|unid.*bult/.test(hdr[hi]))                  { iUxb  = hi; }
+      if (/neto/.test(hdr[hi]))                               { iNeto = hi; }
+      if (/interno/.test(hdr[hi]))                            { iInt  = hi; }
+    }
     var result = {};
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
@@ -475,7 +489,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!sku) { continue; }
       var neto  = parseFloat((row[iNeto] || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var inter = parseFloat((row[iInt]  || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
-      result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter };
+      var uxbVal = (iUxb >= 0 && row[iUxb]) ? (parseFloat(row[iUxb].toString().replace(',','.')) || 1) : 1;
+      result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter, uxb: uxbVal };
     }
     return result;
   }
@@ -487,10 +502,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
     var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
-    var iSeg = hdr.findIndex(function(h) { return /segmento|segment/.test(h); });
-    var iSku = hdr.findIndex(function(h) { return /^sku$|cod/.test(h); });
-    if (iSeg < 0) { iSeg = 0; }
-    if (iSku < 0) { iSku = 1; }
+    var iSeg = 0; var iSku = 1;
+    for (var hi = 0; hi < hdr.length; hi++) {
+      if (/segmento|segment/.test(hdr[hi])) { iSeg = hi; }
+      if (/^sku$|cod/.test(hdr[hi]))        { iSku = hi; }
+    }
     var result = {};
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
@@ -586,17 +602,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* Construir tabla */
+    var precioLabel = precioUnitario ? 'x unidad' : 'x bulto';
     var html = '<table class="price-table"><thead><tr>';
-    html += '<th>SKU</th><th>Producto</th>';
+    html += '<th>SKU</th><th>Producto</th><th style="text-align:center">UxB</th>';
     for (var h = 0; h < colHeaders.length; h++) {
-      html += '<th>' + escHtml(colHeaders[h].label) + '</th>';
+      html += '<th>' + escHtml(colHeaders[h].label) + '<br><span style="opacity:.65;font-size:9px;font-weight:400">' + precioLabel + '</span></th>';
     }
     html += '</tr></thead><tbody>';
     for (var rr = 0; rr < productRows.length; rr++) {
       var pr = productRows[rr];
-      html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
+      html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td><td style="text-align:center">' + (pr.uxb || 1) + '</td>';
       for (var cc = 0; cc < colHeaders.length; cc++) {
-        var precio = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
+        var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
+        var precio = precioUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
         html += '<td>' + fmtPrecio(precio) + '</td>';
       }
       html += '</tr>';
