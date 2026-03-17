@@ -790,6 +790,13 @@ document.addEventListener('DOMContentLoaded', function() {
     allOpen = false;
     segColorMap = {}; colorCounter = 1;
     var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
+    /* Sync unitario button visual state */
+    var bu = document.getElementById('btn-unitario');
+    if (bu) {
+      bu.style.background = precioUnitario ? 'var(--azul-m)' : '';
+      bu.style.color = precioUnitario ? '#fff' : '';
+      bu.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
+    }
   }
 
   document.getElementById('btn-unitario').addEventListener('click', function() {
@@ -798,8 +805,24 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
     btn.style.color = precioUnitario ? '#fff' : '';
     btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
-    var codigo = document.getElementById('codinput').value.trim();
-    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(true); }
+    /* Regenerar solo las tablas de precios en el DOM - sin tocar la red */
+    var blocks = document.querySelectorAll('.segblock');
+    for (var b = 0; b < blocks.length; b++) {
+      var segtit = blocks[b].querySelector('.segtit');
+      var detval = blocks[b].querySelector('.detval');
+      if (!segtit || !detval) { continue; }
+      var segLabel = segtit.textContent.trim();
+      /* Reconstruir burbujas para obtener detalleStr */
+      var bubbles = detval.querySelectorAll('.bubble');
+      var parts = [];
+      for (var bb = 0; bb < bubbles.length; bb++) { parts.push(bubbles[bb].textContent.trim()); }
+      var detalleStr = parts.join(' | ');
+      var segKey = segLabel.toLowerCase();
+      var scroll = blocks[b].querySelector('.price-scroll');
+      if (scroll) {
+        scroll.innerHTML = buildPriceTable(segKey, detalleStr, precioUnitario);
+      }
+    }
   });
 
   document.getElementById('p0').focus();
