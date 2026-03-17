@@ -227,8 +227,9 @@
     .calc-lbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
     .calc-input { width: 100%; border: 2px solid var(--gris-b); border-radius: 12px; padding: 12px 14px; font-size: 16px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul); background: var(--gris-f); outline: none; transition: all .18s; }
     .calc-input:focus { border-color: var(--azul-m); background: #fff; box-shadow: 0 0 0 3px rgba(0,61,165,.09); }
-    .calc-detalle-wrap { min-height: 24px; margin: -6px 0 14px; }
-    .calc-detalle { font-size: 13px; color: var(--verde); font-weight: 600; padding: 4px 2px; min-height: 20px; }
+    .calc-row-2 { display: flex; gap: 10px; }
+    .calc-detalle-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-start; }
+    .calc-detalle { font-size: 12px; color: var(--verde); font-weight: 600; padding: 12px 14px; background: var(--gris-f); border-radius: 12px; border: 2px solid var(--gris-b); min-height: 46px; word-break: break-word; }
     .calc-qty-row { display: flex; gap: 10px; align-items: center; }
     .calc-qty-btn { width: 44px; height: 44px; border: 2px solid var(--gris-b); border-radius: 12px; background: var(--gris-f); font-size: 22px; font-weight: 600; color: var(--azul); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
     .calc-qty-btn:active { background: var(--gris-b); transform: scale(.93); }
@@ -309,25 +310,30 @@
   <div class="calc-overlay" id="calc-overlay"></div>
   <div class="calc-sheet" id="calc-sheet">
     <div class="calc-handle"></div>
-    <div class="calc-title">Calculadora de precios</div>
+    <div class="calc-title" id="calc-title">Calculadora de precios<span id="calc-title-indicator" style="display:none;font-size:10px;font-weight:700;color:var(--rojo);margin-left:8px;vertical-align:middle;"></span></div>
     <div class="calc-body">
-      <div class="calc-field">
-        <label class="calc-lbl">SKU</label>
-        <input class="calc-input" id="calc-sku" type="text" inputmode="numeric" placeholder="Ej: 7634" autocomplete="off">
+      <div class="calc-row-2">
+        <div class="calc-field" style="flex:1">
+          <label class="calc-lbl">SKU</label>
+          <input class="calc-input" id="calc-sku" type="text" inputmode="numeric" placeholder="Ej: 7634" autocomplete="off">
+        </div>
+        <div class="calc-field" style="flex:1">
+          <label class="calc-lbl">Descuento (%)</label>
+          <input class="calc-input" id="calc-dto" type="text" inputmode="decimal" placeholder="Ej: 7,5">
+        </div>
       </div>
-      <div class="calc-detalle-wrap" id="calc-detalle-wrap">
-        <div class="calc-detalle" id="calc-detalle"></div>
-      </div>
-      <div class="calc-field">
-        <label class="calc-lbl">Descuento (%)</label>
-        <input class="calc-input" id="calc-dto" type="text" inputmode="decimal" placeholder="Ej: 7,5">
-      </div>
-      <div class="calc-field">
-        <label class="calc-lbl">Cantidad de bultos</label>
-        <div class="calc-qty-row">
-          <button class="calc-qty-btn" id="calc-qty-minus">&#8722;</button>
-          <input class="calc-input calc-qty-input" id="calc-qty" type="text" inputmode="numeric" value="1">
-          <button class="calc-qty-btn" id="calc-qty-plus">&#43;</button>
+      <div class="calc-detalle-row">
+        <div style="flex:1;min-width:0">
+          <div class="calc-lbl">Producto</div>
+          <div class="calc-detalle" id="calc-detalle">-</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="calc-lbl">Bultos</div>
+          <div class="calc-qty-row">
+            <button class="calc-qty-btn" id="calc-qty-minus">&#8722;</button>
+            <input class="calc-input calc-qty-input" id="calc-qty" type="text" inputmode="numeric" value="1">
+            <button class="calc-qty-btn" id="calc-qty-plus">&#43;</button>
+          </div>
         </div>
       </div>
       <div class="calc-result" id="calc-result">
@@ -971,16 +977,28 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   /* -- CALCULADORA ------------------------------------------------- */
+  var calcDistriOverride = null;
+  var calcLongPressTimer = null;
+
   function calcAbrir() {
+    calcDistriOverride = null;
+    var ind = document.getElementById('calc-title-indicator');
+    if (ind) { ind.style.display = 'none'; }
     document.getElementById('calc-sheet').classList.add('on');
     setTimeout(function() { document.getElementById('calc-sheet').classList.add('open'); }, 10);
     document.getElementById('calc-overlay').classList.add('on');
     setTimeout(function() { document.getElementById('calc-sku').focus(); }, 350);
   }
   function calcCerrar() {
+    calcDistriOverride = null;
+    var ind = document.getElementById('calc-title-indicator');
+    if (ind) { ind.style.display = 'none'; }
     document.getElementById('calc-sheet').classList.remove('open');
     document.getElementById('calc-overlay').classList.remove('on');
     setTimeout(function() { document.getElementById('calc-sheet').classList.remove('on'); }, 320);
+  }
+  function calcGetDistri() {
+    return calcDistriOverride !== null ? calcDistriOverride : cache.distri;
   }
   function calcRecalc() {
     var skuRaw = document.getElementById('calc-sku').value.trim().replace(/\.0+$/, '');
@@ -1001,7 +1019,14 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('calc-val-total').textContent = '-';
       return;
     }
-    var bulto = calcPrecio(prod.neto, prod.internos, dto);
+    /* Usar override de distri si esta activo */
+    var distri = calcGetDistri();
+    var bulto;
+    if (distri === 2) {
+      bulto = (prod.neto + prod.neto * 0.21) * (1 - dto / 100) + prod.internos;
+    } else {
+      bulto = (prod.neto + prod.internos + prod.neto * 0.21) * (1 - dto / 100);
+    }
     var unit  = bulto / (prod.uxb || 1);
     var total = bulto * qtyRaw;
     document.getElementById('calc-val-bulto').textContent = fmtPrecio(bulto);
@@ -1021,6 +1046,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var v = parseInt(document.getElementById('calc-qty').value) || 1;
     document.getElementById('calc-qty').value = v + 1; calcRecalc();
   });
+
+  /* Toque largo 3s en el titulo - toggle secreto de tipo distribuidor */
+  var calcTitleEl = document.getElementById('calc-title');
+  calcTitleEl.addEventListener('touchstart', function() {
+    calcLongPressTimer = setTimeout(function() {
+      var current = calcGetDistri();
+      calcDistriOverride = current === 1 ? 2 : 1;
+      var ind = document.getElementById('calc-title-indicator');
+      ind.textContent = ' M' + calcDistriOverride;
+      ind.style.display = 'inline';
+      calcRecalc();
+    }, 3000);
+  });
+  calcTitleEl.addEventListener('touchend',  function() { clearTimeout(calcLongPressTimer); });
+  calcTitleEl.addEventListener('touchmove', function() { clearTimeout(calcLongPressTimer); });
 
   document.getElementById('p0').focus();
 });
