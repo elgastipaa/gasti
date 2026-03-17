@@ -594,6 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Construir tabla */
     var precioLabel = esUnitario ? 'x unidad' : 'x bulto';
+    console.log('buildPriceTable seg=' + segKey + ' esUnitario=' + esUnitario + ' precioUnitario_global=' + precioUnitario);
     var html = '<table class="price-table"><thead><tr>';
     html += '<th>SKU</th><th>Producto</th>';
     for (var h = 0; h < colHeaders.length; h++) {
@@ -801,6 +802,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('btn-unitario').addEventListener('click', function() {
     precioUnitario = !precioUnitario;
+    console.log('# clicked, precioUnitario now=' + precioUnitario);
     var btn = document.getElementById('btn-unitario');
     btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
     btn.style.color = precioUnitario ? '#fff' : '';
