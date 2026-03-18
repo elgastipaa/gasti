@@ -390,11 +390,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function getSegPalette(segKey) {
     if (/^core$/.test(segKey.toLowerCase())) { return PALETTE[0]; }
-    if (segColorMap[segKey] === undefined) {
-      segColorMap[segKey] = colorCounter % (PALETTE.length - 1) + 1;
+    /* Check if this segment has a color group - share palette with group members */
+    var segCol = (cache.precios && cache.precios._segColor) ? cache.precios._segColor : {};
+    var groupKey = segCol[segKey] || segKey;
+    if (segColorMap[groupKey] === undefined) {
+      segColorMap[groupKey] = colorCounter % (PALETTE.length - 1) + 1;
       colorCounter++;
     }
-    return PALETTE[segColorMap[segKey]];
+    return PALETTE[segColorMap[groupKey]];
   }
 
   /* -- PIN --------------------------------------------------------- */
@@ -698,16 +701,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
     var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
-    var iNeg = -1; var iSeg = 0; var iSku = 1;
+    var iNeg = -1; var iSeg = 0; var iSku = 1; var iCol = -1;
     for (var hi = 0; hi < hdr.length; hi++) {
       if (/negocio/.test(hdr[hi]))          { iNeg = hi; }
       if (/segmento|segment/.test(hdr[hi])) { iSeg = hi; }
       if (/^sku$|cod/.test(hdr[hi]))        { iSku = hi; }
+      if (/^color$|^grupo$/.test(hdr[hi]))  { iCol = hi; }
     }
     var result = {};
     var order = [];
-    var negocios = [];       /* ordered unique list of negocios */
-    var segNegocio = {};     /* seg -> negocio */
+    var negocios = [];
+    var segNegocio = {};
+    var segColor = {};       /* seg -> color group name */
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
       var neg = iNeg >= 0 ? (row[iNeg] || '').trim() : '';
@@ -725,10 +730,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (!found) { negocios.push(neg); }
       }
+      if (iCol >= 0 && !segColor[seg]) {
+        var colVal = (row[iCol] || '').trim();
+        if (colVal) { segColor[seg] = colVal; }
+      }
     }
     result._order    = order;
-    result._negocios = negocios;   /* ['Cerveza', 'Gaseosas', ...] */
-    result._segNeg   = segNegocio; /* {core: 'Cerveza', latones: 'Cerveza', ...} */
+    result._negocios = negocios;
+    result._segNeg   = segNegocio;
+    result._segColor = segColor;   /* seg -> color group, same group = same palette color */
     return result;
   }
 
@@ -876,10 +886,12 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderNegocioTabs(negocios) {
     var wrap = document.getElementById('negocio-tabs');
     if (!wrap) { return; }
-    if (!negocios || negocios.length <= 1) { wrap.innerHTML = ''; return; }
+    if (!negocios || negocios.length === 0) { wrap.innerHTML = ''; return; }
+    /* Auto-select first negocio if none active yet */
+    if (negocioActivo === '' && negocios.length > 0) {
+      negocioActivo = negocios[0];
+    }
     var html = '';
-    /* "Todos" button */
-    html += '<button class="negocio-tab' + (negocioActivo === '' ? ' active' : '') + '" data-neg="">Todos</button>';
     for (var i = 0; i < negocios.length; i++) {
       var neg = negocios[i];
       var isActive = negocioActivo.toLowerCase() === neg.toLowerCase();
@@ -908,12 +920,20 @@ document.addEventListener('DOMContentLoaded', function() {
       var segtit = blocks[b].querySelector('.segtit');
       if (!segtit) { continue; }
       var segKey = segtit.textContent.trim().toLowerCase();
-      if (negocioActivo === '') {
-        blocks[b].style.display = '';
-      } else {
-        var segN = segNeg[segKey] || '';
-        blocks[b].style.display = (segN.toLowerCase() === negocioActivo.toLowerCase()) ? '' : 'none';
+      /* Also try matching via segNeg keys directly */
+      var segN = segNeg[segKey] || '';
+      if (!segN) {
+        var snKeys = Object.keys(segNeg);
+        for (var sk = 0; sk < snKeys.length; sk++) {
+          if (snKeys[sk].indexOf(segKey) !== -1 || segKey.indexOf(snKeys[sk]) !== -1) {
+            segN = segNeg[snKeys[sk]]; break;
+          }
+        }
       }
+      var show = negocioActivo === '' || segN.toLowerCase() === negocioActivo.toLowerCase();
+      /* Remove animation class to avoid delay on filter */
+      blocks[b].classList.remove('fade-in');
+      blocks[b].style.display = show ? '' : 'none';
     }
   }
 
