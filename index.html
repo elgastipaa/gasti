@@ -69,12 +69,16 @@
     .esub { font-size: 13px; color: var(--txt-s); line-height: 1.6; }
 
     /* RESULT HEADER */
-    .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 14px 20px; display: none; }
-    .reshdr.on { display: flex; align-items: center; gap: 14px; }
-    .rcod { font-size: 30px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
+    .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 12px 16px; display: none; }
+    .reshdr.on { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .rcod { font-size: 28px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
     .rbadge { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
+    .negocio-tabs { display: flex; gap: 6px; width: 100%; flex-wrap: wrap; }
+    .negocio-tab { background: rgba(255,255,255,.12); border: none; color: rgba(255,255,255,.7); font-size: 11px; font-weight: 600; font-family: 'DM Sans', sans-serif; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .negocio-tab.active { background: #fff; color: var(--azul); }
+    .negocio-tab:active { transform: scale(.95); }
 
     /* PILLS */
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
@@ -260,6 +264,7 @@
     <div class="rcod" id="rcod">-</div>
     <span class="rbadge" id="rbadge">0 acciones</span>
     <button class="tog-btn" id="btn-tog">&#9660;&#9660;</button>
+    <div class="negocio-tabs" id="negocio-tabs"></div>
   </div>
 
   <div class="segswrap" id="segswrap"></div>
@@ -693,22 +698,37 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
     var hdr = rows[0].map(function(h) { return h.toLowerCase().trim(); });
-    var iSeg = 0; var iSku = 1;
+    var iNeg = -1; var iSeg = 0; var iSku = 1;
     for (var hi = 0; hi < hdr.length; hi++) {
+      if (/negocio/.test(hdr[hi]))          { iNeg = hi; }
       if (/segmento|segment/.test(hdr[hi])) { iSeg = hi; }
       if (/^sku$|cod/.test(hdr[hi]))        { iSku = hi; }
     }
     var result = {};
-    var order = []; /* preserve first-appearance order */
+    var order = [];
+    var negocios = [];       /* ordered unique list of negocios */
+    var segNegocio = {};     /* seg -> negocio */
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
+      var neg = iNeg >= 0 ? (row[iNeg] || '').trim() : '';
       var seg = (row[iSeg] || '').trim().toLowerCase();
       var sku = (row[iSku] || '').toString().trim().replace(/\.0+$/, '');
       if (!seg || !sku) { continue; }
       if (!result[seg]) { result[seg] = []; order.push(seg); }
       result[seg].push(sku);
+      if (neg && !segNegocio[seg]) {
+        segNegocio[seg] = neg;
+        var negLow = neg.toLowerCase();
+        var found = false;
+        for (var ni = 0; ni < negocios.length; ni++) {
+          if (negocios[ni].toLowerCase() === negLow) { found = true; break; }
+        }
+        if (!found) { negocios.push(neg); }
+      }
     }
-    result._order = order; /* attach order array to result object */
+    result._order    = order;
+    result._negocios = negocios;   /* ['Cerveza', 'Gaseosas', ...] */
+    result._segNeg   = segNegocio; /* {core: 'Cerveza', latones: 'Cerveza', ...} */
     return result;
   }
 
@@ -850,12 +870,61 @@ document.addEventListener('DOMContentLoaded', function() {
     return acciones;
   }
 
+  /* -- NEGOCIO TABS ------------------------------------------------- */
+  var negocioActivo = ''; /* '' = todos */
+
+  function renderNegocioTabs(negocios) {
+    var wrap = document.getElementById('negocio-tabs');
+    if (!wrap) { return; }
+    if (!negocios || negocios.length <= 1) { wrap.innerHTML = ''; return; }
+    var html = '';
+    /* "Todos" button */
+    html += '<button class="negocio-tab' + (negocioActivo === '' ? ' active' : '') + '" data-neg="">Todos</button>';
+    for (var i = 0; i < negocios.length; i++) {
+      var neg = negocios[i];
+      var isActive = negocioActivo.toLowerCase() === neg.toLowerCase();
+      html += '<button class="negocio-tab' + (isActive ? ' active' : '') + '" data-neg="' + escHtml(neg) + '">' + escHtml(neg) + '</button>';
+    }
+    wrap.innerHTML = html;
+    var tabs = wrap.querySelectorAll('.negocio-tab');
+    for (var t = 0; t < tabs.length; t++) {
+      tabs[t].addEventListener('click', function() {
+        negocioActivo = this.getAttribute('data-neg');
+        /* Update active styles */
+        var all = document.querySelectorAll('.negocio-tab');
+        for (var a = 0; a < all.length; a++) {
+          all[a].classList.toggle('active', all[a].getAttribute('data-neg') === negocioActivo);
+        }
+        /* Show/hide pills based on negocio */
+        filterPillsByNegocio();
+      });
+    }
+  }
+
+  function filterPillsByNegocio() {
+    var blocks = document.querySelectorAll('.segblock');
+    var segNeg = (cache.precios && cache.precios._segNeg) ? cache.precios._segNeg : {};
+    for (var b = 0; b < blocks.length; b++) {
+      var segtit = blocks[b].querySelector('.segtit');
+      if (!segtit) { continue; }
+      var segKey = segtit.textContent.trim().toLowerCase();
+      if (negocioActivo === '') {
+        blocks[b].style.display = '';
+      } else {
+        var segN = segNeg[segKey] || '';
+        blocks[b].style.display = (segN.toLowerCase() === negocioActivo.toLowerCase()) ? '' : 'none';
+      }
+    }
+  }
+
   /* -- RENDER RESULTADO -------------------------------------------- */
   function renderResultado(codigo, acciones) {
     hideEst();
     document.getElementById('reshdr').classList.add('on','fade-in');
     document.getElementById('rcod').textContent = codigo;
     document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
+    var negs = (cache.precios && cache.precios._negocios) ? cache.precios._negocios : [];
+    renderNegocioTabs(negs);
 
     /* Ordenar: con precios primero, sin precios al fondo */
     var conPrecios = []; var sinPrecios = [];
@@ -867,7 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
           var ks = Object.keys(cache.precios);
           for (var ki = 0; ki < ks.length; ki++) {
-            if (ks[ki] === '_order') { continue; }
+            if (ks[ki] === '_order' || ks[ki] === '_negocios' || ks[ki] === '_segNeg') { continue; }
             if (ks[ki].indexOf(segKey) !== -1 || segKey.indexOf(ks[ki]) !== -1 || segKey.split(' ')[0] === ks[ki]) {
               tienePrecios = true; break;
             }
@@ -934,6 +1003,7 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '</div>';
     }
     wrap.innerHTML = html;
+    filterPillsByNegocio();
 
     /* Detectar si hay scroll horizontal en tablas */
     setTimeout(function() {
@@ -1011,6 +1081,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
     allOpen = false;
+    negocioActivo = '';
     segColorMap = {}; colorCounter = 1;
     var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
     /* Sync unitario button visual state */
