@@ -84,7 +84,7 @@
     .segswrap { padding: 4px 16px 0; display: flex; flex-direction: column; gap: 8px; }
     .segblock { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border-width: 1.5px; border-style: solid; }
     .segpill { display: flex; align-items: stretch; cursor: pointer; user-select: none; -webkit-user-select: none; }
-    .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; min-width: 96px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; }
+    .segtit { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; width: 110px; min-width: 110px; max-width: 110px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; overflow: hidden; }
     .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; flex: 1; }
     .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; border-radius: 20px; padding: 4px 11px; white-space: nowrap; border-width: 1.5px; border-style: solid; }
     .pill-chevron { font-size: 11px; padding: 0 12px 0 4px; display: flex; align-items: center; flex-shrink: 0; transition: transform .2s; opacity: .5; }
@@ -389,10 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
   var colorCounter = 1;
 
   function getSegPalette(segKey) {
-    if (/^core$/.test(segKey.toLowerCase())) { return PALETTE[0]; }
-    /* Check if this segment has a color group - share palette with group members */
+    /* Check color group first - if segment has a group, use that as the key */
     var segCol = (cache.precios && cache.precios._segColor) ? cache.precios._segColor : {};
     var groupKey = segCol[segKey] || segKey;
+    /* Only use fixed blue for Core if it has NO color group assigned */
+    if (/^core$/.test(segKey.toLowerCase()) && !segCol[segKey]) { return PALETTE[0]; }
     if (segColorMap[groupKey] === undefined) {
       segColorMap[groupKey] = colorCounter % (PALETTE.length - 1) + 1;
       colorCounter++;
@@ -731,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!found) { negocios.push(neg); }
       }
       if (iCol >= 0 && !segColor[seg]) {
-        var colVal = (row[iCol] || '').trim();
+        var colVal = (row[iCol] || '').trim().replace(/\.0+$/, '');
         if (colVal) { segColor[seg] = colVal; }
       }
     }
