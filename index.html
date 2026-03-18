@@ -38,7 +38,7 @@
     #app { display: none; }
 
     /* TOPBAR */
-    .topbar { background: var(--azul); padding: 18px 18px 14px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 14px rgba(0,0,0,.18); }
+    .topbar { background: var(--azul); padding: 18px 18px 14px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 14px rgba(0,0,0,.18); overflow: visible; }
     .trow { display: flex; align-items: center; justify-content: space-between; }
     .tbrand { display: flex; align-items: center; gap: 10px; }
     .tbadge { background: var(--dorado); color: var(--azul); font-size: 10px; font-weight: 800; letter-spacing: .8px; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; }
@@ -126,8 +126,25 @@
 
     /* CONFIG */
     .cfgwrap { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1.5px solid var(--gris-b); padding: 10px 16px 12px; z-index: 40; box-shadow: 0 -2px 12px rgba(0,31,91,.07); }
+    .sheet-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .sheet-row-num { font-size: 11px; font-weight: 700; color: var(--txt-s); min-width: 16px; }
+    .sheet-row .cinput { margin-bottom: 0; flex: 1; font-size: 11px; padding: 8px 10px; }
+    .sheet-nombre { font-size: 12px; font-weight: 600; color: var(--azul); min-width: 90px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sheet-active-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); flex-shrink: 0; display: none; }
+    .sheet-active-dot.on { display: block; }
+    /* Distribuidor dropdown */
+    .distri-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-radius: 0 0 14px 14px; box-shadow: 0 8px 24px rgba(0,31,91,.15); z-index: 60; overflow: hidden; display: none; }
+    .distri-dropdown.on { display: block; }
+    .distri-option { padding: 14px 18px; font-size: 14px; font-weight: 600; color: var(--azul); border-bottom: 1px solid var(--gris-f); cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .distri-option:last-child { border-bottom: none; }
+    .distri-option:active { background: var(--gris-f); }
+    .distri-option.active { color: var(--azul-m); }
+    .distri-option .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gris-b); flex-shrink: 0; }
+    .distri-option.active .dot { background: var(--dorado); }
+    .tname-wrap { position: relative; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .tname-chevron { font-size: 9px; color: rgba(255,255,255,.5); }
     .cfgtoggle { background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 8px 14px; border-radius: 10px; cursor: pointer; width: 100%; text-align: left; }
-    .cfgbody { display: none; background: #fff; border-radius: 14px; padding: 18px; margin-top: 10px; box-shadow: 0 2px 16px rgba(0,31,91,.08); }
+    .cfgbody { display: none; background: #fff; border-radius: 14px 14px 0 0; padding: 18px 18px 24px; margin-top: 10px; box-shadow: 0 -4px 24px rgba(0,31,91,.12); position: fixed; bottom: 60px; left: 0; right: 0; max-height: 75vh; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 39; }
     .cfgbody.open { display: block; }
     .clbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
     .cinput { width: 100%; border: 1.5px solid var(--gris-b); border-radius: 10px; padding: 11px 13px; font-size: 12px; font-family: 'DM Mono', monospace; outline: none; background: var(--gris-f); color: var(--txt); margin-bottom: 12px; transition: all .18s; }
@@ -205,7 +222,11 @@
     <div class="trow">
       <div class="tbrand">
         <div class="tbadge">Quilmes</div>
-        <div class="tname" id="tdistri">Acciones Comerciales</div>
+        <div class="tname-wrap" id="tname-wrap">
+          <div class="tname" id="tdistri">Acciones Comerciales</div>
+          <span class="tname-chevron" id="tname-chevron">&#9660;</span>
+        </div>
+        <div class="distri-dropdown" id="distri-dropdown"></div>
       </div>
       <button class="texit" id="btn-salir">Salir</button>
     </div>
@@ -298,9 +319,12 @@
       <button class="crefresh" id="btn-calc" title="Calculadora de precios">&#247;</button>
     </div>
     <div class="cfgbody" id="cfgbody">
-      <label class="clbl">ID del Google Sheet</label>
-      <input class="cinput" id="cid" placeholder="ID del Sheet">
-      <div class="chint">El string largo en la URL, entre /d/ y /edit</div>
+      <label class="clbl">Sheets de distribuidores</label>
+      <div class="chint" style="margin-bottom:8px">ID del Sheet - string largo en la URL entre /d/ y /edit</div>
+      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cid0" placeholder="ID Sheet 1"><span class="sheet-nombre" id="snombre0">-</span><span class="sheet-active-dot" id="sdot0"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cid1" placeholder="ID Sheet 2"><span class="sheet-nombre" id="snombre1">-</span><span class="sheet-active-dot" id="sdot1"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cid2" placeholder="ID Sheet 3"><span class="sheet-nombre" id="snombre2">-</span><span class="sheet-active-dot" id="sdot2"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cid3" placeholder="ID Sheet 4"><span class="sheet-nombre" id="snombre3">-</span><span class="sheet-active-dot" id="sdot3"></span></div>
       <label class="clbl">Nombre pestana Acciones</label>
       <input class="cinput" id="ctab" placeholder="Acciones">
       <label class="clbl">Nombre pestana Precios</label>
@@ -324,13 +348,19 @@ document.addEventListener('DOMContentLoaded', function() {
   var STORE = 'qac6';
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
-    pin:      saved.pin      || '1234',
-    sheetId:  saved.sheetId  || '',
-    tab:      saved.tab      || 'Acciones',
-    tabPrec:  saved.tabPrec  || 'Precios',
-    tabLdp:   saved.tabLdp   || 'LDP',
-    tabCfg:   saved.tabCfg   || 'Config'
+    pin:        saved.pin        || '1234',
+    sheets:     saved.sheets     || ['','','',''],
+    activeSheet:saved.activeSheet !== undefined ? saved.activeSheet : 0,
+    tab:        saved.tab        || 'Acciones',
+    tabPrec:    saved.tabPrec    || 'Precios',
+    tabLdp:     saved.tabLdp     || 'LDP',
+    tabCfg:     saved.tabCfg     || 'Config'
   };
+  /* sheetId computed from active sheet for backward compat */
+  Object.defineProperty(cfg, 'sheetId', {
+    get: function() { return cfg.sheets[cfg.activeSheet] || ''; },
+    enumerable: true
+  });
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
   var cache = { ldp: null, precios: null, distri: 1, nombre: '' };
@@ -402,7 +432,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (val === cfg.pin) {
       document.getElementById('login').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      document.getElementById('cid').value = cfg.sheetId;
+      for (var si = 0; si < 4; si++) {
+        var el = document.getElementById('cid' + si);
+        if (el) { el.value = cfg.sheets[si] || ''; }
+      }
+      updateSheetNombres();
       document.getElementById('ctab').value = cfg.tab;
       document.getElementById('ctabprec').value = cfg.tabPrec;
       document.getElementById('ctabldp').value = cfg.tabLdp;
@@ -429,22 +463,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function doSave() {
-    var sid = document.getElementById('cid').value.trim();
-    var tab = document.getElementById('ctab').value.trim();
+    for (var si = 0; si < 4; si++) {
+      var el = document.getElementById('cid' + si);
+      if (el) { cfg.sheets[si] = el.value.trim(); }
+    }
+    var tab  = document.getElementById('ctab').value.trim();
     var tabp = document.getElementById('ctabprec').value.trim();
     var tabl = document.getElementById('ctabldp').value.trim();
     var tabc = document.getElementById('ctabcfg').value.trim();
     var pin  = document.getElementById('cpin').value.trim();
-    if (sid)  { cfg.sheetId = sid; }
     if (tab)  { cfg.tab = tab; }
     if (tabp) { cfg.tabPrec = tabp; }
     if (tabl) { cfg.tabLdp = tabl; }
     if (tabc) { cfg.tabCfg = tabc; }
     if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
-    /* Invalidar cache cuando cambia config */
     cache.ldp = null; cache.precios = null;
     document.getElementById('cfgbody').classList.remove('open');
+    updateSheetNombres();
     setCfgStatus('Guardado', 'ok');
   }
 
@@ -456,6 +492,82 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /* -- CACHE ESTATICO (LDP + Precios + Config) --------------------- */
+  var sheetNombres = ['','','',''];
+
+  function updateSheetNombres() {
+    for (var si = 0; si < 4; si++) {
+      (function(idx) {
+        var sid = cfg.sheets[idx];
+        var el = document.getElementById('cid' + idx);
+        var lblEl = document.getElementById('snombre' + idx);
+        var dot = document.getElementById('sdot' + idx);
+        if (!sid) {
+          if (lblEl) { lblEl.textContent = '-'; }
+          if (dot) { dot.classList.remove('on'); }
+          sheetNombres[idx] = '';
+          renderDistriDropdown();
+          return;
+        }
+        var url = 'https://docs.google.com/spreadsheets/d/' + sid + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(cfg.tabCfg);
+        fetch(url, { cache: 'no-store' }).then(function(res) { return res.text(); }).then(function(txt) {
+          if (txt.trim().charAt(0) === '<') { throw new Error(''); }
+          var rows = parseCSV(txt);
+          var nombre = '';
+          for (var r = 0; r < rows.length; r++) {
+            var v = (rows[r][0] || '').trim();
+            if (v && !/nombre|distri|intern/i.test(v)) { nombre = v; break; }
+          }
+          sheetNombres[idx] = nombre || ('Distri ' + (idx + 1));
+          if (lblEl) { lblEl.textContent = sheetNombres[idx]; }
+          if (dot) { dot.classList.toggle('on', idx === cfg.activeSheet); }
+          renderDistriDropdown();
+        }).catch(function() {
+          sheetNombres[idx] = 'Sheet ' + (idx + 1);
+          if (lblEl) { lblEl.textContent = sheetNombres[idx]; }
+          renderDistriDropdown();
+        });
+      })(si);
+    }
+  }
+
+  function renderDistriDropdown() {
+    var dd = document.getElementById('distri-dropdown');
+    if (!dd) { return; }
+    var html = '';
+    for (var i = 0; i < 4; i++) {
+      if (!cfg.sheets[i]) { continue; }
+      var nombre = sheetNombres[i] || ('Sheet ' + (i + 1));
+      var isCurrent = i === cfg.activeSheet;
+      html += '<div class="distri-option' + (isCurrent ? ' active' : '') + '" data-idx="' + i + '">';
+      html += '<span class="dot"></span>' + escHtml(nombre) + '</div>';
+    }
+    dd.innerHTML = html;
+    var opts = dd.querySelectorAll('.distri-option');
+    for (var o = 0; o < opts.length; o++) {
+      opts[o].addEventListener('click', function() {
+        switchDistri(parseInt(this.getAttribute('data-idx')));
+      });
+    }
+  }
+
+  function switchDistri(idx) {
+    cfg.activeSheet = idx;
+    localStorage.setItem(STORE, JSON.stringify(cfg));
+    var nd = document.getElementById('tdistri');
+    if (nd) { nd.textContent = sheetNombres[idx] || 'Acciones Comerciales'; }
+    for (var i = 0; i < 4; i++) {
+      var dot = document.getElementById('sdot' + i);
+      if (dot) { dot.classList.toggle('on', i === idx); }
+    }
+    document.getElementById('distri-dropdown').classList.remove('on');
+    var chev = document.getElementById('tname-chevron');
+    if (chev) { chev.innerHTML = '&#9660;'; }
+    cache.ldp = null; cache.precios = null;
+    resetUI();
+    document.getElementById('codinput').value = '';
+    cargarCacheEstaticoSiNecesario();
+  }
+
   function cargarCacheEstaticoSiNecesario() {
     if (cache.ldp && cache.precios && Object.keys(cache.ldp).length > 0) { return Promise.resolve(); }
     return cargarCacheEstatico();
@@ -471,8 +583,11 @@ document.addEventListener('DOMContentLoaded', function() {
       cache.precios = parsePreciosHoja(results[1]);
       if (results[2]) { parseConfig(results[2]); }
       var nd = document.getElementById('tdistri');
-      if (cache.nombre) { nd.textContent = cache.nombre; }
-      else { nd.textContent = ''; }
+      if (cache.nombre) {
+        nd.textContent = cache.nombre;
+        sheetNombres[cfg.activeSheet] = cache.nombre;
+        renderDistriDropdown();
+      } else { nd.textContent = 'Acciones Comerciales'; }
     }).catch(function(e) {
       /* Mantener null para que el proximo buscar reintente */
       cache.ldp = null; cache.precios = null;
@@ -998,6 +1113,26 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   calcTitleEl.addEventListener('touchend',  function() { clearTimeout(calcLongPressTimer); });
   calcTitleEl.addEventListener('touchmove', function() { clearTimeout(calcLongPressTimer); });
+
+  var tnameWrap = document.getElementById('tname-wrap');
+  if (tnameWrap) {
+    tnameWrap.addEventListener('click', function() {
+      var dd = document.getElementById('distri-dropdown');
+      var chev = document.getElementById('tname-chevron');
+      var isOpen = dd.classList.contains('on');
+      dd.classList.toggle('on');
+      if (chev) { chev.innerHTML = isOpen ? '&#9660;' : '&#9650;'; }
+    });
+  }
+  document.addEventListener('click', function(e) {
+    var wrap = document.getElementById('tname-wrap');
+    var dd = document.getElementById('distri-dropdown');
+    if (wrap && dd && !wrap.contains(e.target)) {
+      dd.classList.remove('on');
+      var chev = document.getElementById('tname-chevron');
+      if (chev) { chev.innerHTML = '&#9660;'; }
+    }
+  });
 
   document.getElementById('p0').focus();
 });
