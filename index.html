@@ -128,8 +128,8 @@
     .cfgwrap { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1.5px solid var(--gris-b); padding: 10px 16px 12px; z-index: 40; box-shadow: 0 -2px 12px rgba(0,31,91,.07); }
     .sheet-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
     .sheet-row-num { font-size: 11px; font-weight: 700; color: var(--txt-s); min-width: 16px; }
-    .sheet-row .cinput { margin-bottom: 0; flex: 1; font-size: 11px; padding: 8px 10px; }
-    .sheet-nombre { font-size: 12px; font-weight: 600; color: var(--azul); min-width: 90px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sheet-row .cinput { margin-bottom: 0; flex: 1; font-size: 11px; padding: 8px 10px; min-width: 0; }
+    .sheet-nombre { font-size: 12px; font-weight: 600; color: var(--azul); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 8px 10px; background: var(--gris-f); border-radius: 10px; border: 1.5px solid var(--gris-b); }
     .sheet-active-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); flex-shrink: 0; display: none; }
     .sheet-active-dot.on { display: block; }
     /* Distribuidor dropdown */
@@ -699,14 +699,16 @@ document.addEventListener('DOMContentLoaded', function() {
       if (/^sku$|cod/.test(hdr[hi]))        { iSku = hi; }
     }
     var result = {};
+    var order = []; /* preserve first-appearance order */
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
       var seg = (row[iSeg] || '').trim().toLowerCase();
       var sku = (row[iSku] || '').toString().trim().replace(/\.0+$/, '');
       if (!seg || !sku) { continue; }
-      if (!result[seg]) { result[seg] = []; }
+      if (!result[seg]) { result[seg] = []; order.push(seg); }
       result[seg].push(sku);
     }
+    result._order = order; /* attach order array to result object */
     return result;
   }
 
@@ -865,6 +867,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
           var ks = Object.keys(cache.precios);
           for (var ki = 0; ki < ks.length; ki++) {
+            if (ks[ki] === '_order') { continue; }
             if (ks[ki].indexOf(segKey) !== -1 || segKey.indexOf(ks[ki]) !== -1 || segKey.split(' ')[0] === ks[ki]) {
               tienePrecios = true; break;
             }
@@ -875,6 +878,24 @@ document.addEventListener('DOMContentLoaded', function() {
       if (tienePrecios) { conPrecios.push(acciones[si]); }
       else { sinPrecios.push(acciones[si]); }
     }
+    /* Sort conPrecios by the order they appear in the Precios sheet */
+    var preciosOrder = (cache.precios && cache.precios._order) ? cache.precios._order : [];
+    conPrecios.sort(function(a, b) {
+      var ia = preciosOrder.indexOf(a.key);
+      var ib = preciosOrder.indexOf(b.key);
+      /* If not found directly, try partial match */
+      if (ia < 0) {
+        for (var pi = 0; pi < preciosOrder.length; pi++) {
+          if (preciosOrder[pi].indexOf(a.key) !== -1 || a.key.indexOf(preciosOrder[pi]) !== -1) { ia = pi; break; }
+        }
+      }
+      if (ib < 0) {
+        for (var pj = 0; pj < preciosOrder.length; pj++) {
+          if (preciosOrder[pj].indexOf(b.key) !== -1 || b.key.indexOf(preciosOrder[pj]) !== -1) { ib = pj; break; }
+        }
+      }
+      return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+    });
     acciones = conPrecios.concat(sinPrecios);
 
     var wrap = document.getElementById('segswrap');
