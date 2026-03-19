@@ -461,6 +461,16 @@ document.addEventListener('DOMContentLoaded', function() {
     cfg.modoPTC = !cfg.modoPTC;
     savePricingPrefs();
     syncPricingBtns();
+    /* Auto-activar unitario al entrar en PTC */
+    if (cfg.modoPTC && !precioUnitario) {
+      precioUnitario = true;
+      var bu = document.getElementById('btn-unitario');
+      if (bu) {
+        bu.style.background  = 'var(--azul-m)';
+        bu.style.color       = '#fff';
+        bu.style.borderColor = 'var(--azul-m)';
+      }
+    }
     refreshTablesInDOM();
   });
   document.getElementById('btn-markup').addEventListener('click', function() {
@@ -1312,17 +1322,20 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Toque largo 3s en el titulo - toggle secreto de tipo distribuidor */
   var calcTitleEl = document.getElementById('calc-title');
   calcTitleEl.addEventListener('touchstart', function() {
+    var self = this;
+    self.style.opacity = '.5';
     calcLongPressTimer = setTimeout(function() {
+      self.style.opacity = '';
       var current = calcGetDistri();
       calcDistriOverride = current === 1 ? 2 : 1;
       var ind = document.getElementById('calc-title-indicator');
-      ind.textContent = ' M' + calcDistriOverride;
+      ind.textContent = calcDistriOverride === 1 ? ' Bonif.' : ' No bonif.';
       ind.style.display = 'inline';
       calcRecalc();
     }, 3000);
   });
-  calcTitleEl.addEventListener('touchend',  function() { clearTimeout(calcLongPressTimer); });
-  calcTitleEl.addEventListener('touchmove', function() { clearTimeout(calcLongPressTimer); });
+  calcTitleEl.addEventListener('touchend',  function() { clearTimeout(calcLongPressTimer); this.style.opacity = ''; });
+  calcTitleEl.addEventListener('touchmove', function() { clearTimeout(calcLongPressTimer); this.style.opacity = ''; });
 
   var tnameWrap = document.getElementById('tname-wrap');
   if (tnameWrap) {
