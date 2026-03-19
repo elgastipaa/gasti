@@ -147,7 +147,7 @@
     .distri-option.active .dot { background: var(--dorado); }
     .tname-wrap { position: relative; cursor: pointer; display: flex; align-items: center; gap: 5px; }
     .tname-chevron { font-size: 9px; color: rgba(255,255,255,.5); }
-    .cfgtoggle { background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s); font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 8px 14px; border-radius: 10px; cursor: pointer; width: 100%; text-align: left; }
+    .cfgtoggle { background: none; border: 1.5px solid var(--gris-b); color: var(--txt-s); font-size: 13px; font-family: 'DM Sans', sans-serif; padding: 7px 10px; border-radius: 10px; cursor: pointer; text-align: center; height: 36px; display: flex; align-items: center; justify-content: center; }
     .cfgbody { display: none; background: #fff; border-radius: 14px 14px 0 0; padding: 18px 18px 24px; margin-top: 10px; box-shadow: 0 -4px 24px rgba(0,31,91,.12); position: fixed; bottom: 60px; left: 0; right: 0; max-height: 75vh; overflow-y: auto; -webkit-overflow-scrolling: touch; z-index: 39; }
     .cfgbody.open { display: block; }
     .clbl { display: block; font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
@@ -157,7 +157,7 @@
     .cfg-row { display: flex; gap: 8px; margin-top: 4px; }
     .csave { flex: 1; background: var(--azul); color: #fff; border: none; padding: 13px; border-radius: 11px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
     .csave:active { transform: scale(.97); }
-    .crefresh { background: var(--gris-f); color: var(--txt-s); border: 1.5px solid var(--gris-b); padding: 13px 16px; border-radius: 11px; font-size: 16px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .crefresh { background: var(--gris-f); color: var(--txt-s); border: 1.5px solid var(--gris-b); padding: 0 12px; border-radius: 10px; font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; white-space: nowrap; height: 36px; display: inline-flex; align-items: center; justify-content: center; }
     .crefresh:active { transform: scale(.97); background: var(--gris-b); }
     .crefresh.spinning { animation: spin .6s linear infinite; }
     .cfg-status { font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; font-weight: 500; }
@@ -308,6 +308,10 @@
           <div class="calc-result-lbl">Por unidad</div>
           <div class="calc-result-val" id="calc-val-unit">-</div>
         </div>
+        <div class="calc-result-box" id="calc-ptc-box">
+          <div class="calc-result-lbl">PTC unit. <button id="calc-btn-markup" style="font-size:9px;padding:1px 5px;border-radius:6px;border:1px solid var(--gris-b);background:var(--gris-f);cursor:pointer;font-family:DM Sans,sans-serif;font-weight:700;color:var(--azul)">30%</button></div>
+          <div class="calc-result-val" id="calc-val-ptc">-</div>
+        </div>
         <div class="calc-result-box calc-result-total">
           <div class="calc-result-lbl">Total (<span id="calc-qty-display">1</span> bult.)</div>
           <div class="calc-result-val" id="calc-val-total">-</div>
@@ -318,9 +322,11 @@
 
   <div class="cfgwrap">
     <div style="display:flex;gap:8px;align-items:center;">
-      <button class="cfgtoggle" id="btn-cfg" style="flex:1">&#9881; Configuracion</button>
+      <button class="cfgtoggle" id="btn-cfg" style="flex:0 0 auto;width:40px;text-align:center;padding:8px">&#9881;</button>
       <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
       <button class="crefresh" id="btn-unitario" title="Precio por bulto / unitario">#</button>
+      <button class="crefresh" id="btn-modo" title="Alternar PTR / PTC">PTR</button>
+      <button class="crefresh" id="btn-markup" title="Cambiar markup">30%</button>
       <button class="crefresh" id="btn-calc" title="Calculadora de precios">&#247;</button>
     </div>
     <div class="cfgbody" id="cfgbody">
@@ -359,7 +365,9 @@ document.addEventListener('DOMContentLoaded', function() {
     tab:        saved.tab        || 'Acciones',
     tabPrec:    saved.tabPrec    || 'Precios',
     tabLdp:     saved.tabLdp     || 'LDP',
-    tabCfg:     saved.tabCfg     || 'Config'
+    tabCfg:     saved.tabCfg     || 'Config',
+    modoPTC:    saved.modoPTC    || false,
+    markupIdx:  saved.markupIdx  !== undefined ? saved.markupIdx : 0
   };
   /* sheetId computed from active sheet for backward compat */
   Object.defineProperty(cfg, 'sheetId', {
@@ -369,6 +377,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
   var cache = { ldp: null, precios: null, distri: 1, nombre: '' };
+
+  /* -- PTR / PTC --------------------------------------------------- */
+  var MARKUPS = [30, 35, 40];
+  function getMarkup()  { return MARKUPS[cfg.markupIdx] / 100; }
+  function getMarkupLabel() { return MARKUPS[cfg.markupIdx] + '%'; }
+  function applyPTC(precio) { return precio * (1 + getMarkup()); }
+
+  function savePricingPrefs() {
+    localStorage.setItem(STORE, JSON.stringify(cfg));
+  }
+  function syncPricingBtns() {
+    var btnModo = document.getElementById('btn-modo');
+    var btnMkp  = document.getElementById('btn-markup');
+    if (btnModo) {
+      btnModo.textContent = cfg.modoPTC ? 'PTC' : 'PTR';
+      btnModo.style.background    = cfg.modoPTC ? 'var(--azul-m)' : '';
+      btnModo.style.color         = cfg.modoPTC ? '#fff' : '';
+      btnModo.style.borderColor   = cfg.modoPTC ? 'var(--azul-m)' : '';
+    }
+    if (btnMkp) {
+      btnMkp.textContent = getMarkupLabel();
+      btnMkp.style.background  = cfg.modoPTC ? 'var(--azul-m)' : '';
+      btnMkp.style.color       = cfg.modoPTC ? '#fff' : '';
+      btnMkp.style.borderColor = cfg.modoPTC ? 'var(--azul-m)' : '';
+    }
+  }
 
   /* -- PALETA DE COLORES ------------------------------------------- */
   var PALETTE = [
@@ -423,6 +457,24 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-cfg').addEventListener('click', function() { document.getElementById('cfgbody').classList.toggle('open'); });
   document.getElementById('btn-save').addEventListener('click', doSave);
   document.getElementById('btn-refresh').addEventListener('click', doRefresh);
+  document.getElementById('btn-modo').addEventListener('click', function() {
+    cfg.modoPTC = !cfg.modoPTC;
+    savePricingPrefs();
+    syncPricingBtns();
+    /* Re-render if there are active results */
+    var codigo = document.getElementById('codinput').value.trim();
+    if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(true); }
+  });
+  document.getElementById('btn-markup').addEventListener('click', function() {
+    cfg.markupIdx = (cfg.markupIdx + 1) % MARKUPS.length;
+    savePricingPrefs();
+    syncPricingBtns();
+    if (cfg.modoPTC) {
+      var codigo = document.getElementById('codinput').value.trim();
+      if (codigo && document.getElementById('reshdr').classList.contains('on')) { doBuscar(true); }
+    }
+    calcRecalc();
+  });
   document.getElementById('btn-tog').addEventListener('click', function() {
     allOpen = !allOpen;
     var blocks = document.querySelectorAll('.segblock');
@@ -452,6 +504,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('ctabcfg').value = cfg.tabCfg;
       document.getElementById('cpin').value = cfg.pin;
       cargarCacheEstaticoSiNecesario();
+      syncPricingBtns();
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
       var err = document.getElementById('lerr');
@@ -826,7 +879,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* Construir tabla */
-    var precioLabel = esUnitario ? 'x unidad' : 'x bulto';
+    var modoLabel = cfg.modoPTC ? ('PTC +' + getMarkupLabel()) : 'PTR';
+    var precioLabel = esUnitario ? ('x unidad ' + modoLabel) : ('x bulto ' + modoLabel);
     console.log('buildPriceTable seg=' + segKey + ' esUnitario=' + esUnitario + ' precioUnitario_global=' + precioUnitario);
     var html = '<table class="price-table"><thead><tr>';
     html += '<th>SKU</th><th>Producto</th>';
@@ -840,7 +894,9 @@ document.addEventListener('DOMContentLoaded', function() {
       for (var cc = 0; cc < colHeaders.length; cc++) {
         var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
         console.log('SKU=' + pr.sku + ' uxb=' + pr.uxb + ' bulto=' + precioBulto);
-        var precio = esUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
+        var precioFinal = esUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
+        if (cfg.modoPTC) { precioFinal = applyPTC(precioFinal); }
+        var precio = precioFinal;
         html += '<td>' + fmtPrecio(precio) + '</td>';
       }
       html += '</tr>';
@@ -1221,15 +1277,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var unit  = bulto / (prod.uxb || 1);
     var total = bulto * qtyRaw;
+    var ptcUnit = applyPTC(unit);
     document.getElementById('calc-val-bulto').textContent = fmtPrecio(bulto);
     document.getElementById('calc-val-unit').textContent  = fmtPrecio(unit);
     document.getElementById('calc-val-total').textContent = fmtPrecio(total);
+    /* PTC unit row */
+    var ptcBox = document.getElementById('calc-ptc-box');
+    var ptcEl  = document.getElementById('calc-val-ptc');
+    var mkpBtn = document.getElementById('calc-btn-markup');
+    /* ptc box always visible */
+    if (ptcEl)  { ptcEl.textContent = fmtPrecio(ptcUnit); }
+    if (mkpBtn) { mkpBtn.textContent = getMarkupLabel(); }
   }
   document.getElementById('btn-calc').addEventListener('click', calcAbrir);
   document.getElementById('calc-overlay').addEventListener('click', calcCerrar);
   document.getElementById('calc-sku').addEventListener('input', calcRecalc);
   document.getElementById('calc-dto').addEventListener('input', calcRecalc);
   document.getElementById('calc-qty').addEventListener('input', calcRecalc);
+  /* In-calc markup button */
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'calc-btn-markup') {
+      cfg.markupIdx = (cfg.markupIdx + 1) % MARKUPS.length;
+      savePricingPrefs();
+      syncPricingBtns();
+      calcRecalc();
+    }
+  });
   document.getElementById('calc-qty-minus').addEventListener('click', function() {
     var v = parseInt(document.getElementById('calc-qty').value) || 1;
     if (v > 1) { document.getElementById('calc-qty').value = v - 1; calcRecalc(); }
