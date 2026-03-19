@@ -101,7 +101,7 @@
     .price-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 2; }
     .price-table th:nth-child(2) { text-align: left; position: sticky; left: 44px; z-index: 2; }
     .price-table td { padding: 9px 10px; border-top-width: 1px; border-top-style: solid; text-align: right; white-space: nowrap; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; }
-    .price-table td:first-child { text-align: left; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400; opacity: .6; position: sticky; left: 0; z-index: 1; }
+    .price-table td:first-child { text-align: left; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400; color: var(--txt-s); position: sticky; left: 0; z-index: 1; background: inherit; }
     .price-table td:nth-child(2) { text-align: left; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 12px; opacity: 1; max-width: 130px; white-space: normal; word-break: break-word; position: sticky; left: 44px; z-index: 1; }
     .no-precios { padding: 12px 14px; font-size: 12px; font-style: italic; opacity: .6; }
 
@@ -113,7 +113,8 @@
     .s-dyn .price-table-wrap { border-top-color: var(--s-border); background: var(--s-light); }
     .s-dyn .price-table th { background: var(--s-mid); color: var(--s-dark); }
     .s-dyn .price-table th:first-child, .s-dyn .price-table th:nth-child(2) { background: var(--s-mid); }
-    .s-dyn .price-table td:first-child, .s-dyn .price-table td:nth-child(2) { background: var(--s-light); }
+    .s-dyn .price-table td:first-child { background: var(--s-light); color: var(--txt-s); opacity: 1; }
+    .s-dyn .price-table td:nth-child(2) { background: var(--s-light); }
     .s-dyn .price-table td { border-top-color: var(--s-border); color: var(--s-dark); }
     .s-dyn .price-table td:first-child { color: var(--txt-s); }
     .s-dyn .price-table td:nth-child(2) { color: var(--txt); }
@@ -125,7 +126,8 @@
     .s-grey .price-table-wrap { border-top-color: #C8D0D8; background: #EEF1F6; }
     .s-grey .price-table th { background: #DDE3EE; color: var(--txt-s); }
     .s-grey .price-table th:first-child, .s-grey .price-table th:nth-child(2) { background: #DDE3EE; }
-    .s-grey .price-table td:first-child, .s-grey .price-table td:nth-child(2) { background: #EEF1F6; }
+    .s-grey .price-table td:first-child { background: #EEF1F6; color: var(--txt-s); opacity: 1; }
+    .s-grey .price-table td:nth-child(2) { background: #EEF1F6; }
     .s-grey .price-table td { border-top-color: #D4DAE4; color: var(--txt-s); }
     .s-grey .price-scroll-fade { background: linear-gradient(to right, transparent, #EEF1F6); }
 
