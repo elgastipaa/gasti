@@ -871,11 +871,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (!fila) { return null; }
     var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
-    var acciones = [];
+
+    /* Merge columns that are duplicates: "Value Lata 2", "Value Lata 3" -> "Value Lata" */
+    var mergedMap = {}; /* base label -> { key, label, detalle } */
+    var mergedOrder = []; /* to preserve column order */
     for (var k = 0; k < segCols.length; k++) {
-      var detalle = (fila[segCols[k].i] || '').trim();
+      var rawLabel = segCols[k].raw;
+      var detalle  = (fila[segCols[k].i] || '').trim();
+      /* Check if this column is a numbered duplicate: ends with " 2", " 3", etc. */
+      var baseLabel = rawLabel.replace(/\s+\d+$/, '').trim();
+      var isExtra   = baseLabel !== rawLabel; /* true if " 2" or " 3" was stripped */
+      var useLabel  = isExtra ? baseLabel : rawLabel;
+      var useKey    = useLabel.toLowerCase();
+      if (!mergedMap[useKey]) {
+        mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '' };
+        mergedOrder.push(useKey);
+      }
+      /* Append detalle if non-empty */
       if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
-        acciones.push({ key: segCols[k].raw.toLowerCase(), label: segCols[k].raw, detalle: detalle });
+        if (mergedMap[useKey].detalle === '') {
+          mergedMap[useKey].detalle = detalle;
+        } else {
+          mergedMap[useKey].detalle += ' | ' + detalle;
+        }
+      }
+    }
+
+    /* Build acciones array, skip entries with no detalle */
+    var acciones = [];
+    for (var m = 0; m < mergedOrder.length; m++) {
+      var entry = mergedMap[mergedOrder[m]];
+      if (entry.detalle !== '') {
+        acciones.push({ key: entry.key, label: entry.label, detalle: entry.detalle });
       }
     }
     return acciones;
