@@ -1053,8 +1053,10 @@ document.addEventListener('DOMContentLoaded', function() {
         mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '', srcLabels: [] };
         mergedOrder.push(useKey);
       }
-      /* Always track original column label for etiq matching */
-      mergedMap[useKey].srcLabels.push(rawLabel.toLowerCase());
+      /* Only track original label if this client has a value in that column */
+      if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
+        mergedMap[useKey].srcLabels.push(rawLabel.toLowerCase());
+      }
       /* Append detalle if non-empty */
       if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
         if (mergedMap[useKey].detalle === '') {
