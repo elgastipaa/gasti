@@ -72,7 +72,10 @@
     .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 12px 16px; display: none; }
     .reshdr.on { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
     .rcod { font-size: 28px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
-    .rbadge { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .rbadge { display: none; } /* replaced by etiquetas */
+    .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .etiq-pdv { display: inline-block; background: #FFF3CD; color: #7A5500; border: 1.5px solid #F5C842; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .etiq-seg { display: inline-block; background: #D6F5E3; color: #0F5229; border: 1.5px solid #6DD49A; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
     .negocio-tabs { display: flex; gap: 6px; width: 100%; flex-wrap: wrap; }
@@ -268,7 +271,7 @@
 
   <div class="reshdr" id="reshdr">
     <div class="rcod" id="rcod">-</div>
-    <span class="rbadge" id="rbadge">0 acciones</span>
+    <div class="etiq-wrap" id="etiq-wrap"></div>
     <button class="tog-btn" id="btn-tog">&#9660;&#9660;</button>
     <div class="negocio-tabs" id="negocio-tabs"></div>
   </div>
@@ -350,6 +353,10 @@
       <input class="cinput" id="ctabldp" placeholder="LDP">
       <label class="clbl">Nombre pestana Config</label>
       <input class="cinput" id="ctabcfg" placeholder="Config">
+      <label class="clbl">Nombre pestana Etiq Segmento</label>
+      <input class="cinput" id="ctabetiqseg" placeholder="Etiq Segmento">
+      <label class="clbl">Nombre pestana Etiq PDV</label>
+      <input class="cinput" id="ctabetiqpdv" placeholder="Etiq PDV">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
       <button class="csave" id="btn-save">Guardar</button>
@@ -372,6 +379,8 @@ document.addEventListener('DOMContentLoaded', function() {
     tabPrec:    saved.tabPrec    || 'Precios',
     tabLdp:     saved.tabLdp     || 'LDP',
     tabCfg:     saved.tabCfg     || 'Config',
+    tabEtiqSeg: saved.tabEtiqSeg || 'Etiq Segmento',
+    tabEtiqPdv: saved.tabEtiqPdv || 'Etiq PDV',
     modoPTC:    saved.modoPTC    || false,
     markupIdx:  saved.markupIdx  !== undefined ? saved.markupIdx : 0
   };
@@ -382,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
-  var cache = { ldp: null, precios: null, distri: 1, nombre: '' };
+  var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {} };
 
   /* -- PTR / PTC --------------------------------------------------- */
   var MARKUPS = [30, 35, 40];
@@ -513,6 +522,8 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('ctabprec').value = cfg.tabPrec;
       document.getElementById('ctabldp').value = cfg.tabLdp;
       document.getElementById('ctabcfg').value = cfg.tabCfg;
+      document.getElementById('ctabetiqseg').value = cfg.tabEtiqSeg;
+      document.getElementById('ctabetiqpdv').value = cfg.tabEtiqPdv;
       document.getElementById('cpin').value = cfg.pin;
       cargarCacheEstaticoSiNecesario();
       syncPricingBtns();
@@ -543,12 +554,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var tab  = document.getElementById('ctab').value.trim();
     var tabp = document.getElementById('ctabprec').value.trim();
     var tabl = document.getElementById('ctabldp').value.trim();
-    var tabc = document.getElementById('ctabcfg').value.trim();
+    var tabc    = document.getElementById('ctabcfg').value.trim();
+    var tabes   = document.getElementById('ctabetiqseg').value.trim();
+    var tabep   = document.getElementById('ctabetiqpdv').value.trim();
     var pin  = document.getElementById('cpin').value.trim();
     if (tab)  { cfg.tab = tab; }
     if (tabp) { cfg.tabPrec = tabp; }
     if (tabl) { cfg.tabLdp = tabl; }
-    if (tabc) { cfg.tabCfg = tabc; }
+    if (tabc)  { cfg.tabCfg = tabc; }
+    if (tabes) { cfg.tabEtiqSeg = tabes; }
+    if (tabep) { cfg.tabEtiqPdv = tabep; }
     if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
     cache.ldp = null; cache.precios = null;
@@ -650,11 +665,15 @@ document.addEventListener('DOMContentLoaded', function() {
     return Promise.all([
       fetchSheet(cfg.tabLdp),
       fetchSheet(cfg.tabPrec),
-      fetchSheet(cfg.tabCfg).catch(function() { return null; })
+      fetchSheet(cfg.tabCfg).catch(function() { return null; }),
+      fetchSheet(cfg.tabEtiqSeg).catch(function() { return null; }),
+      fetchSheet(cfg.tabEtiqPdv).catch(function() { return null; })
     ]).then(function(results) {
       cache.ldp     = parseLDP(results[0]);
       cache.precios = parsePreciosHoja(results[1]);
       if (results[2]) { parseConfig(results[2]); }
+      cache.etiqSeg = results[3] ? parseEtiqSegmento(results[3]) : {};
+      cache.etiqPdv = results[4] ? parseEtiqPdv(results[4]) : {};
       var nd = document.getElementById('tdistri');
       if (cache.nombre) {
         nd.textContent = cache.nombre;
@@ -732,6 +751,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- PARSE LDP --------------------------------------------------- */
   /* LDP sheet: SKU | Detalle | Neto | Internos */
+  /* Etiq Segmento: col A = Segmento (exact match), col B = Etiqueta */
+  function parseEtiqSegmento(txt) {
+    var rows = parseCSV(txt);
+    var result = {};
+    for (var r = 0; r < rows.length; r++) {
+      var seg = (rows[r][0] || '').trim();
+      var etiq = (rows[r][1] || '').trim();
+      /* Skip header row */
+      if (!seg || !etiq || /segmento|etiqueta/i.test(seg)) { continue; }
+      result[seg.toLowerCase()] = etiq;
+    }
+    return result;
+  }
+
+  /* Etiq PDV: col A = PDV, col B+ = etiquetas (multiple cols supported) */
+  function parseEtiqPdv(txt) {
+    var rows = parseCSV(txt);
+    var result = {};
+    for (var r = 0; r < rows.length; r++) {
+      var pdv = (rows[r][0] || '').toString().trim().replace(/\.0+$/, '');
+      if (!pdv || /pdv|cliente|codigo/i.test(pdv)) { continue; }
+      var etiquetas = [];
+      for (var c2 = 1; c2 < rows[r].length; c2++) {
+        var v = (rows[r][c2] || '').trim();
+        if (v) { etiquetas.push(v); }
+      }
+      if (etiquetas.length > 0) { result[pdv] = etiquetas; }
+    }
+    return result;
+  }
+
   function parseLDP(txt) {
     var rows = parseCSV(txt);
     if (rows.length < 2) { return {}; }
@@ -1037,7 +1087,24 @@ document.addEventListener('DOMContentLoaded', function() {
     hideEst();
     document.getElementById('reshdr').classList.add('on','fade-in');
     document.getElementById('rcod').textContent = codigo;
-    document.getElementById('rbadge').textContent = acciones.length + ' accion' + (acciones.length !== 1 ? 'es' : '');
+    /* Render etiquetas */
+    var etiqHtml = '';
+    /* PDV etiquetas first */
+    var pdvEtiqs = (cache.etiqPdv && cache.etiqPdv[codigo]) ? cache.etiqPdv[codigo] : [];
+    for (var ei = 0; ei < pdvEtiqs.length; ei++) {
+      etiqHtml += '<span class="etiq-pdv">' + escHtml(pdvEtiqs[ei]) + '</span>';
+    }
+    /* Segment etiquetas - exact match on acciones keys */
+    var segEtiqs = cache.etiqSeg || {};
+    var shownSeg = {};
+    for (var ai = 0; ai < acciones.length; ai++) {
+      var aKey = acciones[ai].label.toLowerCase();
+      if (segEtiqs[aKey] && !shownSeg[aKey]) {
+        etiqHtml += '<span class="etiq-seg">' + escHtml(segEtiqs[aKey]) + '</span>';
+        shownSeg[aKey] = true;
+      }
+    }
+    document.getElementById('etiq-wrap').innerHTML = etiqHtml;
     var negs = (cache.precios && cache.precios._negocios) ? cache.precios._negocios : [];
     renderNegocioTabs(negs);
 
@@ -1195,6 +1262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     hideEst();
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
+    document.getElementById('etiq-wrap').innerHTML = '';
     allOpen = false;
     negocioActivo = '';
     segColorMap = {}; colorCounter = 1;
