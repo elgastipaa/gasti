@@ -74,8 +74,8 @@
     .rcod { font-size: 28px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
     .rbadge { display: none; } /* replaced by etiquetas */
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-    .etiq-pdv { display: inline-block; background: #FFF3CD; color: #7A5500; border: 1.5px solid #F5C842; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
-    .etiq-seg { display: inline-block; background: #D6F5E3; color: #0F5229; border: 1.5px solid #6DD49A; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .etiq-seg { display: inline-block; background: #6DD49A; color: #0F5229; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
     .negocio-tabs { display: flex; gap: 6px; width: 100%; flex-wrap: wrap; }
@@ -754,12 +754,18 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Etiq Segmento: col A = Segmento (exact match), col B = Etiqueta */
   function parseEtiqSegmento(txt) {
     var rows = parseCSV(txt);
+    if (rows.length < 1) { return {}; }
+    /* Validate: first row must look like a segmento/etiqueta header or data
+       If first non-empty cell looks like a PDV number or has many columns, reject */
+    var hdr = rows[0];
+    if (hdr.length > 3) { return {}; } /* too many columns, wrong sheet */
     var result = {};
     for (var r = 0; r < rows.length; r++) {
-      var seg = (rows[r][0] || '').trim();
+      var seg  = (rows[r][0] || '').trim();
       var etiq = (rows[r][1] || '').trim();
-      /* Skip header row */
-      if (!seg || !etiq || /segmento|etiqueta/i.test(seg)) { continue; }
+      if (!seg || !etiq) { continue; }
+      if (/^segmento|^etiqueta/i.test(seg)) { continue; } /* skip header */
+      if (/^\d+$/.test(seg)) { continue; } /* skip if looks like a PDV number */
       result[seg.toLowerCase()] = etiq;
     }
     return result;
@@ -768,14 +774,23 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Etiq PDV: col A = PDV, col B+ = etiquetas (multiple cols supported) */
   function parseEtiqPdv(txt) {
     var rows = parseCSV(txt);
+    if (rows.length < 1) { return {}; }
+    /* Validate: first data cell must be a number (PDV code) */
+    var firstData = '';
+    for (var i = 0; i < rows.length; i++) {
+      var v = (rows[i][0] || '').trim().replace(/\.0+$/, '');
+      if (v && !/pdv|cliente|codigo/i.test(v)) { firstData = v; break; }
+    }
+    if (firstData && !/^\d+$/.test(firstData)) { return {}; } /* wrong sheet */
     var result = {};
     for (var r = 0; r < rows.length; r++) {
       var pdv = (rows[r][0] || '').toString().trim().replace(/\.0+$/, '');
       if (!pdv || /pdv|cliente|codigo/i.test(pdv)) { continue; }
+      if (!/^\d+$/.test(pdv)) { continue; } /* must be numeric */
       var etiquetas = [];
       for (var c2 = 1; c2 < rows[r].length; c2++) {
-        var v = (rows[r][c2] || '').trim();
-        if (v) { etiquetas.push(v); }
+        var val = (rows[r][c2] || '').trim();
+        if (val) { etiquetas.push(val); }
       }
       if (etiquetas.length > 0) { result[pdv] = etiquetas; }
     }
