@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var VACIAS = ['', '-', 'n/a', 'na', 'sin accion'];
 
     /* Merge columns that are duplicates: "Value Lata 2", "Value Lata 3" -> "Value Lata" */
-    var mergedMap = {}; /* base label -> { key, label, detalle } */
+    var mergedMap = {}; /* base label -> { key, label, detalle, srcLabels } */
     var mergedOrder = []; /* to preserve column order */
     for (var k = 0; k < segCols.length; k++) {
       var rawLabel = segCols[k].raw;
@@ -1050,9 +1050,11 @@ document.addEventListener('DOMContentLoaded', function() {
       var useLabel  = isExtra ? baseLabel : rawLabel;
       var useKey    = useLabel.toLowerCase();
       if (!mergedMap[useKey]) {
-        mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '' };
+        mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '', srcLabels: [] };
         mergedOrder.push(useKey);
       }
+      /* Always track original column label for etiq matching */
+      mergedMap[useKey].srcLabels.push(rawLabel.toLowerCase());
       /* Append detalle if non-empty */
       if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
         if (mergedMap[useKey].detalle === '') {
@@ -1068,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var m = 0; m < mergedOrder.length; m++) {
       var entry = mergedMap[mergedOrder[m]];
       if (entry.detalle !== '') {
-        acciones.push({ key: entry.key, label: entry.label, detalle: entry.detalle });
+        acciones.push({ key: entry.key, label: entry.label, detalle: entry.detalle, srcLabels: entry.srcLabels });
       }
     }
     return acciones;
@@ -1143,14 +1145,22 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var ei = 0; ei < pdvEtiqs.length; ei++) {
       etiqHtml += '<span class="etiq-pdv">' + escHtml(pdvEtiqs[ei]) + '</span>';
     }
-    /* Segment etiquetas - exact match on acciones keys */
+    /* Segment etiquetas - check base label AND original column names */
     var segEtiqs = cache.etiqSeg || {};
-    var shownSeg = {};
+    var shownEtiqs = {};
     for (var ai = 0; ai < acciones.length; ai++) {
-      var aKey = acciones[ai].label.toLowerCase();
-      if (segEtiqs[aKey] && !shownSeg[aKey]) {
-        etiqHtml += '<span class="etiq-seg">' + escHtml(segEtiqs[aKey]) + '</span>';
-        shownSeg[aKey] = true;
+      /* Build list of keys to check: base label + all source labels */
+      var keysToCheck = [acciones[ai].label.toLowerCase()];
+      var srcs = acciones[ai].srcLabels || [];
+      for (var sk = 0; sk < srcs.length; sk++) {
+        if (keysToCheck.indexOf(srcs[sk]) === -1) { keysToCheck.push(srcs[sk]); }
+      }
+      for (var ki = 0; ki < keysToCheck.length; ki++) {
+        var k = keysToCheck[ki];
+        if (segEtiqs[k] && !shownEtiqs[segEtiqs[k]]) {
+          etiqHtml += '<span class="etiq-seg">' + escHtml(segEtiqs[k]) + '</span>';
+          shownEtiqs[segEtiqs[k]] = true;
+        }
       }
     }
     document.getElementById('etiq-wrap').innerHTML = etiqHtml;
