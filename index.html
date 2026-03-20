@@ -666,8 +666,8 @@ document.addEventListener('DOMContentLoaded', function() {
       fetchSheet(cfg.tabLdp),
       fetchSheet(cfg.tabPrec),
       fetchSheet(cfg.tabCfg).catch(function() { return null; }),
-      fetchSheet(cfg.tabEtiqSeg).catch(function() { return null; }),
-      fetchSheet(cfg.tabEtiqPdv).catch(function() { return null; })
+      fetchSheetSafe(cfg.tabEtiqSeg),
+      fetchSheetSafe(cfg.tabEtiqPdv)
     ]).then(function(results) {
       cache.ldp     = parseLDP(results[0]);
       cache.precios = parsePreciosHoja(results[1]);
@@ -717,6 +717,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* fetchSheetSafe: verifica via JSON que la hoja exista antes de fetchear CSV.
+     Si la hoja no existe devuelve null en lugar de tirar error o devolver datos incorrectos. */
+  function fetchSheetSafe(tabName) {
+    var jsonUrl = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId +
+                  '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(tabName);
+    return fetch(jsonUrl, { cache: 'no-store' }).then(function(res) {
+      return res.text();
+    }).then(function(txt) {
+      /* Google wraps JSON in google.visualization.Query.setResponse(...) */
+      var match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
+      if (!match) { return null; }
+      try {
+        var json = JSON.parse(match[1]);
+        if (json.status === 'error') { return null; } /* sheet does not exist */
+      } catch(e) { return null; }
+      /* Sheet exists - now fetch as CSV */
+      return fetchSheet(tabName);
+    }).catch(function() { return null; });
+  }
+
   function parseCSV(txt) {
     var rows = []; var lines = txt.trim().split('\n');
     for (var li = 0; li < lines.length; li++) {
@@ -753,40 +773,54 @@ document.addEventListener('DOMContentLoaded', function() {
   /* LDP sheet: SKU | Detalle | Neto | Internos */
   /* Etiq Segmento: col A = Segmento (exact match), col B = Etiqueta */
   function parseEtiqSegmento(txt) {
+    if (!txt || txt.trim().charAt(0) === '<') { return {}; }
     var rows = parseCSV(txt);
     if (rows.length < 1) { return {}; }
-    /* Validate: first row must look like a segmento/etiqueta header or data
-       If first non-empty cell looks like a PDV number or has many columns, reject */
-    var hdr = rows[0];
-    if (hdr.length > 3) { return {}; } /* too many columns, wrong sheet */
+    /* Strict header check: first row must have exactly 2 non-empty cols
+       and must NOT look like Acciones/Precios/LDP headers */
+    var hdr0 = (rows[0][0] || '').trim().toLowerCase();
+    var hdr1 = (rows[0][1] || '').trim().toLowerCase();
+    /* Reject if looks like known sheet headers */
+    if (/^pdv$|^negocio$|^sku$|^neto$/.test(hdr0)) { return {}; }
+    /* Reject if too many columns (Acciones has many) */
+    var nonEmpty = 0;
+    for (var h = 0; h < rows[0].length; h++) { if ((rows[0][h] || '').trim()) { nonEmpty++; } }
+    if (nonEmpty > 3) { return {}; }
     var result = {};
     for (var r = 0; r < rows.length; r++) {
       var seg  = (rows[r][0] || '').trim();
       var etiq = (rows[r][1] || '').trim();
       if (!seg || !etiq) { continue; }
-      if (/^segmento|^etiqueta/i.test(seg)) { continue; } /* skip header */
-      if (/^\d+$/.test(seg)) { continue; } /* skip if looks like a PDV number */
+      if (/^segmento|^etiqueta/i.test(seg)) { continue; }
+      if (/^\d+$/.test(seg)) { continue; }
       result[seg.toLowerCase()] = etiq;
     }
     return result;
   }
 
-  /* Etiq PDV: col A = PDV, col B+ = etiquetas (multiple cols supported) */
+  /* Etiq PDV: col A = PDV (numeric), col B+ = etiquetas */
   function parseEtiqPdv(txt) {
+    if (!txt || txt.trim().charAt(0) === '<') { return {}; }
     var rows = parseCSV(txt);
     if (rows.length < 1) { return {}; }
-    /* Validate: first data cell must be a number (PDV code) */
-    var firstData = '';
-    for (var i = 0; i < rows.length; i++) {
-      var v = (rows[i][0] || '').trim().replace(/\.0+$/, '');
-      if (v && !/pdv|cliente|codigo/i.test(v)) { firstData = v; break; }
+    /* Strict check: first row header must be pdv/cliente or first data must be numeric */
+    var hdr0 = (rows[0][0] || '').trim().toLowerCase();
+    /* Reject if looks like known sheet headers */
+    if (/^negocio$|^segmento$|^sku$|^neto$|^core$|^latones$/i.test(hdr0)) { return {}; }
+    /* Find first data row and check it's numeric */
+    var firstDataOk = false;
+    for (var i = 0; i < Math.min(rows.length, 5); i++) {
+      var v = (rows[i][0] || '').toString().trim().replace(/\.0+$/, '');
+      if (!v || /pdv|cliente|codigo/i.test(v)) { continue; }
+      firstDataOk = /^\d+$/.test(v);
+      break;
     }
-    if (firstData && !/^\d+$/.test(firstData)) { return {}; } /* wrong sheet */
+    if (!firstDataOk) { return {}; }
     var result = {};
     for (var r = 0; r < rows.length; r++) {
       var pdv = (rows[r][0] || '').toString().trim().replace(/\.0+$/, '');
       if (!pdv || /pdv|cliente|codigo/i.test(pdv)) { continue; }
-      if (!/^\d+$/.test(pdv)) { continue; } /* must be numeric */
+      if (!/^\d+$/.test(pdv)) { continue; }
       var etiquetas = [];
       for (var c2 = 1; c2 < rows[r].length; c2++) {
         var val = (rows[r][c2] || '').trim();
