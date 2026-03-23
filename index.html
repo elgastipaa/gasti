@@ -70,8 +70,13 @@
 
     /* RESULT HEADER */
     .reshdr { margin: 20px 16px 4px; background: var(--azul); border-radius: 14px; padding: 12px 16px; display: none; }
-    .reshdr.on { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-    .rcod { font-size: 28px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 3px; }
+    .reshdr.on { display: flex; flex-direction: column; gap: 6px; }
+    .reshdr-row1 { display: flex; align-items: center; gap: 10px; }
+    .reshdr-row2 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .rcod { font-size: 26px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; letter-spacing: 2px; flex-shrink: 0; }
+    .rinfo { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .rrs   { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rdom  { font-size: 11px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .rbadge { display: none; } /* replaced by etiquetas */
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
     .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
@@ -175,7 +180,44 @@
 
 
     /* CALCULADORA */
-    .calc-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
+    /* PLANIFICADOR */
+    .plan-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
+    .plan-overlay.on { display: block; }
+    .plan-sheet {
+      display: none; position: fixed; top: 0; left: 0; right: 0;
+      background: #fff; border-radius: 0 0 24px 24px; z-index: 101;
+      box-shadow: 0 8px 40px rgba(0,31,91,.18);
+      transform: translateY(-100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+      max-height: 88vh; flex-direction: column;
+    }
+    .plan-sheet.on  { display: flex; }
+    .plan-sheet.open { transform: translateY(0); }
+    .plan-fixed { flex-shrink: 0; background: #fff; }
+    .plan-scroll { overflow-y: auto; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; border-radius: 0 0 24px 24px; border-top: 1.5px solid var(--gris-b); }
+    .plan-filters { display: flex; gap: 10px; margin-bottom: 8px; }
+    .plan-select { width: 100%; border: 2px solid var(--gris-b); border-radius: 10px; padding: 8px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--azul); background: var(--gris-f); outline: none; }
+    .plan-dias { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .plan-dia { display: flex; align-items: center; gap: 4px; background: var(--gris-f); border: 1.5px solid var(--gris-b); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--txt-s); cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .plan-dia input[type=checkbox] { accent-color: var(--azul-m); width: 14px; height: 14px; }
+    .plan-dia:has(input:checked) { background: #EAF2FF; border-color: var(--azul-m); color: var(--azul); }
+    .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 8px; min-height: 16px; }
+    .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
+    .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .plan-table td:first-child { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--azul-m); width: 62px; }
+    .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); }
+    .plan-table td:nth-child(3) { font-size: 11px; white-space: normal; overflow: visible; }
+    .plan-table td:nth-child(4) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; overflow: visible; }
+    .plan-table td:nth-child(5) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; }
+    .plan-table th:first-child  { width: 62px; }
+    .plan-table th:nth-child(2) { width: 25%; }
+    .plan-table th:nth-child(3) { width: 22%; }
+    .plan-table th:nth-child(4) { width: 28%; }
+    .plan-table th:nth-child(5) { width: 18%; white-space: normal; }
+    .plan-table tr:hover td { background: var(--gris-f); }
+    .plan-empty { text-align: center; padding: 24px; color: var(--txt-s); font-size: 13px; font-style: italic; }
+
+        .calc-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
     .calc-overlay.on { display: block; }
     .calc-sheet {
       display: none; position: fixed; top: 0; left: 0; right: 0;
@@ -270,10 +312,18 @@
   </div>
 
   <div class="reshdr" id="reshdr">
-    <div class="rcod" id="rcod">-</div>
-    <div class="etiq-wrap" id="etiq-wrap"></div>
-    <button class="tog-btn" id="btn-tog">&#9660;&#9660;</button>
-    <div class="negocio-tabs" id="negocio-tabs"></div>
+    <div class="reshdr-row1">
+      <div class="rcod" id="rcod">-</div>
+      <div class="rinfo">
+        <div class="rrs" id="rrs"></div>
+        <div class="rdom" id="rdom"></div>
+      </div>
+      <button class="tog-btn" id="btn-tog" style="margin-left:auto">&#9660;&#9660;</button>
+    </div>
+    <div class="reshdr-row2">
+      <div class="etiq-wrap" id="etiq-wrap"></div>
+      <div class="negocio-tabs" id="negocio-tabs"></div>
+    </div>
   </div>
 
   <div class="segswrap" id="segswrap"></div>
@@ -291,7 +341,7 @@
         </div>
         <div class="calc-field" style="flex:1">
           <label class="calc-lbl">Descuento (%)</label>
-          <input class="calc-input" id="calc-dto" type="text" inputmode="decimal" placeholder="Ej: 7,5">
+          <input class="calc-input" id="calc-dto" type="text" inputmode="numeric" placeholder="Ej: 7,5">
         </div>
       </div>
       <div class="calc-detalle-row">
@@ -329,16 +379,63 @@
     </div>
   </div>
 
+  <!-- PLANIFICADOR -->
+  <div class="plan-overlay" id="plan-overlay"></div>
+  <div class="plan-sheet" id="plan-sheet">
+    <div class="plan-fixed">
+      <div style="display:flex;align-items:center;padding:10px 16px 6px">
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--azul);letter-spacing:-.3px">Planificador de visitas</div>
+        <button id="btn-plan-cerrar" style="background:none;border:none;font-size:20px;color:var(--txt-s);cursor:pointer;padding:4px 8px;line-height:1">&#10005;</button>
+      </div>
+      <div style="padding:0 16px">
+        <div class="plan-filters">
+          <div style="flex:1">
+            <div class="calc-lbl">Supervisor</div>
+            <select class="plan-select" id="plan-sup"><option value="">Todos</option></select>
+          </div>
+          <div style="flex:1">
+            <div class="calc-lbl">Vendedor</div>
+            <select class="plan-select" id="plan-vend"><option value="">Todos</option></select>
+          </div>
+        </div>
+        <div class="calc-lbl" style="margin-top:8px">Dias de visita</div>
+        <div class="plan-dias" id="plan-dias">
+          <label class="plan-dia"><input type="checkbox" value="LU"> LU</label>
+          <label class="plan-dia"><input type="checkbox" value="MA"> MA</label>
+          <label class="plan-dia"><input type="checkbox" value="MI"> MI</label>
+          <label class="plan-dia"><input type="checkbox" value="JU"> JU</label>
+          <label class="plan-dia"><input type="checkbox" value="VI"> VI</label>
+          <label class="plan-dia"><input type="checkbox" value="SA"> SA</label>
+          <label class="plan-dia"><input type="checkbox" value="DO"> DO</label>
+        </div>
+        <div class="plan-count" id="plan-count"></div>
+      </div>
+    </div>
+    <div class="plan-scroll">
+      <table class="plan-table" id="plan-table">
+        <thead><tr><th>PDV</th><th>Razon social</th><th>Etiquetas</th><th>Domicilio</th><th>Localidad</th></tr></thead>
+        <tbody id="plan-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="cfgwrap">
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="cfgtoggle" id="btn-cfg" style="flex:0 0 auto;width:40px;text-align:center;padding:8px">&#9881;</button>
       <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
-      <button class="crefresh" id="btn-unitario" title="Precio por bulto / unitario">#</button>
-      <button class="crefresh" id="btn-modo" title="Alternar PTR / PTC">PTR</button>
-      <button class="crefresh" id="btn-markup" title="Cambiar markup">30%</button>
-      <button class="crefresh" id="btn-calc" title="Calculadora de precios">&#247;</button>
+      <button class="crefresh" id="btn-unitario" title="Precio por bulto / unitario">Bt</button>
+      <span style="display:inline-flex;border:1.5px solid var(--gris-b);border-radius:10px;overflow:hidden;height:36px">
+        <button id="btn-modo" title="Alternar PTR / PTC" style="background:var(--gris-f);color:var(--txt-s);border:none;border-right:1.5px solid var(--gris-b);padding:0 10px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;height:36px;white-space:nowrap">PTR</button>
+        <button id="btn-markup" title="Cambiar markup" style="background:var(--gris-f);color:var(--txt-s);border:none;padding:0 10px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;height:36px;white-space:nowrap">30%</button>
+      </span>
+      <button class="crefresh" id="btn-calc" title="Calculadora de precios">Calc</button>
+      <button class="crefresh" id="btn-plan" title="Planificador">&#9432;</button>
     </div>
     <div class="cfgbody" id="cfgbody">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="font-size:13px;font-weight:700;color:var(--azul)">Configuracion</span>
+        <button class="csave" id="btn-save-top" style="width:auto;padding:5px 14px;font-size:11px;border-radius:8px">Guardar</button>
+      </div>
       <label class="clbl">Sheets de distribuidores</label>
       <div class="chint" style="margin-bottom:8px">ID del Sheet - string largo en la URL entre /d/ y /edit</div>
       <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cid0" placeholder="ID Sheet 1"><span class="sheet-nombre" id="snombre0">-</span><span class="sheet-active-dot" id="sdot0"></span></div>
@@ -357,6 +454,8 @@
       <input class="cinput" id="ctabetiqseg" placeholder="Etiq Segmento">
       <label class="clbl">Nombre pestana Etiq PDV</label>
       <input class="cinput" id="ctabetiqpdv" placeholder="Etiq PDV">
+      <label class="clbl">Nombre pestana Datos PDV</label>
+      <input class="cinput" id="ctabdatospdv" placeholder="Datos PDV">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
       <button class="csave" id="btn-save">Guardar</button>
@@ -370,6 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- STORE ------------------------------------------------------- */
   var STORE = 'qac6';
+
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
     pin:        saved.pin        || '1234',
@@ -381,6 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tabCfg:     saved.tabCfg     || 'Config',
     tabEtiqSeg: saved.tabEtiqSeg || 'Etiq Segmento',
     tabEtiqPdv: saved.tabEtiqPdv || 'Etiq PDV',
+    tabDatosPdv: saved.tabDatosPdv || 'Datos PDV',
     modoPTC:    saved.modoPTC    || false,
     markupIdx:  saved.markupIdx  !== undefined ? saved.markupIdx : 0
   };
@@ -391,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
-  var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {} };
+  var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {}, datosPdv: [], accionesIndex: null };
 
   /* -- PTR / PTC --------------------------------------------------- */
   var MARKUPS = [30, 35, 40];
@@ -403,19 +504,24 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem(STORE, JSON.stringify(cfg));
   }
   function syncPricingBtns() {
+    var btnU = document.getElementById('btn-unitario');
+    if (btnU) {
+      btnU.style.background  = 'var(--azul-m)';
+      btnU.style.color       = '#fff';
+      btnU.style.borderColor = 'var(--azul-m)';
+    }
     var btnModo = document.getElementById('btn-modo');
     var btnMkp  = document.getElementById('btn-markup');
     if (btnModo) {
       btnModo.textContent = cfg.modoPTC ? 'PTC' : 'PTR';
-      btnModo.style.background    = cfg.modoPTC ? 'var(--azul-m)' : '';
-      btnModo.style.color         = cfg.modoPTC ? '#fff' : '';
-      btnModo.style.borderColor   = cfg.modoPTC ? 'var(--azul-m)' : '';
+      btnModo.style.background  = 'var(--azul-m)';
+      btnModo.style.color       = '#fff';
     }
     if (btnMkp) {
       btnMkp.textContent = getMarkupLabel();
-      btnMkp.style.background  = cfg.modoPTC ? 'var(--azul-m)' : '';
-      btnMkp.style.color       = cfg.modoPTC ? '#fff' : '';
-      btnMkp.style.borderColor = cfg.modoPTC ? 'var(--azul-m)' : '';
+      btnMkp.style.background  = cfg.modoPTC ? 'var(--azul-m)' : 'var(--gris-f)';
+      btnMkp.style.color       = cfg.modoPTC ? '#fff' : 'var(--txt-s)';
+      btnMkp.style.borderLeft  = cfg.modoPTC ? '1.5px solid rgba(255,255,255,0.35)' : '1.5px solid var(--gris-b)';
     }
   }
 
@@ -471,6 +577,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('codinput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { doBuscar(); } });
   document.getElementById('btn-cfg').addEventListener('click', function() { document.getElementById('cfgbody').classList.toggle('open'); });
   document.getElementById('btn-save').addEventListener('click', doSave);
+  document.getElementById('btn-save-top').addEventListener('click', doSave);
   document.getElementById('btn-refresh').addEventListener('click', doRefresh);
   document.getElementById('btn-modo').addEventListener('click', function() {
     cfg.modoPTC = !cfg.modoPTC;
@@ -484,6 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bu.style.background  = 'var(--azul-m)';
         bu.style.color       = '#fff';
         bu.style.borderColor = 'var(--azul-m)';
+        bu.textContent = 'Un';
       }
     }
     refreshTablesInDOM();
@@ -524,6 +632,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('ctabcfg').value = cfg.tabCfg;
       document.getElementById('ctabetiqseg').value = cfg.tabEtiqSeg;
       document.getElementById('ctabetiqpdv').value = cfg.tabEtiqPdv;
+      document.getElementById('ctabdatospdv').value = cfg.tabDatosPdv;
       document.getElementById('cpin').value = cfg.pin;
       cargarCacheEstaticoSiNecesario();
       syncPricingBtns();
@@ -564,9 +673,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tabc)  { cfg.tabCfg = tabc; }
     if (tabes) { cfg.tabEtiqSeg = tabes; }
     if (tabep) { cfg.tabEtiqPdv = tabep; }
+    var tabdp = document.getElementById('ctabdatospdv').value.trim();
+    if (tabdp) { cfg.tabDatosPdv = tabdp; }
     if (pin.length === 4) { cfg.pin = pin; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
-    cache.ldp = null; cache.precios = null;
+    cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
     document.getElementById('cfgbody').classList.remove('open');
     updateSheetNombres();
     setCfgStatus('Guardado', 'ok');
@@ -650,7 +762,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('distri-dropdown').classList.remove('on');
     var chev = document.getElementById('tname-chevron');
     if (chev) { chev.innerHTML = '&#9660;'; }
-    cache.ldp = null; cache.precios = null;
+    cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
     resetUI();
     document.getElementById('codinput').value = '';
     cargarCacheEstaticoSiNecesario();
@@ -667,13 +780,17 @@ document.addEventListener('DOMContentLoaded', function() {
       fetchSheet(cfg.tabPrec),
       fetchSheet(cfg.tabCfg).catch(function() { return null; }),
       fetchSheetSafe(cfg.tabEtiqSeg),
-      fetchSheetSafe(cfg.tabEtiqPdv)
+      fetchSheetSafe(cfg.tabEtiqPdv),
+      fetchSheetSafe(cfg.tabDatosPdv),
+      fetchSheet(cfg.tab).catch(function() { return null; })
     ]).then(function(results) {
       cache.ldp     = parseLDP(results[0]);
       cache.precios = parsePreciosHoja(results[1]);
       if (results[2]) { parseConfig(results[2]); }
-      cache.etiqSeg = results[3] ? parseEtiqSegmento(results[3]) : {};
-      cache.etiqPdv = results[4] ? parseEtiqPdv(results[4]) : {};
+      cache.etiqSeg  = results[3] ? parseEtiqSegmento(results[3]) : {};
+      cache.etiqPdv  = results[4] ? parseEtiqPdv(results[4]) : {};
+      cache.datosPdv      = results[5] ? parseDatosPdv(results[5]) : [];
+      cache.accionesIndex = results[6] ? buildAccionesIndex(results[6]) : null;
       var nd = document.getElementById('tdistri');
       if (cache.nombre) {
         nd.textContent = cache.nombre;
@@ -690,7 +807,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var btn = document.getElementById('btn-refresh');
     btn.classList.add('spinning');
     btn.disabled = true;
-    cache.ldp = null; cache.precios = null;
+    cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
     cargarCacheEstatico().then(function() {
       btn.classList.remove('spinning');
       btn.disabled = false;
@@ -738,17 +856,28 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function parseCSV(txt) {
-    var rows = []; var lines = txt.trim().split('\n');
-    for (var li = 0; li < lines.length; li++) {
-      var cols = []; var cur = ''; var inQ = false; var line = lines[li];
-      for (var ci = 0; ci < line.length; ci++) {
-        var ch = line[ci];
-        if (ch === '"') { inQ = !inQ; }
-        else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-        else { cur += ch; }
+    /* Handles quoted fields with embedded newlines and commas */
+    var rows = []; var cols = []; var cur = ''; var inQ = false;
+    var s = txt.trim();
+    for (var ci = 0; ci < s.length; ci++) {
+      var ch = s[ci];
+      if (ch === '"') {
+        /* Check for escaped quote "" */
+        if (inQ && s[ci+1] === '"') { cur += '"'; ci++; }
+        else { inQ = !inQ; }
+      } else if (ch === ',' && !inQ) {
+        cols.push(cur.trim()); cur = '';
+      } else if ((ch === '\n' || (ch === '\r' && s[ci+1] === '\n')) && !inQ) {
+        if (ch === '\r') { ci++; } /* skip \r in \r\n */
+        cols.push(cur.trim()); rows.push(cols);
+        cols = []; cur = '';
+      } else {
+        if (!(ch === '\r')) { cur += ch; } /* skip bare \r */
       }
-      cols.push(cur.trim()); rows.push(cols);
     }
+    /* Last field and row */
+    cols.push(cur.trim());
+    if (cols.some(function(x) { return x !== ''; })) { rows.push(cols); }
     return rows;
   }
 
@@ -798,35 +927,118 @@ document.addEventListener('DOMContentLoaded', function() {
     return result;
   }
 
-  /* Etiq PDV: col A = PDV (numeric), col B+ = etiquetas */
+  /* Etiq PDV: multiple listado blocks side by side separated by empty cols
+     Format: PDV | Etiq | (empty) | PDV | Etiq | (empty) | PDV | Etiq ...
+     Detects all blocks automatically and merges into one PDV->etiquetas map */
   function parseEtiqPdv(txt) {
     if (!txt || txt.trim().charAt(0) === '<') { return {}; }
     var rows = parseCSV(txt);
     if (rows.length < 1) { return {}; }
-    /* Strict check: first row header must be pdv/cliente or first data must be numeric */
-    var hdr0 = (rows[0][0] || '').trim().toLowerCase();
-    /* Reject if looks like known sheet headers */
-    if (/^negocio$|^segmento$|^sku$|^neto$|^core$|^latones$/i.test(hdr0)) { return {}; }
-    /* Find first data row and check it's numeric */
-    var firstDataOk = false;
-    for (var i = 0; i < Math.min(rows.length, 5); i++) {
-      var v = (rows[i][0] || '').toString().trim().replace(/\.0+$/, '');
-      if (!v || /pdv|cliente|codigo/i.test(v)) { continue; }
-      firstDataOk = /^\d+$/.test(v);
-      break;
-    }
-    if (!firstDataOk) { return {}; }
-    var result = {};
-    for (var r = 0; r < rows.length; r++) {
-      var pdv = (rows[r][0] || '').toString().trim().replace(/\.0+$/, '');
-      if (!pdv || /pdv|cliente|codigo/i.test(pdv)) { continue; }
-      if (!/^\d+$/.test(pdv)) { continue; }
-      var etiquetas = [];
-      for (var c2 = 1; c2 < rows[r].length; c2++) {
-        var val = (rows[r][c2] || '').trim();
-        if (val) { etiquetas.push(val); }
+    var hdr = rows[0];
+    /* Find all (pdv_col, etiq_col) blocks by scanning header row */
+    var blocks = [];
+    var hi2 = 0;
+    while (hi2 < hdr.length) {
+      var hv = (hdr[hi2] || '').trim().toLowerCase();
+      /* A block starts with a header that looks like pdv/cod and next col is etiq/label */
+      if (/^pdv$|cod|cliente/.test(hv) && hi2 + 1 < hdr.length && (hdr[hi2+1] || '').trim()) {
+        blocks.push({ pdv: hi2, etiq: hi2 + 1 });
+        hi2 += 2;
+      } else {
+        hi2++;
       }
-      if (etiquetas.length > 0) { result[pdv] = etiquetas; }
+    }
+    /* Fallback: if no header found, try col 0+1 as first block */
+    if (blocks.length === 0) {
+      var firstDataOk = false;
+      for (var fi = 0; fi < Math.min(rows.length, 5); fi++) {
+        var fv = (rows[fi][0] || '').toString().trim().replace(/\.0+$/, '');
+        if (!fv || /pdv|cliente/i.test(fv)) { continue; }
+        firstDataOk = /^\d+$/.test(fv); break;
+      }
+      if (!firstDataOk) { return {}; }
+      blocks.push({ pdv: 0, etiq: 1 });
+    }
+    var result = {};
+    for (var r = 1; r < rows.length; r++) {
+      for (var bi = 0; bi < blocks.length; bi++) {
+        var pdv = (rows[r][blocks[bi].pdv] || '').toString().trim().replace(/\.0+$/, '');
+        var etiq = (rows[r][blocks[bi].etiq] || '').trim();
+        if (!pdv || !/^\d+$/.test(pdv) || !etiq) { continue; }
+        if (!result[pdv]) { result[pdv] = []; }
+        if (result[pdv].indexOf(etiq) === -1) { result[pdv].push(etiq); }
+      }
+    }
+    return result;
+  }
+
+  /* Acciones index: PDV -> array of segment labels for etiq matching in planificador */
+  function buildAccionesIndex(txt) {
+    var rows = parseCSV(txt);
+    if (rows.length < 2) { return null; }
+    var headers = rows[0];
+    var iCod = 0;
+    for (var i = 0; i < headers.length; i++) {
+      if (/^pdv$/.test((headers[i] || '').toLowerCase().trim())) { iCod = i; break; }
+    }
+    var segCols = [];
+    for (var j = 0; j < headers.length; j++) {
+      if (j !== iCod && (headers[j] || '').trim()) {
+        segCols.push({ i: j, label: headers[j].trim() });
+      }
+    }
+    var VACIAS2 = ['', '-', 'n/a', 'na', 'sin accion'];
+    var index = {};
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      var pdv = (row[iCod] || '').toString().trim().replace(/\.0+$/, '');
+      if (!pdv) { continue; }
+      var segs = [];
+      for (var k = 0; k < segCols.length; k++) {
+        var val = (row[segCols[k].i] || '').trim();
+        if (VACIAS2.indexOf(val.toLowerCase()) === -1) {
+          segs.push(segCols[k].label.toLowerCase());
+        }
+      }
+      if (segs.length > 0) { index[pdv] = segs; }
+    }
+    return index;
+  }
+
+  /* Datos PDV: PDV | Razon social | Domicilio | Supervisor | Vendedor | Frecuencia */
+  function parseDatosPdv(txt) {
+    if (!txt || txt.trim().charAt(0) === '<') { return []; }
+    var rows = parseCSV(txt);
+    if (rows.length < 2) { return []; }
+    var hdr = rows[0].map(function(h) { return (h || '').toLowerCase().trim(); });
+    /* Detect columns */
+    var iPdv = 0; var iRs = 1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5;
+    for (var hi = 0; hi < hdr.length; hi++) {
+      if (/^pdv$|^cod/.test(hdr[hi]))                      { iPdv  = hi; }
+      if (/razon|social|nombre/.test(hdr[hi]))             { iRs   = hi; }
+      if (/domicilio|direcci|address/.test(hdr[hi]))       { iDom  = hi; }
+      if (/localidad|ciudad|city/.test(hdr[hi]))            { iLoc  = hi; }
+      if (/supervisor/.test(hdr[hi]))                      { iSup  = hi; }
+      if (/vendedor|promotor/.test(hdr[hi]))               { iVend = hi; }
+      if (/frecuencia|dias|freq/.test(hdr[hi]))            { iFrec = hi; }
+    }
+    /* Validate: first data row col 0 must be numeric PDV */
+    var firstVal = (rows[1][iPdv] || '').toString().trim().replace(/\.0+$/, '');
+    if (!/^\d+$/.test(firstVal)) { return []; }
+    var result = [];
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      var pdv = (row[iPdv] || '').toString().trim().replace(/\.0+$/, '');
+      if (!pdv || !/^\d+$/.test(pdv)) { continue; }
+      result.push({
+        pdv:  pdv,
+        rs:   (row[iRs]   || '').trim(),
+        dom:  (row[iDom]  || '').trim(),
+        loc:  iLoc >= 0 ? (row[iLoc] || '').trim() : '',
+        sup:  (row[iSup]  || '').trim(),
+        vend: (row[iVend] || '').trim(),
+        frec: (row[iFrec] || '').trim().toUpperCase()
+      });
     }
     return result;
   }
@@ -843,7 +1055,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (/neto/.test(hdr[hi]))                                    { iNeto = hi; }
       if (/interno/.test(hdr[hi]))                                 { iInt  = hi; }
     }
-    console.log('LDP cols: iSku=' + iSku + ' iDet=' + iDet + ' iUxb=' + iUxb + ' iNeto=' + iNeto + ' iInt=' + iInt);
     var result = {};
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
@@ -852,7 +1063,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var neto  = parseFloat((row[iNeto] || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var inter = parseFloat((row[iInt]  || '0').toString().replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
       var uxbVal = parseFloat((row[iUxb] || '1').toString().replace(',','.')) || 1;
-      if (sku === '7634' || uxbVal !== 1) { console.log('LDP SKU=' + sku + ' iUxb=' + iUxb + ' raw=' + row[iUxb] + ' uxb=' + uxbVal); }
       result[sku] = { detalle: (row[iDet] || '').trim(), neto: neto, internos: inter, uxb: uxbVal };
     }
     return result;
@@ -940,25 +1150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Obtener SKUs del segmento */
     var segSkus = null;
-    if (precios[segKey]) {
-      segSkus = precios[segKey];
-    } else {
-      /* Match parcial */
-      var keys = Object.keys(precios);
-      for (var k = 0; k < keys.length; k++) {
-        if (keys[k].indexOf(segKey) !== -1 || segKey.indexOf(keys[k]) !== -1) {
-          segSkus = precios[keys[k]]; break;
-        }
-      }
-      if (!segSkus) {
-        var fw = segKey.split(' ')[0];
-        for (var k2 = 0; k2 < keys.length; k2++) {
-          if (keys[k2] === fw || keys[k2].indexOf(fw) === 0) {
-            segSkus = precios[keys[k2]]; break;
-          }
-        }
-      }
-    }
+    segSkus = precios[segKey] || null;
     if (!segSkus || segSkus.length === 0) {
       return '<div class="no-precios">Sin precios asignados para este segmento.</div>';
     }
@@ -990,8 +1182,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Construir tabla */
     var modoLabel = cfg.modoPTC ? ('PTC +' + getMarkupLabel()) : 'PTR';
-    var precioLabel = esUnitario ? ('x unidad ' + modoLabel) : ('x bulto ' + modoLabel);
-    console.log('buildPriceTable seg=' + segKey + ' esUnitario=' + esUnitario + ' precioUnitario_global=' + precioUnitario);
+    var precioLabel = esUnitario ? ('x un ' + modoLabel) : ('x bt ' + modoLabel);
     var html = '<table class="price-table"><thead><tr>';
     html += '<th>SKU</th><th>Producto</th>';
     for (var h = 0; h < colHeaders.length; h++) {
@@ -1003,7 +1194,6 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<tr><td>' + escHtml(pr.sku) + '</td><td>' + escHtml(pr.detalle) + '</td>';
       for (var cc = 0; cc < colHeaders.length; cc++) {
         var precioBulto = calcPrecio(pr.neto, pr.internos, colHeaders[cc].dto);
-        console.log('SKU=' + pr.sku + ' uxb=' + pr.uxb + ' bulto=' + precioBulto);
         var precioFinal = esUnitario ? precioBulto / (pr.uxb || 1) : precioBulto;
         if (cfg.modoPTC) { precioFinal = applyPTC(precioFinal); }
         var precio = precioFinal;
@@ -1044,8 +1234,8 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var k = 0; k < segCols.length; k++) {
       var rawLabel = segCols[k].raw;
       var detalle  = (fila[segCols[k].i] || '').trim();
-      /* Check if this column is a numbered duplicate: ends with " 2", " 3", etc. */
-      var baseLabel = rawLabel.replace(/\s+\d+$/, '').trim();
+      /* Check if this column is a numbered duplicate: ends with " 2"..." 9" (single digit only) */
+      var baseLabel = rawLabel.replace(/\s+[2-9]$/, '').trim();
       var isExtra   = baseLabel !== rawLabel; /* true if " 2" or " 3" was stripped */
       var useLabel  = isExtra ? baseLabel : rawLabel;
       var useKey    = useLabel.toLowerCase();
@@ -1140,6 +1330,15 @@ document.addEventListener('DOMContentLoaded', function() {
     hideEst();
     document.getElementById('reshdr').classList.add('on','fade-in');
     document.getElementById('rcod').textContent = codigo;
+    /* Razon social y domicilio desde Datos PDV */
+    var datoCliente = null;
+    if (cache.datosPdv && cache.datosPdv.length > 0) {
+      for (var dp = 0; dp < cache.datosPdv.length; dp++) {
+        if (cache.datosPdv[dp].pdv === codigo) { datoCliente = cache.datosPdv[dp]; break; }
+      }
+    }
+    document.getElementById('rrs').textContent  = datoCliente ? datoCliente.rs  : '';
+    document.getElementById('rdom').textContent = datoCliente ? datoCliente.dom : '';
     /* Render etiquetas */
     var etiqHtml = '';
     /* PDV etiquetas first */
@@ -1176,15 +1375,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var tienePrecios = false;
       if (cache.precios) {
         if (cache.precios[segKey]) { tienePrecios = true; }
-        else {
-          var ks = Object.keys(cache.precios);
-          for (var ki = 0; ki < ks.length; ki++) {
-            if (ks[ki] === '_order' || ks[ki] === '_negocios' || ks[ki] === '_segNeg') { continue; }
-            if (ks[ki].indexOf(segKey) !== -1 || segKey.indexOf(ks[ki]) !== -1 || segKey.split(' ')[0] === ks[ki]) {
-              tienePrecios = true; break;
-            }
-          }
-        }
       }
       acciones[si].hasPrices = tienePrecios;
       if (tienePrecios) { conPrecios.push(acciones[si]); }
@@ -1196,16 +1386,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var ia = preciosOrder.indexOf(a.key);
       var ib = preciosOrder.indexOf(b.key);
       /* If not found directly, try partial match */
-      if (ia < 0) {
-        for (var pi = 0; pi < preciosOrder.length; pi++) {
-          if (preciosOrder[pi].indexOf(a.key) !== -1 || a.key.indexOf(preciosOrder[pi]) !== -1) { ia = pi; break; }
-        }
-      }
-      if (ib < 0) {
-        for (var pj = 0; pj < preciosOrder.length; pj++) {
-          if (preciosOrder[pj].indexOf(b.key) !== -1 || b.key.indexOf(preciosOrder[pj]) !== -1) { ib = pj; break; }
-        }
-      }
+      /* exact match only - unmatched go to end */
       return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
     });
     acciones = conPrecios.concat(sinPrecios);
@@ -1282,7 +1463,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (savedPills.length > 0) { restoreOpenPills(savedPills); }
     }).catch(function(e) {
       showEst('error');
-      if (/fetch|Failed|Load|network/i.test(e.message)) {
+      if (!cfg.sheetId) {
+        document.getElementById('etitle').textContent = 'Sheet no configurado';
+        document.getElementById('esub').textContent = '1. Toca el icono \u2699 abajo  2. Pega el ID del Sheet (el string largo entre /d/ y /edit en la URL)  3. Toca Guardar  4. Volve a buscar.';
+      } else if (/fetch|Failed|Load|network/i.test(e.message)) {
         document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
         document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
       } else {
@@ -1324,6 +1508,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
     document.getElementById('etiq-wrap').innerHTML = '';
+    document.getElementById('rrs').textContent = '';
+    document.getElementById('rdom').textContent = '';
     allOpen = false;
     negocioActivo = '';
     segColorMap = {}; colorCounter = 1;
@@ -1331,19 +1517,20 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Sync unitario button visual state */
     var bu = document.getElementById('btn-unitario');
     if (bu) {
-      bu.style.background = precioUnitario ? 'var(--azul-m)' : '';
-      bu.style.color = precioUnitario ? '#fff' : '';
-      bu.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
+      bu.style.background = 'var(--azul-m)';
+      bu.style.color = '#fff';
+      bu.style.borderColor = 'var(--azul-m)';
+      bu.textContent = precioUnitario ? 'Un' : 'Bt';
     }
   }
 
   document.getElementById('btn-unitario').addEventListener('click', function() {
     precioUnitario = !precioUnitario;
-    console.log('# clicked, precioUnitario now=' + precioUnitario);
     var btn = document.getElementById('btn-unitario');
-    btn.style.background = precioUnitario ? 'var(--azul-m)' : '';
-    btn.style.color = precioUnitario ? '#fff' : '';
-    btn.style.borderColor = precioUnitario ? 'var(--azul-m)' : '';
+    btn.style.background = 'var(--azul-m)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--azul-m)';
+    btn.textContent = precioUnitario ? 'Un' : 'Bt';
     refreshTablesInDOM();
   });
 
@@ -1407,6 +1594,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('calc-val-bulto').textContent = '-';
       document.getElementById('calc-val-unit').textContent  = '-';
       document.getElementById('calc-val-total').textContent = '-';
+      document.getElementById('calc-val-ptc').textContent   = '-';
       return;
     }
     /* Usar override de distri si esta activo */
@@ -1490,6 +1678,170 @@ document.addEventListener('DOMContentLoaded', function() {
       var chev = document.getElementById('tname-chevron');
       if (chev) { chev.innerHTML = '&#9660;'; }
     }
+  });
+
+  /* -- PLANIFICADOR ----------------------------------------------- */
+  function planAbrir() {
+    if (!cache.datosPdv || cache.datosPdv.length === 0) {
+      alert('No hay datos de PDV cargados. Verifica que exista la hoja "' + cfg.tabDatosPdv + '" en el Sheet y toca Actualizar.');
+      return;
+    }
+    planPoblarFiltros();
+    planFiltrar();
+    var sh = document.getElementById('plan-sheet');
+    sh.classList.add('on');
+    setTimeout(function() { sh.classList.add('open'); }, 10);
+    document.getElementById('plan-overlay').classList.add('on');
+  }
+
+  function planCerrar() {
+    var sh = document.getElementById('plan-sheet');
+    sh.classList.remove('open');
+    document.getElementById('plan-overlay').classList.remove('on');
+    setTimeout(function() { sh.classList.remove('on'); }, 320);
+  }
+
+  function planPoblarFiltros() {
+    var datos = cache.datosPdv || [];
+    var sups  = {}; var vends = {};
+    for (var i = 0; i < datos.length; i++) {
+      if (datos[i].sup)  { sups[datos[i].sup]   = 1; }
+      if (datos[i].vend) { vends[datos[i].vend]  = 1; }
+    }
+    var selSup  = document.getElementById('plan-sup');
+    var selVend = document.getElementById('plan-vend');
+    var curSup  = selSup.value;
+    var curVend = selVend.value;
+    /* Rebuild supervisor options */
+    selSup.innerHTML = '<option value="">Todos</option>';
+    Object.keys(sups).sort().forEach(function(s) {
+      var o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      if (s === curSup) { o.selected = true; }
+      selSup.appendChild(o);
+    });
+    /* Rebuild vendedor filtered by supervisor */
+    planActualizarVendedores();
+  }
+
+  function planActualizarVendedores() {
+    var datos = cache.datosPdv || [];
+    var sup   = document.getElementById('plan-sup').value;
+    var selVend = document.getElementById('plan-vend');
+    var curVend = selVend.value;
+    var vends = {};
+    for (var i = 0; i < datos.length; i++) {
+      if (!sup || datos[i].sup === sup) {
+        if (datos[i].vend) { vends[datos[i].vend] = 1; }
+      }
+    }
+    selVend.innerHTML = '<option value="">Todos</option>';
+    Object.keys(vends).sort().forEach(function(v) {
+      var o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      if (v === curVend) { o.selected = true; }
+      selVend.appendChild(o);
+    });
+    planFiltrar();
+  }
+
+  function planGetDiasSeleccionados() {
+    var cbs = document.querySelectorAll('#plan-dias input[type=checkbox]');
+    var dias = [];
+    for (var i = 0; i < cbs.length; i++) {
+      if (cbs[i].checked) { dias.push(cbs[i].value); }
+    }
+    return dias;
+  }
+
+  function planFiltrar() {
+    var datos = cache.datosPdv || [];
+    var sup   = document.getElementById('plan-sup').value;
+    var vend  = document.getElementById('plan-vend').value;
+    var dias  = planGetDiasSeleccionados();
+
+    var filtrados = datos.filter(function(d) {
+      if (sup  && d.sup  !== sup)  { return false; }
+      if (vend && d.vend !== vend) { return false; }
+      if (dias.length > 0) {
+        /* OR: at least one selected day appears in frecuencia */
+        var frec = d.frec.toUpperCase();
+        var match = false;
+        for (var di = 0; di < dias.length; di++) {
+          /* Match whole word to avoid LU matching inside another word */
+          if (new RegExp('(^|[^A-Z])' + dias[di] + '($|[^A-Z])').test(frec) || frec === dias[di]) {
+            match = true; break;
+          }
+        }
+        if (!match) { return false; }
+      }
+      return true;
+    });
+
+    /* Update count */
+    var countEl = document.getElementById('plan-count');
+    countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : 'Sin resultados';
+
+    /* Build table rows */
+    var tbody = document.getElementById('plan-tbody');
+    if (filtrados.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="plan-empty">Sin PDVs para los filtros seleccionados</td></tr>';
+      return;
+    }
+
+    var etiqSeg = cache.etiqSeg || {};
+    var etiqPdv = cache.etiqPdv || {};
+
+    var html = '';
+    for (var fi = 0; fi < filtrados.length; fi++) {
+      var d = filtrados[fi];
+      /* Build etiquetas */
+      var eHtml = '';
+      /* PDV etiquetas */
+      var pe = etiqPdv[d.pdv] || [];
+      for (var pi = 0; pi < pe.length; pi++) {
+        eHtml += '<span class="etiq-pdv" style="font-size:10px;padding:2px 8px">' + escHtml(pe[pi]) + '</span> ';
+      }
+      /* Segment etiquetas via accionesIndex */
+      var segsForPdv = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+      var shownSeg = {};
+      for (var si2 = 0; si2 < segsForPdv.length; si2++) {
+        var sk2 = segsForPdv[si2];
+        if (etiqSeg[sk2] && !shownSeg[etiqSeg[sk2]]) {
+          eHtml += '<span class="etiq-seg" style="font-size:10px;padding:2px 8px">' + escHtml(etiqSeg[sk2]) + '</span> ';
+          shownSeg[etiqSeg[sk2]] = true;
+        }
+      }
+      html += '<tr>';
+      html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;text-decoration:underline">' + escHtml(d.pdv) + '</span></td>';
+      html += '<td>' + escHtml(d.rs) + '</td>';
+      html += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
+      html += '<td>' + escHtml(d.dom) + '</td>';
+      html += '<td>' + escHtml(d.loc) + '</td>';
+      html += '</tr>';
+    }
+    tbody.innerHTML = html;
+  }
+
+  document.getElementById('plan-tbody').addEventListener('click', function(e) {
+    var link = e.target.closest('.plan-pdv-link');
+    if (!link) { return; }
+    var pdv = link.getAttribute('data-pdv');
+    planCerrar();
+    setTimeout(function() {
+      document.getElementById('codinput').value = pdv;
+      doBuscar(false);
+    }, 340); /* wait for planificador close animation */
+  });
+  document.getElementById('btn-plan').addEventListener('click', planAbrir);
+  document.getElementById('plan-overlay').addEventListener('click', planCerrar);
+  document.getElementById('btn-plan-cerrar').addEventListener('click', planCerrar);
+  document.getElementById('plan-sup').addEventListener('change', function() {
+    planActualizarVendedores();
+  });
+  document.getElementById('plan-vend').addEventListener('change', planFiltrar);
+  document.querySelectorAll('#plan-dias input[type=checkbox]').forEach(function(cb) {
+    cb.addEventListener('change', planFiltrar);
   });
 
   document.getElementById('p0').focus();
