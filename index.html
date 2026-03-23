@@ -48,7 +48,26 @@
     .tsub { color: rgba(255,255,255,.4); font-size: 11px; margin-top: 5px; }
 
     /* SEARCH */
-    .swrap { padding: 20px 16px 0; }
+    .swrap { padding: 20px 16px 0; position: relative; }
+    /* Search suggestions */
+    .ssugg { position: absolute; left: 16px; right: 72px; background: #fff; border: 2px solid var(--azul-m); border-top: none; border-radius: 0 0 14px 14px; z-index: 30; box-shadow: 0 4px 20px rgba(0,31,91,.15); overflow: hidden; display: none; }
+    .ssugg.on { display: block; }
+    /* When open, remove bottom radius from input and its focus ring to merge visually */
+    .sinput.sugg-open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-color: var(--azul-m); box-shadow: 3px 0 0 3px rgba(0,61,165,.09), -3px 0 0 3px rgba(0,61,165,.09), 0 -3px 0 3px rgba(0,61,165,.09); }
+    .ssugg-item { padding: 12px 18px; cursor: pointer; border-top: 1px solid var(--gris-f); display: flex; align-items: center; gap: 10px; transition: background .1s; }
+    .ssugg-item:first-child { border-top: none; }
+    .ssugg-item:hover { background: var(--gris-f); }
+    .ssugg-item:active { background: var(--gris-b); }
+    .ssugg-cod { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; color: var(--azul); flex-shrink: 0; }
+    .ssugg-rs  { font-size: 12px; color: var(--txt-s); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* History chips */
+    .shist { padding: 8px 16px 0; display: none; flex-wrap: wrap; gap: 6px; }
+    .shist.on { display: flex; }
+    .shist-chip { background: #fff; border: 1.5px solid var(--gris-b); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul-m); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .15s; }
+    .shist-chip:active { background: var(--gris-f); }
+    .shist-chip-rs { font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--txt-s); font-size: 11px; }
+    /* Offline badge */
+    .offline-badge { display: none; background: #FFF3CD; color: #7A5500; border: 1.5px solid #F5C842; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; margin-left: 6px; }
     .slbl { font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 9px; }
     .srow { display: flex; gap: 10px; }
     .sinput { flex: 1; min-width: 0; background: #fff; border: 2px solid var(--gris-b); border-radius: 14px; padding: 15px 18px; font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); outline: none; letter-spacing: 2px; transition: all .18s; -webkit-appearance: none; }
@@ -205,7 +224,7 @@
     .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
     .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .plan-table td:first-child { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--azul-m); width: 62px; }
-    .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); }
+    .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); white-space: normal; word-break: break-word; overflow: visible; }
     .plan-table td:nth-child(3) { font-size: 11px; white-space: normal; overflow: visible; }
     .plan-table td:nth-child(4) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; overflow: visible; }
     .plan-table td:nth-child(5) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; }
@@ -285,16 +304,17 @@
       </div>
       <button class="texit" id="btn-salir">Salir</button>
     </div>
-    <div class="tsub">Consulta las acciones activas de tu cliente</div>
   </div>
 
   <div class="swrap">
     <div class="slbl">Codigo de cliente (PDV)</div>
     <div class="srow">
-      <input class="sinput" id="codinput" type="text" inputmode="numeric" placeholder="Ej: 3485" autocomplete="off">
+      <input class="sinput" id="codinput" type="text" inputmode="text" placeholder="Ej: 3485 o nombre..." autocomplete="off">
       <button class="sbtn" id="btn-buscar">&#128269;</button>
     </div>
+    <div class="ssugg" id="ssugg"></div>
   </div>
+  <div class="shist" id="shist"></div>
 
   <div class="estado eloading" id="st-loading">
     <div class="spinner"></div>
@@ -316,8 +336,12 @@
       <div class="rcod" id="rcod">-</div>
       <div class="rinfo">
         <div class="rrs" id="rrs"></div>
-        <div class="rdom" id="rdom"></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="rdom" id="rdom"></div>
+          <a id="btn-maps" href="#" target="_blank" style="display:none;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-decoration:none;white-space:nowrap">&#128205; Maps</a>
+        </div>
       </div>
+      <span class="offline-badge" id="offline-badge">Sin conexion</span>
       <button class="tog-btn" id="btn-tog" style="margin-left:auto">&#9660;&#9660;</button>
     </div>
     <div class="reshdr-row2">
@@ -469,6 +493,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- STORE ------------------------------------------------------- */
   var STORE = 'qac6';
+  var STORE_HIST  = 'qac6_hist';   /* last 5 searches */
+  var STORE_ACCS   = 'qac6_accs';   /* offline acciones cache */
+  var STORE_STATIC = 'qac6_static'; /* offline LDP+Precios+Config cache */
+  var MAX_HIST    = 5;
+  var MAX_OFFLINE = 30;             /* max PDVs cached for offline */
+  var TODAY       = new Date().toDateString();
+
 
   var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
   var cfg = {
@@ -493,6 +524,148 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
   var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {}, datosPdv: [], accionesIndex: null };
+
+  /* -- HISTORIAL --------------------------------------------------- */
+  function histLoad() {
+    try { return JSON.parse(localStorage.getItem(STORE_HIST) || '[]'); } catch(e) { return []; }
+  }
+  function histSave(codigo) {
+    var hist = histLoad();
+    /* Remove if already exists, then prepend */
+    hist = hist.filter(function(h) { return h !== codigo; });
+    hist.unshift(codigo);
+    if (hist.length > MAX_HIST) { hist = hist.slice(0, MAX_HIST); }
+    localStorage.setItem(STORE_HIST, JSON.stringify(hist));
+  }
+  function histRender() {
+    var hist = histLoad();
+    var wrap = document.getElementById('shist');
+    if (!wrap) { return; }
+    if (hist.length === 0) { wrap.classList.remove('on'); return; }
+    var html = '';
+    for (var hi = 0; hi < hist.length; hi++) {
+      var cod = hist[hi];
+      var rs = '';
+      if (cache.datosPdv) {
+        for (var di = 0; di < cache.datosPdv.length; di++) {
+          if (cache.datosPdv[di].pdv === cod) { rs = cache.datosPdv[di].rs; break; }
+        }
+      }
+      html += '<span class="shist-chip" data-cod="' + escHtml(cod) + '">' + escHtml(cod);
+      if (rs) { html += ' <span class="shist-chip-rs">' + escHtml(rs) + '</span>'; }
+      html += '</span>';
+    }
+    wrap.innerHTML = html;
+    wrap.classList.add('on');
+    var chips = wrap.querySelectorAll('.shist-chip');
+    for (var ci = 0; ci < chips.length; ci++) {
+      chips[ci].addEventListener('click', function() {
+        document.getElementById('codinput').value = this.getAttribute('data-cod');
+        hidesugg();
+        doBuscar(false);
+      });
+    }
+  }
+
+  /* -- OFFLINE CACHE ----------------------------------------------- */
+  function offlineSave(codigo, rawAcciones) {
+    try {
+      var store = JSON.parse(localStorage.getItem(STORE_ACCS) || '{}');
+      store[codigo] = { ts: Date.now(), raw: rawAcciones };
+      /* Keep only MAX_OFFLINE most recent */
+      var keys = Object.keys(store);
+      if (keys.length > MAX_OFFLINE) {
+        keys.sort(function(a,b) { return store[a].ts - store[b].ts; });
+        delete store[keys[0]];
+      }
+      localStorage.setItem(STORE_ACCS, JSON.stringify(store));
+    } catch(e) {}
+  }
+  function offlineSaveStatic(rawLdp, rawPrec, rawCfg) {
+    try {
+      localStorage.setItem(STORE_STATIC, JSON.stringify({
+        ts: Date.now(), ldp: rawLdp, prec: rawPrec, cfg: rawCfg
+      }));
+    } catch(e) {}
+  }
+  function offlineLoadStatic() {
+    try {
+      var s = localStorage.getItem(STORE_STATIC);
+      return s ? JSON.parse(s) : null;
+    } catch(e) { return null; }
+  }
+  function offlineRestoreStatic() {
+    var s = offlineLoadStatic();
+    if (!s) { return false; }
+    try {
+      cache.ldp     = parseLDP(s.ldp);
+      cache.precios = parsePreciosHoja(s.prec);
+      if (s.cfg) { parseConfig(s.cfg); }
+      return true;
+    } catch(e) { return false; }
+  }
+  function offlineLoad(codigo) {
+    try {
+      var store = JSON.parse(localStorage.getItem(STORE_ACCS) || '{}');
+      return store[codigo] ? store[codigo] : null;
+    } catch(e) { return null; }
+  }
+  function offlineBadgeShow(ts) {
+    var el = document.getElementById('offline-badge');
+    if (!el) { return; }
+    var d = new Date(ts);
+    var hh = ('0'+d.getHours()).slice(-2);
+    var mm = ('0'+d.getMinutes()).slice(-2);
+    el.textContent = 'Sin conexion - ' + hh + ':' + mm;
+    el.style.display = 'inline-block';
+  }
+  function offlineBadgeHide() {
+    var el = document.getElementById('offline-badge');
+    if (el) { el.style.display = 'none'; }
+  }
+
+  /* -- SEARCH SUGGESTIONS ------------------------------------------ */
+  function hidesugg() {
+    var s = document.getElementById('ssugg');
+    if (s) { s.classList.remove('on'); s.innerHTML = ''; }
+    var inp = document.getElementById('codinput');
+    if (inp) { inp.classList.remove('sugg-open'); }
+  }
+  function showSuggestions(q) {
+    var s = document.getElementById('ssugg');
+    if (!s) { return; }
+    if (!q || !cache.datosPdv || cache.datosPdv.length === 0) { hidesugg(); return; }
+    var qLow = q.toLowerCase();
+    var isNum = /^\d+$/.test(q);
+    var matches = [];
+    for (var di = 0; di < cache.datosPdv.length && matches.length < 5; di++) {
+      var d = cache.datosPdv[di];
+      var matchesPdv = isNum ? d.pdv.indexOf(q) === 0 : false;
+      var matchesRs  = !isNum ? d.rs.toLowerCase().indexOf(qLow) !== -1 : false;
+      if (matchesPdv || matchesRs) { matches.push(d); }
+    }
+    if (matches.length === 0) { hidesugg(); return; }
+    var html = '';
+    for (var mi = 0; mi < matches.length; mi++) {
+      var m = matches[mi];
+      html += '<div class="ssugg-item" data-cod="' + escHtml(m.pdv) + '">';
+      html += '<span class="ssugg-cod">' + escHtml(m.pdv) + '</span>';
+      html += '<span class="ssugg-rs">' + escHtml(m.rs) + '</span>';
+      html += '</div>';
+    }
+    s.innerHTML = html;
+    s.classList.add('on');
+    document.getElementById('codinput').classList.add('sugg-open');
+    var items = s.querySelectorAll('.ssugg-item');
+    for (var ii = 0; ii < items.length; ii++) {
+      items[ii].addEventListener('click', function() {
+        document.getElementById('codinput').value = this.getAttribute('data-cod');
+        hidesugg();
+        doBuscar(false);
+      });
+    }
+  }
+
 
   /* -- PTR / PTC --------------------------------------------------- */
   var MARKUPS = [30, 35, 40];
@@ -573,8 +746,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('btn-entrar').addEventListener('click', doLogin);
   document.getElementById('btn-salir').addEventListener('click', doLogout);
-  document.getElementById('btn-buscar').addEventListener('click', doBuscar);
-  document.getElementById('codinput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { doBuscar(); } });
+  document.getElementById('btn-buscar').addEventListener('click', function() { doBuscar(false); });
+  document.getElementById('codinput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { doBuscar(false); } });
+  document.getElementById('codinput').addEventListener('input', function() {
+    var q = this.value.trim();
+    var hist = document.getElementById('shist');
+    if (hist) { hist.classList.toggle('on', q.length === 0 && histLoad().length > 0); }
+    if (q.length >= 2) { showSuggestions(q); } else { hidesugg(); }
+  });
+  document.getElementById('codinput').addEventListener('focus', function() {
+    if (!this.value.trim()) { histRender(); }
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.swrap') && !e.target.closest('.shist')) { hidesugg(); }
+  });
   document.getElementById('btn-cfg').addEventListener('click', function() { document.getElementById('cfgbody').classList.toggle('open'); });
   document.getElementById('btn-save').addEventListener('click', doSave);
   document.getElementById('btn-save-top').addEventListener('click', doSave);
@@ -636,6 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('cpin').value = cfg.pin;
       cargarCacheEstaticoSiNecesario();
       syncPricingBtns();
+      histRender();
       setTimeout(function() { document.getElementById('codinput').focus(); }, 150);
     } else {
       var err = document.getElementById('lerr');
@@ -787,6 +973,8 @@ document.addEventListener('DOMContentLoaded', function() {
       cache.ldp     = parseLDP(results[0]);
       cache.precios = parsePreciosHoja(results[1]);
       if (results[2]) { parseConfig(results[2]); }
+      /* Save raw CSVs for offline use */
+      offlineSaveStatic(results[0], results[1], results[2] || '');
       cache.etiqSeg  = results[3] ? parseEtiqSegmento(results[3]) : {};
       cache.etiqPdv  = results[4] ? parseEtiqPdv(results[4]) : {};
       cache.datosPdv      = results[5] ? parseDatosPdv(results[5]) : [];
@@ -828,8 +1016,10 @@ document.addEventListener('DOMContentLoaded', function() {
               '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(tabName);
     return fetch(url, { cache: 'no-store' }).then(function(res) {
       if (!res.ok) { throw new Error('HTTP ' + res.status); }
-      return res.text();
-    }).then(function(txt) {
+      /* Force UTF-8 decode to avoid browser misinterpreting charset */
+      return res.arrayBuffer();
+    }).then(function(buf) {
+      var txt = new TextDecoder('utf-8').decode(buf);
       if (txt.trim().charAt(0) === '<') { throw new Error('Sheet no publico o ID incorrecto.'); }
       return txt;
     });
@@ -935,25 +1125,36 @@ document.addEventListener('DOMContentLoaded', function() {
     var rows = parseCSV(txt);
     if (rows.length < 1) { return {}; }
     var hdr = rows[0];
-    /* Find all (pdv_col, etiq_col) blocks by scanning header row */
+    /* Reject if too many columns - Acciones/Precios/LDP have many more than 2 per block */
+    var nonEmpty = 0;
+    for (var hi3 = 0; hi3 < hdr.length; hi3++) { if ((hdr[hi3] || '').trim()) { nonEmpty++; } }
+    /* Each block is PDV+Etiq = 2 cols, separated by empty. Max ~10 blocks = 20 non-empty cols.
+       Acciones has 15+ non-etiq cols so reject if avg cols per block > 3 */
+    /* Simpler rule: reject if any non-empty col header doesnt match pdv/etiq/label/tag/empty pattern */
     var blocks = [];
     var hi2 = 0;
     while (hi2 < hdr.length) {
       var hv = (hdr[hi2] || '').trim().toLowerCase();
-      /* A block starts with a header that looks like pdv/cod and next col is etiq/label */
-      if (/^pdv$|cod|cliente/.test(hv) && hi2 + 1 < hdr.length && (hdr[hi2+1] || '').trim()) {
-        blocks.push({ pdv: hi2, etiq: hi2 + 1 });
-        hi2 += 2;
+      if (/^pdv$|^cod/.test(hv) && hi2 + 1 < hdr.length) {
+        var nextHv = (hdr[hi2+1] || '').trim().toLowerCase();
+        /* Next column must look like an etiqueta column, not a segment name */
+        if (nextHv && /etiq|label|tag|etiqueta/.test(nextHv)) {
+          blocks.push({ pdv: hi2, etiq: hi2 + 1 });
+          hi2 += 2;
+        } else {
+          hi2++;
+        }
       } else {
         hi2++;
       }
     }
-    /* Fallback: if no header found, try col 0+1 as first block */
+    /* Fallback: if no labeled blocks found, check if it's a simple 2-col sheet */
     if (blocks.length === 0) {
+      if (nonEmpty > 4) { return {}; } /* too many cols for a simple etiq sheet */
       var firstDataOk = false;
       for (var fi = 0; fi < Math.min(rows.length, 5); fi++) {
         var fv = (rows[fi][0] || '').toString().trim().replace(/\.0+$/, '');
-        if (!fv || /pdv|cliente/i.test(fv)) { continue; }
+        if (!fv || /pdv|cliente|etiq/i.test(fv)) { continue; }
         firstDataOk = /^\d+$/.test(fv); break;
       }
       if (!firstDataOk) { return {}; }
@@ -1339,6 +1540,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('rrs').textContent  = datoCliente ? datoCliente.rs  : '';
     document.getElementById('rdom').textContent = datoCliente ? datoCliente.dom : '';
+    var btnMaps = document.getElementById('btn-maps');
+    if (btnMaps) {
+      if (datoCliente && datoCliente.dom) {
+        var dest = encodeURIComponent(datoCliente.dom + (datoCliente.loc ? ' ' + datoCliente.loc : ''));
+        btnMaps.href = 'https://www.google.com/maps/dir/?api=1&destination=' + dest;
+        btnMaps.style.display = '';
+      } else {
+        btnMaps.style.display = 'none';
+      }
+    }
     /* Render etiquetas */
     var etiqHtml = '';
     /* PDV etiquetas first */
@@ -1445,14 +1656,19 @@ document.addEventListener('DOMContentLoaded', function() {
   function doBuscar(preservePills) {
     var codigo = document.getElementById('codinput').value.trim();
     if (!codigo) { document.getElementById('codinput').focus(); return; }
+    hidesugg();
+    var inp = document.getElementById('codinput');
+    if (inp.select) { inp.select(); }
     var savedPills = preservePills ? getOpenPills() : [];
     resetUI();
     showEst('loading');
 
-    /* Primero asegurar cache estatico, luego buscar acciones */
     cargarCacheEstaticoSiNecesario().then(function() {
       return fetchSheet(cfg.tab);
     }).then(function(rawAcciones) {
+      offlineSave(codigo, rawAcciones);
+      histSave(codigo); histRender();
+      offlineBadgeHide();
       var acciones = procesarAccionesCSV(rawAcciones, codigo);
       if (!acciones || acciones.length === 0) {
         showEst('vacio');
@@ -1462,13 +1678,28 @@ document.addEventListener('DOMContentLoaded', function() {
       renderResultado(codigo, acciones);
       if (savedPills.length > 0) { restoreOpenPills(savedPills); }
     }).catch(function(e) {
+      var cached = offlineLoad(codigo);
+      if (cached) {
+        /* Restore LDP+Precios if not in memory */
+        if (!cache.ldp || Object.keys(cache.ldp).length === 0) {
+          offlineRestoreStatic();
+        }
+        histSave(codigo); histRender();
+        var acciones = procesarAccionesCSV(cached.raw, codigo);
+        if (acciones && acciones.length > 0) {
+          renderResultado(codigo, acciones);
+          offlineBadgeShow(cached.ts);
+          if (savedPills.length > 0) { restoreOpenPills(savedPills); }
+          return;
+        }
+      }
       showEst('error');
       if (!cfg.sheetId) {
         document.getElementById('etitle').textContent = 'Sheet no configurado';
-        document.getElementById('esub').textContent = '1. Toca el icono \u2699 abajo  2. Pega el ID del Sheet (el string largo entre /d/ y /edit en la URL)  3. Toca Guardar  4. Volve a buscar.';
+        document.getElementById('esub').textContent = '1. Toca el icono abajo (engranaje)  2. Pega el ID del Sheet  3. Toca Guardar  4. Volve a buscar.';
       } else if (/fetch|Failed|Load|network/i.test(e.message)) {
-        document.getElementById('etitle').textContent = 'No se pudo acceder al Sheet';
-        document.getElementById('esub').textContent = 'Verifica que el Sheet sea publico: Compartir -> Cualquiera con el vinculo -> Lector.';
+        document.getElementById('etitle').textContent = 'Sin conexion';
+        document.getElementById('esub').textContent = 'No hay datos guardados para este cliente. Busca otro cliente que hayas consultado antes.';
       } else {
         document.getElementById('etitle').textContent = 'Error al leer el Sheet';
         document.getElementById('esub').textContent = e.message;
@@ -1505,11 +1736,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resetUI() {
     hideEst();
+    hidesugg();
     document.getElementById('reshdr').classList.remove('on','fade-in');
     document.getElementById('segswrap').innerHTML = '';
     document.getElementById('etiq-wrap').innerHTML = '';
     document.getElementById('rrs').textContent = '';
     document.getElementById('rdom').textContent = '';
+    var bm = document.getElementById('btn-maps'); if (bm) { bm.style.display = 'none'; }
     allOpen = false;
     negocioActivo = '';
     segColorMap = {}; colorCounter = 1;
@@ -1687,7 +1920,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     planPoblarFiltros();
-    planFiltrar();
+    /* Don't render table on open - wait for user to select filters */
+    var tbody = document.getElementById('plan-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
+    document.getElementById('plan-count').textContent = '';
     var sh = document.getElementById('plan-sheet');
     sh.classList.add('on');
     setTimeout(function() { sh.classList.add('open'); }, 10);
@@ -1721,10 +1957,10 @@ document.addEventListener('DOMContentLoaded', function() {
       selSup.appendChild(o);
     });
     /* Rebuild vendedor filtered by supervisor */
-    planActualizarVendedores();
+    planActualizarVendedores(true);
   }
 
-  function planActualizarVendedores() {
+  function planActualizarVendedores(skipFilter) {
     var datos = cache.datosPdv || [];
     var sup   = document.getElementById('plan-sup').value;
     var selVend = document.getElementById('plan-vend');
@@ -1742,7 +1978,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (v === curVend) { o.selected = true; }
       selVend.appendChild(o);
     });
-    planFiltrar();
+    if (!skipFilter) { planFiltrar(); }
   }
 
   function planGetDiasSeleccionados() {
@@ -1759,6 +1995,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var sup   = document.getElementById('plan-sup').value;
     var vend  = document.getElementById('plan-vend').value;
     var dias  = planGetDiasSeleccionados();
+
+    /* Require at least one filter active */
+    if (!sup && !vend && dias.length === 0) {
+      document.getElementById('plan-count').textContent = '';
+      document.getElementById('plan-tbody').innerHTML = '<tr><td colspan="5" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
+      return;
+    }
 
     var filtrados = datos.filter(function(d) {
       if (sup  && d.sup  !== sup)  { return false; }
@@ -1816,7 +2059,8 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;text-decoration:underline">' + escHtml(d.pdv) + '</span></td>';
       html += '<td>' + escHtml(d.rs) + '</td>';
       html += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
-      html += '<td>' + escHtml(d.dom) + '</td>';
+      var mapsHref = d.dom ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.dom + (d.loc ? ' ' + d.loc : '')) : '';
+      html += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
       html += '<td>' + escHtml(d.loc) + '</td>';
       html += '</tr>';
     }
