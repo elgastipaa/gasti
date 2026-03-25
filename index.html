@@ -203,23 +203,30 @@
     .plan-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.45); z-index: 100; }
     .plan-overlay.on { display: block; }
     .plan-sheet {
-      display: none; position: fixed; top: 0; left: 0; right: 0;
-      background: #fff; border-radius: 0 0 24px 24px; z-index: 101;
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: #fff; z-index: 101;
       box-shadow: 0 8px 40px rgba(0,31,91,.18);
       transform: translateY(-100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
-      max-height: 88vh; flex-direction: column;
+      flex-direction: column;
     }
     .plan-sheet.on  { display: flex; }
     .plan-sheet.open { transform: translateY(0); }
     .plan-fixed { flex-shrink: 0; background: #fff; }
-    .plan-scroll { overflow-y: auto; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; border-radius: 0 0 24px 24px; border-top: 1.5px solid var(--gris-b); }
+    .plan-scroll { overflow-y: auto; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; border-top: 1.5px solid var(--gris-b); }
     .plan-filters { display: flex; gap: 10px; margin-bottom: 8px; }
     .plan-select { width: 100%; border: 2px solid var(--gris-b); border-radius: 10px; padding: 8px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--azul); background: var(--gris-f); outline: none; }
     .plan-dias { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
     .plan-dia { display: flex; align-items: center; gap: 4px; background: var(--gris-f); border: 1.5px solid var(--gris-b); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--txt-s); cursor: pointer; user-select: none; -webkit-user-select: none; }
     .plan-dia input[type=checkbox] { accent-color: var(--azul-m); width: 14px; height: 14px; }
     .plan-dia:has(input:checked) { background: #EAF2FF; border-color: var(--azul-m); color: var(--azul); }
-    .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 8px; min-height: 16px; }
+    .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 4px; min-height: 16px; }
+    .plan-etiq-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; min-height: 0; }
+    .plan-etiq-btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 20px; padding: 3px 10px 3px 10px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; opacity: .55; }
+    .plan-etiq-btn.pdv  { background: var(--dorado); color: var(--azul); }
+    .plan-etiq-btn.seg  { background: #6DD49A; color: #0F5229; }
+    .plan-etiq-btn.active { opacity: 1; box-shadow: 0 0 0 2px rgba(0,0,0,.18); }
+    .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.35); background: rgba(255,255,255,.5); border-radius: 10px; padding: 0 5px; }
+    .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); }
     .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
     .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -432,6 +439,7 @@
           <label class="plan-dia"><input type="checkbox" value="SA"> SA</label>
           <label class="plan-dia"><input type="checkbox" value="DO"> DO</label>
         </div>
+        <div class="plan-etiq-filters" id="plan-etiq-filters"></div>
         <div class="plan-count" id="plan-count"></div>
       </div>
     </div>
@@ -1919,6 +1927,8 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('No hay datos de PDV cargados. Verifica que exista la hoja "' + cfg.tabDatosPdv + '" en el Sheet y toca Actualizar.');
       return;
     }
+    planEtiqActivas = {};
+    document.getElementById('plan-etiq-filters').innerHTML = '';
     planPoblarFiltros();
     /* Don't render table on open - wait for user to select filters */
     var tbody = document.getElementById('plan-tbody');
@@ -1990,15 +2000,77 @@ document.addEventListener('DOMContentLoaded', function() {
     return dias;
   }
 
+  var planEtiqActivas = {}; /* etiqueta text -> true if active filter */
+
+  /* Build etiqueta filter bubbles based on current filtrados */
+  function planRenderEtiqFiltros(filtrados) {
+    var wrap = document.getElementById('plan-etiq-filters');
+    if (!wrap) { return; }
+    var etiqSeg = cache.etiqSeg || {};
+    var etiqPdv = cache.etiqPdv || {};
+    /* Count occurrences of each etiqueta among filtrados */
+    var counts = {}; /* etiq text -> { count, type } */
+    for (var fi = 0; fi < filtrados.length; fi++) {
+      var d = filtrados[fi];
+      /* PDV etiquetas */
+      var pe = etiqPdv[d.pdv] || [];
+      for (var pi = 0; pi < pe.length; pi++) {
+        var k = pe[pi];
+        if (!counts[k]) { counts[k] = { count: 0, type: 'pdv' }; }
+        counts[k].count++;
+      }
+      /* Segment etiquetas */
+      var segs = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+      var seenSeg = {};
+      for (var si3 = 0; si3 < segs.length; si3++) {
+        var ev = etiqSeg[segs[si3]];
+        if (ev && !seenSeg[ev]) {
+          seenSeg[ev] = true;
+          if (!counts[ev]) { counts[ev] = { count: 0, type: 'seg' }; }
+          counts[ev].count++;
+        }
+      }
+    }
+    var keys = Object.keys(counts);
+    if (keys.length === 0) { wrap.innerHTML = ''; return; }
+    /* Sort by count desc */
+    keys.sort(function(a, b) { return counts[b].count - counts[a].count; });
+    var html = '';
+    for (var ki = 0; ki < keys.length; ki++) {
+      var etxt = keys[ki];
+      var info = counts[etxt];
+      var isActive = !!planEtiqActivas[etxt];
+      html += '<button class="plan-etiq-btn ' + info.type + (isActive ? ' active' : '') + '" data-etiq="' + escHtml(etxt) + '">';
+      html += escHtml(etxt);
+      html += ' <span class="etiq-count">' + info.count + '</span>';
+      html += '</button>';
+    }
+    wrap.innerHTML = html;
+    var btns = wrap.querySelectorAll('.plan-etiq-btn');
+    for (var bi = 0; bi < btns.length; bi++) {
+      btns[bi].addEventListener('click', function() {
+        var etxt2 = this.getAttribute('data-etiq');
+        if (planEtiqActivas[etxt2]) {
+          delete planEtiqActivas[etxt2];
+        } else {
+          planEtiqActivas[etxt2] = true;
+        }
+        planFiltrar();
+      });
+    }
+  }
+
   function planFiltrar() {
     var datos = cache.datosPdv || [];
     var sup   = document.getElementById('plan-sup').value;
     var vend  = document.getElementById('plan-vend').value;
     var dias  = planGetDiasSeleccionados();
 
+    var etiqFiltros = Object.keys(planEtiqActivas);
     /* Require at least one filter active */
-    if (!sup && !vend && dias.length === 0) {
+    if (!sup && !vend && dias.length === 0 && etiqFiltros.length === 0) {
       document.getElementById('plan-count').textContent = '';
+      document.getElementById('plan-etiq-filters').innerHTML = '';
       document.getElementById('plan-tbody').innerHTML = '<tr><td colspan="5" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
       return;
     }
@@ -2006,6 +2078,28 @@ document.addEventListener('DOMContentLoaded', function() {
     var filtrados = datos.filter(function(d) {
       if (sup  && d.sup  !== sup)  { return false; }
       if (vend && d.vend !== vend) { return false; }
+      /* Etiqueta filter: OR - at least one active etiqueta must match */
+      if (etiqFiltros.length > 0) {
+        var etiqSeg2 = cache.etiqSeg || {};
+        var etiqPdv2 = cache.etiqPdv || {};
+        var hasMatch = false;
+        /* Check PDV etiquetas */
+        var pe2 = etiqPdv2[d.pdv] || [];
+        for (var pei = 0; pei < pe2.length && !hasMatch; pei++) {
+          if (planEtiqActivas[pe2[pei]]) { hasMatch = true; }
+        }
+        /* Check segment etiquetas */
+        if (!hasMatch) {
+          var segs2 = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+          var seenSeg2 = {};
+          for (var sei = 0; sei < segs2.length && !hasMatch; sei++) {
+            var ev2 = etiqSeg2[segs2[sei]];
+            if (ev2 && !seenSeg2[ev2] && planEtiqActivas[ev2]) { hasMatch = true; }
+            if (ev2) { seenSeg2[ev2] = true; }
+          }
+        }
+        if (!hasMatch) { return false; }
+      }
       if (dias.length > 0) {
         /* OR: at least one selected day appears in frecuencia */
         var frec = d.frec.toUpperCase();
@@ -2021,9 +2115,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return true;
     });
 
-    /* Update count */
+    /* Update count and etiqueta filter bubbles */
     var countEl = document.getElementById('plan-count');
     countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : 'Sin resultados';
+    planRenderEtiqFiltros(filtrados);
 
     /* Build table rows */
     var tbody = document.getElementById('plan-tbody');
