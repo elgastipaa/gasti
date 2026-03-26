@@ -222,7 +222,12 @@
     .plan-dia input[type=checkbox] { accent-color: var(--azul-m); width: 14px; height: 14px; }
     .plan-dia:has(input:checked) { background: #EAF2FF; border-color: var(--azul-m); color: var(--azul); }
     .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 4px; min-height: 16px; }
-    .plan-etiq-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; min-height: 0; }
+    .plan-canal-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; min-height: 0; }
+    .plan-etiq-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; min-height: 0; }
+    .plan-canal-btn { display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid #B0BAC8; border-radius: 20px; padding: 4px 11px; font-size: 11px; font-weight: 700; cursor: pointer; background: #EEF1F6; color: #4A5568; transition: all .15s; }
+    .plan-canal-btn.active { background: #4A5568; color: #fff; border-color: #2D3748; box-shadow: 0 0 0 2px rgba(74,85,104,.3); }
+    .plan-canal-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.4); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
+    .plan-canal-btn.active .etiq-count { color: rgba(255,255,255,.7); background: rgba(255,255,255,.2); }
     .plan-etiq-btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 20px; padding: 4px 11px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; }
     .plan-etiq-btn.pdv  { background: #FFE08A; color: #5A3A00; border: 1.5px solid #E8A800; }
     .plan-etiq-btn.seg  { background: #A8E8C4; color: #0A3D1F; border: 1.5px solid #3DB870; }
@@ -232,19 +237,21 @@
     .plan-etiq-btn.active.ccc { background: #3B82F6; color: #fff; border-color: #1D4ED8; box-shadow: 0 0 0 2px rgba(59,130,246,.35); }
     .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.45); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
     .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); background: rgba(255,255,255,.4); }
-    .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .plan-table { border-collapse: collapse; font-size: 12px; width: max-content; min-width: 100%; }
     .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
-    .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .plan-table td:first-child { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--azul-m); width: 62px; }
-    .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); white-space: normal; word-break: break-word; overflow: visible; }
-    .plan-table td:nth-child(3) { font-size: 11px; white-space: normal; overflow: visible; }
-    .plan-table td:nth-child(4) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; overflow: visible; }
-    .plan-table td:nth-child(5) { font-size: 11px; color: var(--txt-s); white-space: normal; word-break: break-word; }
-    .plan-table th:first-child  { width: 62px; }
-    .plan-table th:nth-child(2) { width: 25%; }
-    .plan-table th:nth-child(3) { width: 22%; }
-    .plan-table th:nth-child(4) { width: 28%; }
-    .plan-table th:nth-child(5) { width: 18%; white-space: normal; }
+    .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; }
+    .plan-table td:first-child { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--azul-m); white-space: nowrap; width: 52px; min-width: 52px; max-width: 52px; }
+    .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); width: 110px; min-width: 110px; max-width: 110px; white-space: normal; word-break: break-word; }
+    .plan-table td:nth-child(3) { font-size: 11px; font-weight: 700; color: var(--txt-s); white-space: nowrap; width: 58px; min-width: 58px; max-width: 58px; text-align: center; }
+    .plan-table td:nth-child(4) { font-size: 11px; width: 100px; min-width: 100px; max-width: 100px; white-space: normal; }
+    .plan-table td:nth-child(5) { font-size: 11px; width: 150px; min-width: 150px; max-width: 150px; white-space: normal; word-break: break-word; color: var(--txt-s); }
+    .plan-table td:nth-child(6) { font-size: 11px; color: var(--txt-s); width: 100px; min-width: 100px; max-width: 100px; white-space: normal; word-break: break-word; }
+    .plan-table th:first-child  { width: 52px; min-width: 52px; }
+    .plan-table th:nth-child(2) { width: 110px; min-width: 110px; }
+    .plan-table th:nth-child(3) { width: 58px; min-width: 58px; text-align: center; }
+    .plan-table th:nth-child(4) { width: 100px; min-width: 100px; }
+    .plan-table th:nth-child(5) { width: 150px; min-width: 150px; }
+    .plan-table th:nth-child(6) { width: 100px; min-width: 100px; }
     .plan-table tr:hover td { background: var(--gris-f); }
     .plan-empty { text-align: center; padding: 24px; color: var(--txt-s); font-size: 13px; font-style: italic; }
 
@@ -445,13 +452,14 @@
           <label class="plan-dia"><input type="checkbox" value="SA"> SA</label>
           <label class="plan-dia"><input type="checkbox" value="DO"> DO</label>
         </div>
+        <div class="plan-canal-filters" id="plan-canal-filters"></div>
         <div class="plan-etiq-filters" id="plan-etiq-filters"></div>
         <div class="plan-count" id="plan-count"></div>
       </div>
     </div>
     <div class="plan-scroll">
       <table class="plan-table" id="plan-table">
-        <thead><tr><th>PDV</th><th>Razon social</th><th>Etiquetas</th><th>Domicilio</th><th>Localidad</th></tr></thead>
+        <thead><tr><th>PDV</th><th>Razon social</th><th>Canal</th><th>Etiquetas</th><th>Domicilio</th><th>Localidad</th></tr></thead>
         <tbody id="plan-tbody"></tbody>
       </table>
     </div>
@@ -1241,10 +1249,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rows.length < 2) { return []; }
     var hdr = rows[0].map(function(h) { return (h || '').toLowerCase().trim(); });
     /* Detect columns */
-    var iPdv = 0; var iRs = 1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5;
+    var iPdv = 0; var iRs = 1; var iCanal = -1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5;
     for (var hi = 0; hi < hdr.length; hi++) {
       if (/^pdv$|^cod|^c.digo/.test(hdr[hi]))             { iPdv  = hi; }
       if (/razon|social|nombre/.test(hdr[hi]))             { iRs   = hi; }
+      if (/^canal$/.test(hdr[hi]))                          { iCanal = hi; }
       if (/domicilio|direcci|address/.test(hdr[hi]))       { iDom  = hi; }
       if (/localidad|ciudad|city/.test(hdr[hi]))            { iLoc  = hi; }
       if (/supervisor/.test(hdr[hi]))                      { iSup  = hi; }
@@ -1261,9 +1270,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!pdv || !/^\d+$/.test(pdv)) { continue; }
       result.push({
         pdv:  pdv,
-        rs:   (row[iRs]   || '').trim(),
-        dom:  (row[iDom]  || '').trim(),
-        loc:  iLoc >= 0 ? (row[iLoc] || '').trim() : '',
+        rs:     (row[iRs]    || '').trim(),
+        canal:  iCanal >= 0 ? (row[iCanal] || '').trim().toUpperCase() : '',
+        dom:    (row[iDom]   || '').trim(),
+        loc:    iLoc >= 0 ? (row[iLoc] || '').trim() : '',
         sup:  (row[iSup]  || '').trim(),
         vend: (row[iVend] || '').trim(),
         frec: (row[iFrec] || '').trim().toUpperCase()
@@ -1967,15 +1977,17 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('No hay datos de PDV cargados. Verifica que exista la hoja "' + cfg.tabDatosPdv + '" en el Sheet y toca Actualizar.');
       return;
     }
+    planCanalesActivos = {};
     planEtiqActivas = {};
     planUltimosFiltrados = [];
+    document.getElementById('plan-canal-filters').innerHTML = '';
     document.getElementById('plan-etiq-filters').innerHTML = '';
     var btnWa2 = document.getElementById('btn-plan-wa');
     if (btnWa2) { btnWa2.style.display = 'none'; }
     planPoblarFiltros();
     /* Don't render table on open - wait for user to select filters */
     var tbody = document.getElementById('plan-tbody');
-    tbody.innerHTML = '<tr><td colspan="5" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
     document.getElementById('plan-count').textContent = '';
     var sh = document.getElementById('plan-sheet');
     sh.classList.add('on');
@@ -2043,7 +2055,44 @@ document.addEventListener('DOMContentLoaded', function() {
     return dias;
   }
 
+  var planCanalesActivos = {}; /* canal -> true if active */
   var planEtiqActivas = {}; /* etiqueta text -> true if active filter */
+
+  function planRenderCanalFiltros(filtrados) {
+    var wrap = document.getElementById('plan-canal-filters');
+    if (!wrap) { return; }
+    /* Count canal occurrences */
+    var counts = {};
+    for (var fi = 0; fi < filtrados.length; fi++) {
+      var canal = filtrados[fi].canal;
+      if (canal) {
+        if (!counts[canal]) { counts[canal] = 0; }
+        counts[canal]++;
+      }
+    }
+    var keys = Object.keys(counts);
+    if (keys.length === 0) { wrap.innerHTML = ''; return; }
+    keys.sort();
+    var html = '';
+    for (var ki = 0; ki < keys.length; ki++) {
+      var canal = keys[ki];
+      var isActive = !!planCanalesActivos[canal];
+      html += '<button class="plan-canal-btn' + (isActive ? ' active' : '') + '" data-canal="' + canal + '">';
+      html += canal;
+      html += ' <span class="etiq-count">' + counts[canal] + '</span>';
+      html += '</button>';
+    }
+    wrap.innerHTML = html;
+    var btns = wrap.querySelectorAll('.plan-canal-btn');
+    for (var bi = 0; bi < btns.length; bi++) {
+      btns[bi].addEventListener('click', function() {
+        var canal2 = this.getAttribute('data-canal');
+        if (planCanalesActivos[canal2]) { delete planCanalesActivos[canal2]; }
+        else { planCanalesActivos[canal2] = true; }
+        planFiltrar();
+      });
+    }
+  }
   var planUltimosFiltrados = [];
 
   function planEnviarWA() {
@@ -2167,17 +2216,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var dias  = planGetDiasSeleccionados();
 
     var etiqFiltros = Object.keys(planEtiqActivas);
+    var canalFiltros = Object.keys(planCanalesActivos);
     /* Require at least one filter active */
-    if (!sup && !vend && dias.length === 0 && etiqFiltros.length === 0) {
+    if (!sup && !vend && dias.length === 0 && etiqFiltros.length === 0 && canalFiltros.length === 0) {
       document.getElementById('plan-count').textContent = '';
+      document.getElementById('plan-canal-filters').innerHTML = '';
       document.getElementById('plan-etiq-filters').innerHTML = '';
-      document.getElementById('plan-tbody').innerHTML = '<tr><td colspan="5" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
+      document.getElementById('plan-tbody').innerHTML = '<tr><td colspan="6" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
       return;
     }
 
     var filtrados = datos.filter(function(d) {
       if (sup  && d.sup  !== sup)  { return false; }
       if (vend && d.vend !== vend) { return false; }
+      /* Canal filter: OR between selected canales */
+      if (canalFiltros.length > 0 && !planCanalesActivos[d.canal]) { return false; }
       /* Etiqueta filter: OR - at least one active etiqueta must match */
       if (etiqFiltros.length > 0) {
         var etiqSeg2 = cache.etiqSeg || {};
@@ -2212,8 +2265,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var frec = d.frec.toUpperCase();
         var match = false;
         for (var di = 0; di < dias.length; di++) {
-          /* Match whole word to avoid LU matching inside another word */
-          if (new RegExp('(^|[^A-Z])' + dias[di] + '($|[^A-Z])').test(frec) || frec === dias[di]) {
+        /* Match 2 or 3 letter day codes: LU matches LU and LUN */
+          if (new RegExp('(^|[^A-Z])' + dias[di] + '[A-Z]?($|[^A-Z])').test(frec) || frec === dias[di]) {
             match = true; break;
           }
         }
@@ -2225,6 +2278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Update count and etiqueta filter bubbles */
     var countEl = document.getElementById('plan-count');
     countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : 'Sin resultados';
+    planRenderCanalFiltros(filtrados);
     planRenderEtiqFiltros(filtrados);
     /* Show/hide WhatsApp button */
     var btnWa = document.getElementById('btn-plan-wa');
@@ -2235,7 +2289,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Build table rows */
     var tbody = document.getElementById('plan-tbody');
     if (filtrados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="plan-empty">Sin PDVs para los filtros seleccionados</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="plan-empty">Sin PDVs para los filtros seleccionados</td></tr>';
       return;
     }
 
@@ -2271,6 +2325,7 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<tr>';
       html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="display:inline-block;background:rgba(0,61,165,.08);color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;padding:4px 10px;border-radius:8px;border:1.5px solid rgba(0,61,165,.15)">' + escHtml(d.pdv) + '</span></td>';
       html += '<td>' + escHtml(d.rs) + '</td>';
+      html += '<td style="font-size:11px;font-weight:700;color:var(--txt-s)">' + escHtml(d.canal) + '</td>';
       html += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
       var mapsHref = d.dom ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.dom + (d.loc ? ' ' + d.loc : '')) : '';
       html += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
