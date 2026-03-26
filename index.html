@@ -100,6 +100,7 @@
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
     .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .etiq-seg { display: inline-block; background: #6DD49A; color: #0F5229; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .etiq-ccc { display: inline-block; background: #DBEAFE; color: #1E40AF; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
     .negocio-tabs { display: flex; gap: 6px; width: 100%; flex-wrap: wrap; }
@@ -114,6 +115,7 @@
     .segtit { font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; padding: 10px 12px; white-space: normal; word-break: break-word; width: 90px; min-width: 90px; max-width: 90px; flex-shrink: 0; display: flex; align-items: center; border-right-width: 1.5px; border-right-style: solid; line-height: 1.3; }
     .detval { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 14px; flex: 1; }
     .bubble { font-size: 12px; font-weight: 600; font-family: 'DM Mono', monospace; border-radius: 20px; padding: 4px 11px; white-space: nowrap; border-width: 1.5px; border-style: solid; }
+    .bubble.bubble-extra { border-style: dashed; }
     .pill-chevron { font-size: 11px; padding: 0 12px 0 4px; display: flex; align-items: center; flex-shrink: 0; transition: transform .2s; opacity: .5; }
     .segblock.open .pill-chevron { transform: rotate(180deg); }
 
@@ -221,12 +223,15 @@
     .plan-dia:has(input:checked) { background: #EAF2FF; border-color: var(--azul-m); color: var(--azul); }
     .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 4px; min-height: 16px; }
     .plan-etiq-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; min-height: 0; }
-    .plan-etiq-btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 20px; padding: 3px 10px 3px 10px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; opacity: .55; }
-    .plan-etiq-btn.pdv  { background: var(--dorado); color: var(--azul); }
-    .plan-etiq-btn.seg  { background: #6DD49A; color: #0F5229; }
-    .plan-etiq-btn.active { opacity: 1; box-shadow: 0 0 0 2px rgba(0,0,0,.18); }
-    .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.35); background: rgba(255,255,255,.5); border-radius: 10px; padding: 0 5px; }
-    .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); }
+    .plan-etiq-btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 20px; padding: 4px 11px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; }
+    .plan-etiq-btn.pdv  { background: #FFE08A; color: #5A3A00; border: 1.5px solid #E8A800; }
+    .plan-etiq-btn.seg  { background: #A8E8C4; color: #0A3D1F; border: 1.5px solid #3DB870; }
+    .plan-etiq-btn.active.pdv { background: var(--dorado); color: var(--azul); border-color: #CC8800; box-shadow: 0 0 0 2px rgba(245,168,0,.35); }
+    .plan-etiq-btn.active.seg { background: #3DB870; color: #fff; border-color: #2A9A55; box-shadow: 0 0 0 2px rgba(61,184,112,.35); }
+    .plan-etiq-btn.ccc  { background: #BFDBFE; color: #1E40AF; border: 1.5px solid #60A5FA; }
+    .plan-etiq-btn.active.ccc { background: #3B82F6; color: #fff; border-color: #1D4ED8; box-shadow: 0 0 0 2px rgba(59,130,246,.35); }
+    .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.45); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
+    .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); background: rgba(255,255,255,.4); }
     .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
     .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -416,6 +421,7 @@
     <div class="plan-fixed">
       <div style="display:flex;align-items:center;padding:10px 16px 6px">
         <div style="flex:1;font-size:14px;font-weight:700;color:var(--azul);letter-spacing:-.3px">Planificador de visitas</div>
+        <button id="btn-plan-wa" style="display:none;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;font-family:DM Sans,sans-serif;padding:6px 12px;cursor:pointer;margin-right:6px">&#128232; Enviar</button>
         <button id="btn-plan-cerrar" style="background:none;border:none;font-size:20px;color:var(--txt-s);cursor:pointer;padding:4px 8px;line-height:1">&#10005;</button>
       </div>
       <div style="padding:0 16px">
@@ -486,10 +492,14 @@
       <input class="cinput" id="ctabetiqseg" placeholder="Etiq Segmento">
       <label class="clbl">Nombre pestana Etiq PDV</label>
       <input class="cinput" id="ctabetiqpdv" placeholder="Etiq PDV">
+      <label class="clbl">Nombre pestana Etiq CCC</label>
+      <input class="cinput" id="ctabetiqccc" placeholder="Etiq CCC">
       <label class="clbl">Nombre pestana Datos PDV</label>
       <input class="cinput" id="ctabdatospdv" placeholder="Datos PDV">
       <label class="clbl">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
+      <label class="clbl">WhatsApp (con codigo de pais, sin + ni espacios)</label>
+      <input class="cinput" id="cwhatsapp" inputmode="numeric" placeholder="Ej: 5492281123456">
       <button class="csave" id="btn-save">Guardar</button>
       <div class="cfg-status" id="cfg-status"></div>
     </div>
@@ -520,7 +530,9 @@ document.addEventListener('DOMContentLoaded', function() {
     tabCfg:     saved.tabCfg     || 'Config',
     tabEtiqSeg: saved.tabEtiqSeg || 'Etiq Segmento',
     tabEtiqPdv: saved.tabEtiqPdv || 'Etiq PDV',
+    tabEtiqCcc: saved.tabEtiqCcc || 'Etiq CCC',
     tabDatosPdv: saved.tabDatosPdv || 'Datos PDV',
+    whatsapp:    saved.whatsapp    || '',
     modoPTC:    saved.modoPTC    || false,
     markupIdx:  saved.markupIdx  !== undefined ? saved.markupIdx : 0
   };
@@ -531,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
-  var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {}, datosPdv: [], accionesIndex: null };
+  var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {}, etiqCcc: {}, datosPdv: [], accionesIndex: null };
 
   /* -- HISTORIAL --------------------------------------------------- */
   function histLoad() {
@@ -825,8 +837,10 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('ctabcfg').value = cfg.tabCfg;
       document.getElementById('ctabetiqseg').value = cfg.tabEtiqSeg;
       document.getElementById('ctabetiqpdv').value = cfg.tabEtiqPdv;
+      document.getElementById('ctabetiqccc').value = cfg.tabEtiqCcc;
       document.getElementById('ctabdatospdv').value = cfg.tabDatosPdv;
       document.getElementById('cpin').value = cfg.pin;
+      document.getElementById('cwhatsapp').value = cfg.whatsapp || '';
       cargarCacheEstaticoSiNecesario();
       syncPricingBtns();
       histRender();
@@ -867,12 +881,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tabc)  { cfg.tabCfg = tabc; }
     if (tabes) { cfg.tabEtiqSeg = tabes; }
     if (tabep) { cfg.tabEtiqPdv = tabep; }
+    var tabec = document.getElementById('ctabetiqccc').value.trim();
+    if (tabec) { cfg.tabEtiqCcc = tabec; }
     var tabdp = document.getElementById('ctabdatospdv').value.trim();
     if (tabdp) { cfg.tabDatosPdv = tabdp; }
     if (pin.length === 4) { cfg.pin = pin; }
+    var wa = document.getElementById('cwhatsapp').value.trim().replace(/[^0-9]/g,'');
+    if (wa) { cfg.whatsapp = wa; }
     localStorage.setItem(STORE, JSON.stringify(cfg));
     cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
-    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.etiqCcc = {}; cache.datosPdv = [];
     document.getElementById('cfgbody').classList.remove('open');
     updateSheetNombres();
     setCfgStatus('Guardado', 'ok');
@@ -957,7 +975,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var chev = document.getElementById('tname-chevron');
     if (chev) { chev.innerHTML = '&#9660;'; }
     cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
-    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.etiqCcc = {}; cache.datosPdv = [];
     resetUI();
     document.getElementById('codinput').value = '';
     cargarCacheEstaticoSiNecesario();
@@ -976,6 +994,7 @@ document.addEventListener('DOMContentLoaded', function() {
       fetchSheetSafe(cfg.tabEtiqSeg),
       fetchSheetSafe(cfg.tabEtiqPdv),
       fetchSheetSafe(cfg.tabDatosPdv),
+      fetchSheetSafe(cfg.tabEtiqCcc),
       fetchSheet(cfg.tab).catch(function() { return null; })
     ]).then(function(results) {
       cache.ldp     = parseLDP(results[0]);
@@ -987,6 +1006,7 @@ document.addEventListener('DOMContentLoaded', function() {
       cache.etiqPdv  = results[4] ? parseEtiqPdv(results[4]) : {};
       cache.datosPdv      = results[5] ? parseDatosPdv(results[5]) : [];
       cache.accionesIndex = results[6] ? buildAccionesIndex(results[6]) : null;
+      cache.etiqCcc  = results[7] ? parseEtiqPdv(results[7]) : {};
       var nd = document.getElementById('tdistri');
       if (cache.nombre) {
         nd.textContent = cache.nombre;
@@ -1004,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.classList.add('spinning');
     btn.disabled = true;
     cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
-    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.datosPdv = [];
+    cache.etiqSeg = {}; cache.etiqPdv = {}; cache.etiqCcc = {}; cache.datosPdv = [];
     cargarCacheEstatico().then(function() {
       btn.classList.remove('spinning');
       btn.disabled = false;
@@ -1188,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var headers = rows[0];
     var iCod = 0;
     for (var i = 0; i < headers.length; i++) {
-      if (/^pdv$/.test((headers[i] || '').toLowerCase().trim())) { iCod = i; break; }
+      if (/^pdv$|^cod|^c.digo/.test((headers[i] || '').toLowerCase().trim())) { iCod = i; break; }
     }
     var segCols = [];
     for (var j = 0; j < headers.length; j++) {
@@ -1223,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Detect columns */
     var iPdv = 0; var iRs = 1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5;
     for (var hi = 0; hi < hdr.length; hi++) {
-      if (/^pdv$|^cod/.test(hdr[hi]))                      { iPdv  = hi; }
+      if (/^pdv$|^cod|^c.digo/.test(hdr[hi]))             { iPdv  = hi; }
       if (/razon|social|nombre/.test(hdr[hi]))             { iRs   = hi; }
       if (/domicilio|direcci|address/.test(hdr[hi]))       { iDom  = hi; }
       if (/localidad|ciudad|city/.test(hdr[hi]))            { iLoc  = hi; }
@@ -1345,8 +1365,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var parts = detalleStr.split('|'); var result = [];
     for (var i = 0; i < parts.length; i++) {
       var m = parts[i].match(/(\d+[,.]?\d*)\s*%/);
-      if (m) { result.push(parseFloat(m[1].replace(',','.'))); }
-      else   { result.push(null); }
+      if (m) {
+        result.push(parseFloat(m[1].replace(',','.')));
+      } else {
+        /* Detect decimal values < 1 as percentage (e.g. 0.1 = 10%, 0,15 = 15%) */
+        var m2 = parts[i].match(/\b(0[,.]\d+)\b/);
+        if (m2) {
+          var dec = parseFloat(m2[1].replace(',','.'));
+          result.push(dec * 100); /* 0.1 -> 10 */
+        } else {
+          result.push(null);
+        }
+      }
     }
     return result;
   }
@@ -1421,7 +1451,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var headers = rows[0];
     var iCod = 0;
     for (var i = 0; i < headers.length; i++) {
-      if (/^pdv$/.test(headers[i].toLowerCase().trim()) || /cod|cliente|codigo/.test(headers[i].toLowerCase())) {
+      if (/^pdv$/.test(headers[i].toLowerCase().trim()) || /cod|cliente|codigo|c.digo/.test(headers[i].toLowerCase())) {
         iCod = i; break;
       }
     }
@@ -1449,19 +1479,21 @@ document.addEventListener('DOMContentLoaded', function() {
       var useLabel  = isExtra ? baseLabel : rawLabel;
       var useKey    = useLabel.toLowerCase();
       if (!mergedMap[useKey]) {
-        mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '', srcLabels: [] };
+        mergedMap[useKey] = { key: useKey, label: useLabel, detalle: '', srcLabels: [], extraFlags: [] };
         mergedOrder.push(useKey);
       }
       /* Only track original label if this client has a value in that column */
       if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
         mergedMap[useKey].srcLabels.push(rawLabel.toLowerCase());
       }
-      /* Append detalle if non-empty */
+      /* Append detalle if non-empty, tracking if it's from a numbered column */
       if (VACIAS.indexOf(detalle.toLowerCase()) === -1) {
         if (mergedMap[useKey].detalle === '') {
           mergedMap[useKey].detalle = detalle;
+          mergedMap[useKey].extraFlags.push(isExtra);
         } else {
           mergedMap[useKey].detalle += ' | ' + detalle;
+          mergedMap[useKey].extraFlags.push(isExtra);
         }
       }
     }
@@ -1471,7 +1503,7 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var m = 0; m < mergedOrder.length; m++) {
       var entry = mergedMap[mergedOrder[m]];
       if (entry.detalle !== '') {
-        acciones.push({ key: entry.key, label: entry.label, detalle: entry.detalle, srcLabels: entry.srcLabels });
+        acciones.push({ key: entry.key, label: entry.label, detalle: entry.detalle, srcLabels: entry.srcLabels, extraFlags: entry.extraFlags });
       }
     }
     return acciones;
@@ -1583,6 +1615,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
+    /* CCC etiquetas */
+    var cccEtiqs = cache.etiqCcc || {};
+    var cccPdvEtiqs = (cccEtiqs && cccEtiqs[codigo]) ? cccEtiqs[codigo] : [];
+    for (var ci2 = 0; ci2 < cccPdvEtiqs.length; ci2++) {
+      etiqHtml += '<span class="etiq-ccc">' + escHtml(cccPdvEtiqs[ci2]) + '</span>';
+    }
     document.getElementById('etiq-wrap').innerHTML = etiqHtml;
     var negs = (cache.precios && cache.precios._negocios) ? cache.precios._negocios : [];
     renderNegocioTabs(negs);
@@ -1623,9 +1661,11 @@ document.addEventListener('DOMContentLoaded', function() {
       /* Burbujas */
       var bubblesHtml = '';
       var parts = acc.detalle.split('|');
+      var extraFlags = acc.extraFlags || [];
       for (var p = 0; p < parts.length; p++) {
         var part = parts[p].trim();
-        if (part) { bubblesHtml += '<span class="bubble">' + escHtml(part) + '</span>'; }
+        var isExtraBubble = extraFlags[p] === true;
+        if (part) { bubblesHtml += '<span class="bubble' + (isExtraBubble ? ' bubble-extra' : '') + '">' + escHtml(part) + '</span>'; }
       }
 
       /* Tabla de precios */
@@ -1928,7 +1968,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     planEtiqActivas = {};
+    planUltimosFiltrados = [];
     document.getElementById('plan-etiq-filters').innerHTML = '';
+    var btnWa2 = document.getElementById('btn-plan-wa');
+    if (btnWa2) { btnWa2.style.display = 'none'; }
     planPoblarFiltros();
     /* Don't render table on open - wait for user to select filters */
     var tbody = document.getElementById('plan-tbody');
@@ -2001,6 +2044,55 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   var planEtiqActivas = {}; /* etiqueta text -> true if active filter */
+  var planUltimosFiltrados = [];
+
+  function planEnviarWA() {
+    var filtrados = planUltimosFiltrados;
+    if (!filtrados || filtrados.length === 0) { return; }
+    var etiqSeg = cache.etiqSeg || {};
+    var etiqPdv = cache.etiqPdv || {};
+    var sup  = document.getElementById('plan-sup').value;
+    var vend = document.getElementById('plan-vend').value;
+    var dias = planGetDiasSeleccionados();
+    var etiqFiltrosWa = Object.keys(planEtiqActivas);
+    /* Build message */
+    var lines = [];
+    lines.push('🗓️ *Planificador de visitas*');
+    lines.push('──────────────────');
+    if (vend)  { lines.push('👤 *Vendedor:* ' + vend); }
+    if (sup)   { lines.push('📋 *Supervisor:* ' + sup); }
+    if (dias.length > 0) { lines.push('📅 *Dias:* ' + dias.join(', ')); }
+    if (etiqFiltrosWa.length > 0) { lines.push('🎯 *Foco:* ' + etiqFiltrosWa.join(', ')); }
+    lines.push('📍 *' + filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') + '*');
+    lines.push('──────────────────');
+    lines.push('');
+    for (var fi = 0; fi < filtrados.length; fi++) {
+      var d = filtrados[fi];
+      var line = '- *' + d.pdv + ' - ' + d.rs + '*';
+      /* Etiquetas */
+      var etqs = [];
+      var pe = etiqPdv[d.pdv] || [];
+      for (var pi = 0; pi < pe.length; pi++) { etqs.push(pe[pi]); }
+      var segs = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+      var seenE = {};
+      for (var si4 = 0; si4 < segs.length; si4++) {
+        var ev4 = etiqSeg[segs[si4]];
+        if (ev4 && !seenE[ev4]) { etqs.push(ev4); seenE[ev4] = true; }
+      }
+      var cccWa = (cache.etiqCcc && cache.etiqCcc[d.pdv]) ? cache.etiqCcc[d.pdv] : [];
+      for (var cwi = 0; cwi < cccWa.length; cwi++) { etqs.push(cccWa[cwi]); }
+      if (etqs.length > 0) { line += ' ' + etqs.join(', '); }
+      lines.push(line);
+    }
+    lines.push('');
+    lines.push('_Enviado desde Acciones Comerciales_');
+    var msg = lines.join('\n');
+    var wa = cfg.whatsapp || '';
+    var url = wa
+      ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent(msg)
+      : 'https://wa.me/?text=' + encodeURIComponent(msg);
+    window.open(url, '_blank');
+  }
 
   /* Build etiqueta filter bubbles based on current filtrados */
   function planRenderEtiqFiltros(filtrados) {
@@ -2018,6 +2110,14 @@ document.addEventListener('DOMContentLoaded', function() {
         var k = pe[pi];
         if (!counts[k]) { counts[k] = { count: 0, type: 'pdv' }; }
         counts[k].count++;
+      }
+      /* CCC etiquetas */
+      var cccMapR = cache.etiqCcc || {};
+      var cccItemsR = cccMapR[d.pdv] || [];
+      for (var ci4 = 0; ci4 < cccItemsR.length; ci4++) {
+        var kc = cccItemsR[ci4];
+        if (!counts[kc]) { counts[kc] = { count: 0, type: 'ccc' }; }
+        counts[kc].count++;
       }
       /* Segment etiquetas */
       var segs = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
@@ -2088,6 +2188,13 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var pei = 0; pei < pe2.length && !hasMatch; pei++) {
           if (planEtiqActivas[pe2[pei]]) { hasMatch = true; }
         }
+        /* Check CCC etiquetas */
+        if (!hasMatch) {
+          var cccF = (cache.etiqCcc && cache.etiqCcc[d.pdv]) ? cache.etiqCcc[d.pdv] : [];
+          for (var cfi = 0; cfi < cccF.length && !hasMatch; cfi++) {
+            if (planEtiqActivas[cccF[cfi]]) { hasMatch = true; }
+          }
+        }
         /* Check segment etiquetas */
         if (!hasMatch) {
           var segs2 = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
@@ -2119,6 +2226,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var countEl = document.getElementById('plan-count');
     countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : 'Sin resultados';
     planRenderEtiqFiltros(filtrados);
+    /* Show/hide WhatsApp button */
+    var btnWa = document.getElementById('btn-plan-wa');
+    if (btnWa) { btnWa.style.display = filtrados.length > 0 ? '' : 'none'; }
+    /* Store filtrados for WA export */
+    planUltimosFiltrados = filtrados;
 
     /* Build table rows */
     var tbody = document.getElementById('plan-tbody');
@@ -2150,8 +2262,14 @@ document.addEventListener('DOMContentLoaded', function() {
           shownSeg[etiqSeg[sk2]] = true;
         }
       }
+      /* CCC etiquetas in planificador */
+      var cccMap = cache.etiqCcc || {};
+      var cccItems = cccMap[d.pdv] || [];
+      for (var ci3 = 0; ci3 < cccItems.length; ci3++) {
+        eHtml += '<span class="etiq-ccc" style="font-size:10px;padding:2px 8px">' + escHtml(cccItems[ci3]) + '</span> ';
+      }
       html += '<tr>';
-      html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;text-decoration:underline">' + escHtml(d.pdv) + '</span></td>';
+      html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="display:inline-block;background:rgba(0,61,165,.08);color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;padding:4px 10px;border-radius:8px;border:1.5px solid rgba(0,61,165,.15)">' + escHtml(d.pdv) + '</span></td>';
       html += '<td>' + escHtml(d.rs) + '</td>';
       html += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
       var mapsHref = d.dom ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.dom + (d.loc ? ' ' + d.loc : '')) : '';
@@ -2170,8 +2288,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
       document.getElementById('codinput').value = pdv;
       doBuscar(false);
-    }, 340); /* wait for planificador close animation */
+    }, 50);
   });
+  document.getElementById('btn-plan-wa').addEventListener('click', planEnviarWA);
   document.getElementById('btn-plan').addEventListener('click', planAbrir);
   document.getElementById('plan-overlay').addEventListener('click', planCerrar);
   document.getElementById('btn-plan-cerrar').addEventListener('click', planCerrar);
