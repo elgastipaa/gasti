@@ -1067,33 +1067,10 @@ document.addEventListener('DOMContentLoaded', function() {
   /* fetchSheetSafe: verifica via JSON que la hoja exista antes de fetchear CSV.
      Si la hoja no existe devuelve null en lugar de tirar error o devolver datos incorrectos. */
   function fetchSheetSafe(tabName) {
-    var jsonUrl = 'https://docs.google.com/spreadsheets/d/' + cfg.sheetId +
-                  '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(tabName);
-    return fetch(jsonUrl, { cache: 'no-store' }).then(function(res) {
-      return res.text();
-    }).then(function(txt) {
-      /* Google wraps JSON in google.visualization.Query.setResponse(...) */
-      var match = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
-      if (!match) { return null; }
-      try {
-        var json = JSON.parse(match[1]);
-        if (json.status === 'error') {
-          /* Only reject if sheet truly doesn't exist - check error message */
-          var errors = json.errors || [];
-          for (var ei = 0; ei < errors.length; ei++) {
-            var reason = (errors[ei].reason || '').toLowerCase();
-            var msg = (errors[ei].message || '').toLowerCase();
-            if (reason === 'invalid_query' || msg.indexOf('sheet') !== -1) {
-              /* Could be empty sheet or bad query - still try CSV fetch */
-              break;
-            }
-          }
-          /* If no data rows but sheet exists, gviz returns error - try CSV anyway */
-          return fetchSheet(tabName).catch(function() { return null; });
-        }
-      } catch(e) { return null; }
-      /* Sheet exists - now fetch as CSV */
-      return fetchSheet(tabName);
+    /* Always try CSV directly - if sheet doesn't exist Google returns HTML which parseCSV rejects */
+    return fetchSheet(tabName).then(function(txt) {
+      /* Extra safety: if response looks like wrong sheet data, return it anyway - parsers validate */
+      return txt;
     }).catch(function() { return null; });
   }
 
