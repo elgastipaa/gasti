@@ -1016,8 +1016,8 @@ document.addEventListener('DOMContentLoaded', function() {
       cache.etiqSeg  = results[3] ? parseEtiqSegmento(results[3]) : {};
       cache.etiqPdv  = results[4] ? parseEtiqPdv(results[4]) : {};
       cache.datosPdv      = results[5] ? parseDatosPdv(results[5]) : [];
-      cache.accionesIndex = results[6] ? buildAccionesIndex(results[6]) : null;
-      cache.etiqCcc  = results[7] ? parseEtiqPdv(results[7]) : {};
+      cache.etiqCcc  = results[6] ? parseEtiqPdv(results[6]) : {};
+      cache.accionesIndex = results[7] ? buildAccionesIndex(results[7]) : null;
       var nd = document.getElementById('tdistri');
       if (cache.nombre) {
         nd.textContent = cache.nombre;
