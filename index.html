@@ -218,8 +218,8 @@
     .plan-filters { display: flex; gap: 10px; margin-bottom: 8px; }
     .plan-select { width: 100%; border: 2px solid var(--gris-b); border-radius: 10px; padding: 8px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--azul); background: var(--gris-f); outline: none; }
     .plan-dias { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .plan-dia { display: flex; align-items: center; gap: 4px; background: var(--gris-f); border: 1.5px solid var(--gris-b); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--txt-s); cursor: pointer; user-select: none; -webkit-user-select: none; }
-    .plan-dia input[type=checkbox] { accent-color: var(--azul-m); width: 14px; height: 14px; }
+    .plan-dia { display: flex; align-items: center; gap: 3px; background: var(--gris-f); border: 1.5px solid var(--gris-b); border-radius: 8px; padding: 4px 7px; font-size: 11px; font-weight: 700; color: var(--txt-s); cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .plan-dia input[type=checkbox] { accent-color: var(--azul-m); width: 12px; height: 12px; }
     .plan-dia:has(input:checked) { background: #EAF2FF; border-color: var(--azul-m); color: var(--azul); }
     .plan-count { font-size: 11px; color: var(--txt-s); margin-bottom: 4px; min-height: 16px; }
     .plan-canal-filters { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; min-height: 0; }
@@ -2118,23 +2118,28 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var fi = 0; fi < filtrados.length; fi++) {
       var d = filtrados[fi];
       var line = '- *' + d.pdv + ' - ' + d.rs + '*';
-      /* Etiquetas */
+      /* Etiquetas: if filters active, only show matching ones */
       var etqs = [];
       var pe = etiqPdv[d.pdv] || [];
-      for (var pi = 0; pi < pe.length; pi++) { etqs.push(pe[pi]); }
+      for (var pi = 0; pi < pe.length; pi++) {
+        if (etiqFiltrosWa.length === 0 || planEtiqActivas[pe[pi]]) { etqs.push(pe[pi]); }
+      }
       var segs = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
       var seenE = {};
       for (var si4 = 0; si4 < segs.length; si4++) {
         var ev4 = etiqSeg[segs[si4]];
-        if (ev4 && !seenE[ev4]) { etqs.push(ev4); seenE[ev4] = true; }
+        if (ev4 && !seenE[ev4]) {
+          seenE[ev4] = true;
+          if (etiqFiltrosWa.length === 0 || planEtiqActivas[ev4]) { etqs.push(ev4); }
+        }
       }
       var cccWa = (cache.etiqCcc && cache.etiqCcc[d.pdv]) ? cache.etiqCcc[d.pdv] : [];
-      for (var cwi = 0; cwi < cccWa.length; cwi++) { etqs.push(cccWa[cwi]); }
+      for (var cwi = 0; cwi < cccWa.length; cwi++) {
+        if (etiqFiltrosWa.length === 0 || planEtiqActivas[cccWa[cwi]]) { etqs.push(cccWa[cwi]); }
+      }
       if (etqs.length > 0) { line += ' ' + etqs.join(', '); }
       lines.push(line);
     }
-    lines.push('');
-    lines.push('_Enviado desde Acciones Comerciales_');
     var msg = lines.join('\n');
     var wa = cfg.whatsapp || '';
     var url = wa
