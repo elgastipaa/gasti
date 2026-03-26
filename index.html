@@ -61,19 +61,19 @@
     .ssugg-cod { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; color: var(--azul); flex-shrink: 0; }
     .ssugg-rs  { font-size: 12px; color: var(--txt-s); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     /* History chips */
-    .shist { padding: 8px 16px 0; display: none; flex-wrap: wrap; gap: 6px; }
+    .shist { padding: 6px 16px 0; display: none; flex-wrap: wrap; gap: 5px; max-height: 58px; overflow: hidden; }
     .shist.on { display: flex; }
-    .shist-chip { background: #fff; border: 1.5px solid var(--gris-b); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul-m); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .15s; }
+    .shist-chip { background: #fff; border: 1.5px solid var(--gris-b); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--azul-m); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all .15s; }
     .shist-chip:active { background: var(--gris-f); }
-    .shist-chip-rs { font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--txt-s); font-size: 11px; }
+    .shist-chip-rs { font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--txt-s); font-size: 10px; }
     /* Offline badge */
     .offline-badge { display: none; background: #FFF3CD; color: #7A5500; border: 1.5px solid #F5C842; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; margin-left: 6px; }
     .slbl { font-size: 11px; font-weight: 700; color: var(--txt-s); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 9px; }
     .srow { display: flex; gap: 10px; }
-    .sinput { flex: 1; min-width: 0; background: #fff; border: 2px solid var(--gris-b); border-radius: 14px; padding: 15px 18px; font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); outline: none; letter-spacing: 2px; transition: all .18s; -webkit-appearance: none; }
-    .sinput::placeholder { color: var(--gris-b); font-weight: 400; font-size: 16px; letter-spacing: 0; }
+    .sinput { flex: 1; min-width: 0; background: #fff; border: 2px solid var(--gris-b); border-radius: 12px; padding: 10px 14px; font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--azul); outline: none; letter-spacing: 2px; transition: all .18s; -webkit-appearance: none; }
+    .sinput::placeholder { color: var(--gris-b); font-weight: 400; font-size: 13px; letter-spacing: 0; }
     .sinput:focus { border-color: var(--azul-m); box-shadow: 0 0 0 3px rgba(0,61,165,.09); }
-    .sbtn { background: var(--azul); color: #fff; border: none; border-radius: 14px; width: 56px; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .sbtn { background: var(--azul); color: #fff; border: none; border-radius: 12px; width: 46px; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
     .sbtn:active { transform: scale(.93); }
 
     /* ESTADOS */
@@ -100,7 +100,7 @@
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
     .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .etiq-seg { display: inline-block; background: #6DD49A; color: #0F5229; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
-    .etiq-ccc { display: inline-block; background: #DBEAFE; color: #1E40AF; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .etiq-ccc { display: inline-block; background: #FB923C; color: #431407; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; border: 1.5px solid #FB923C; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
     .negocio-tabs { display: flex; gap: 6px; width: 100%; flex-wrap: wrap; }
@@ -233,8 +233,8 @@
     .plan-etiq-btn.seg  { background: #A8E8C4; color: #0A3D1F; border: 1.5px solid #3DB870; }
     .plan-etiq-btn.active.pdv { background: var(--dorado); color: var(--azul); border-color: #CC8800; box-shadow: 0 0 0 2px rgba(245,168,0,.35); }
     .plan-etiq-btn.active.seg { background: #3DB870; color: #fff; border-color: #2A9A55; box-shadow: 0 0 0 2px rgba(61,184,112,.35); }
-    .plan-etiq-btn.ccc  { background: #BFDBFE; color: #1E40AF; border: 1.5px solid #60A5FA; }
-    .plan-etiq-btn.active.ccc { background: #3B82F6; color: #fff; border-color: #1D4ED8; box-shadow: 0 0 0 2px rgba(59,130,246,.35); }
+    .plan-etiq-btn.ccc  { background: #FFEDD5; color: #9A3412; border: 1.5px solid #FB923C; }
+    .plan-etiq-btn.active.ccc { background: #FB923C; color: #431407; border-color: #EA580C; box-shadow: 0 0 0 2px rgba(251,146,60,.4); }
     .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.45); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
     .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); background: rgba(255,255,255,.4); }
     .plan-table { border-collapse: collapse; font-size: 12px; width: max-content; min-width: 100%; }
@@ -354,7 +354,10 @@
     <div class="reshdr-row1">
       <div class="rcod" id="rcod">-</div>
       <div class="rinfo">
-        <div class="rrs" id="rrs"></div>
+        <div style="display:flex;align-items:center;gap:6px;min-width:0">
+          <div class="rrs" id="rrs" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1"></div>
+          <span id="rcanal" style="display:none;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap"></span>
+        </div>
         <div style="display:flex;align-items:center;gap:6px">
           <div class="rdom" id="rdom"></div>
           <a id="btn-maps" href="#" target="_blank" style="display:none;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-decoration:none;white-space:nowrap">&#128205; Maps</a>
@@ -1074,7 +1077,20 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!match) { return null; }
       try {
         var json = JSON.parse(match[1]);
-        if (json.status === 'error') { return null; } /* sheet does not exist */
+        if (json.status === 'error') {
+          /* Only reject if sheet truly doesn't exist - check error message */
+          var errors = json.errors || [];
+          for (var ei = 0; ei < errors.length; ei++) {
+            var reason = (errors[ei].reason || '').toLowerCase();
+            var msg = (errors[ei].message || '').toLowerCase();
+            if (reason === 'invalid_query' || msg.indexOf('sheet') !== -1) {
+              /* Could be empty sheet or bad query - still try CSV fetch */
+              break;
+            }
+          }
+          /* If no data rows but sheet exists, gviz returns error - try CSV anyway */
+          return fetchSheet(tabName).catch(function() { return null; });
+        }
       } catch(e) { return null; }
       /* Sheet exists - now fetch as CSV */
       return fetchSheet(tabName);
@@ -1589,6 +1605,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     document.getElementById('rrs').textContent  = datoCliente ? datoCliente.rs  : '';
+    var rcEl = document.getElementById('rcanal');
+    if (rcEl) {
+      if (datoCliente && datoCliente.canal) {
+        rcEl.textContent = datoCliente.canal;
+        rcEl.style.display = '';
+      } else { rcEl.style.display = 'none'; }
+    }
     document.getElementById('rdom').textContent = datoCliente ? datoCliente.dom : '';
     var btnMaps = document.getElementById('btn-maps');
     if (btnMaps) {
@@ -1799,6 +1822,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('segswrap').innerHTML = '';
     document.getElementById('etiq-wrap').innerHTML = '';
     document.getElementById('rrs').textContent = '';
+    var rcEl2 = document.getElementById('rcanal'); if (rcEl2) { rcEl2.style.display = 'none'; }
     document.getElementById('rdom').textContent = '';
     var bm = document.getElementById('btn-maps'); if (bm) { bm.style.display = 'none'; }
     allOpen = false;
