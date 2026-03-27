@@ -1986,10 +1986,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var btnWa2 = document.getElementById('btn-plan-wa');
     if (btnWa2) { btnWa2.style.display = 'none'; }
     planPoblarFiltros();
-    /* Don't render table on open - wait for user to select filters */
-    var tbody = document.getElementById('plan-tbody');
-    tbody.innerHTML = '<tr><td colspan="6" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
-    document.getElementById('plan-count').textContent = '';
     var sh = document.getElementById('plan-sheet');
     sh.classList.add('on');
     setTimeout(function() { sh.classList.add('open'); }, 10);
@@ -2023,10 +2019,10 @@ document.addEventListener('DOMContentLoaded', function() {
       selSup.appendChild(o);
     });
     /* Rebuild vendedor filtered by supervisor */
-    planActualizarVendedores(true);
+    planActualizarVendedores();
   }
 
-  function planActualizarVendedores(skipFilter) {
+  function planActualizarVendedores() {
     var datos = cache.datosPdv || [];
     var sup   = document.getElementById('plan-sup').value;
     var selVend = document.getElementById('plan-vend');
@@ -2044,7 +2040,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (v === curVend) { o.selected = true; }
       selVend.appendChild(o);
     });
-    if (!skipFilter) { planFiltrar(); }
+    planFiltrar();
   }
 
   function planGetDiasSeleccionados() {
@@ -2146,10 +2142,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (countEl) {
       var total = list.length;
       var shown = Math.min(end, PLAN_MAX);
-      if (total === 0) { countEl.textContent = 'Sin resultados'; }
-      else if (total > PLAN_MAX) { countEl.textContent = 'Mostrando ' + shown + ' de ' + total + ' PDVs (max ' + PLAN_MAX + ')'; }
-      else if (shown < total) { countEl.textContent = 'Mostrando ' + shown + ' de ' + total + ' PDVs'; }
-      else { countEl.textContent = total + ' PDV' + (total !== 1 ? 's' : ''); }
+      if (total === 0) { countEl.innerHTML = 'Sin resultados'; }
+      else if (total > PLAN_MAX) { countEl.innerHTML = '<strong>' + total + ' PDVs</strong> - Mostrando ' + shown + ' (max ' + PLAN_MAX + ')'; }
+      else if (shown < total) { countEl.innerHTML = '<strong>' + total + ' PDVs</strong> - Mostrando ' + shown; }
+      else { countEl.innerHTML = '<strong>' + total + ' PDV' + (total !== 1 ? 's' : '') + '</strong>'; }
     }
   }
 
@@ -2280,14 +2276,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var etiqFiltros = Object.keys(planEtiqActivas);
     var canalFiltros = Object.keys(planCanalesActivos);
-    /* Require at least one filter active */
-    if (!sup && !vend && dias.length === 0 && etiqFiltros.length === 0 && canalFiltros.length === 0) {
-      document.getElementById('plan-count').textContent = '';
-      document.getElementById('plan-canal-filters').innerHTML = '';
-      document.getElementById('plan-etiq-filters').innerHTML = '';
-      document.getElementById('plan-tbody').innerHTML = '<tr><td colspan="6" class="plan-empty">Selecci&#243;n&#225; supervisor, vendedor o d&#237;as para ver los PDVs.</td></tr>';
-      return;
-    }
 
     /* filtradosBase: PDVs after sup/vend/canal/dia filters but BEFORE etiq filter
        Used to count etiquetas so all bubbles stay visible even when etiq filter is active */
@@ -2359,7 +2347,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Update count and etiqueta filter bubbles */
     var countEl = document.getElementById('plan-count');
-    countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : '';
+    countEl.innerHTML = '';
     planRenderCanalFiltros(filtradosBase);
     planRenderEtiqFiltros(filtradosBase, filtrados);
     /* Show/hide WhatsApp button */
