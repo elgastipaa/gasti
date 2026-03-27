@@ -546,8 +546,9 @@ document.addEventListener('DOMContentLoaded', function() {
     tabEtiqCcc: saved.tabEtiqCcc || 'Etiq CCC',
     tabDatosPdv: saved.tabDatosPdv || 'Datos PDV',
     whatsapp:    saved.whatsapp    || '',
-    modoPTC:    saved.modoPTC    || false,
-    markupIdx:  saved.markupIdx  !== undefined ? saved.markupIdx : 0
+    modoPTC:       saved.modoPTC       || false,
+    markupIdx:     saved.markupIdx     !== undefined ? saved.markupIdx : 0,
+    precioUnitario: saved.precioUnitario || false
   };
   /* sheetId computed from active sheet for backward compat */
   Object.defineProperty(cfg, 'sheetId', {
@@ -832,7 +833,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   var allOpen = false;
-  var precioUnitario = false;
+  var precioUnitario = cfg.precioUnitario || false;
 
   function doLogin() {
     var val = pids.map(function(id) { return document.getElementById(id).value; }).join('');
@@ -1820,6 +1821,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('btn-unitario').addEventListener('click', function() {
     precioUnitario = !precioUnitario;
+    cfg.precioUnitario = precioUnitario;
+    localStorage.setItem(STORE, JSON.stringify(cfg));
     var btn = document.getElementById('btn-unitario');
     btn.style.background = 'var(--azul-m)';
     btn.style.color = '#fff';
