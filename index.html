@@ -460,7 +460,7 @@
         <div class="plan-count" id="plan-count"></div>
       </div>
     </div>
-    <div class="plan-scroll">
+    <div class="plan-scroll" id="plan-scroll">
       <table class="plan-table" id="plan-table">
         <thead><tr><th>PDV</th><th>Razon social</th><th>Canal</th><th>Etiquetas</th><th>Domicilio</th><th>Localidad</th></tr></thead>
         <tbody id="plan-tbody"></tbody>
@@ -2057,6 +2057,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   var planCanalesActivos = {}; /* canal -> true if active */
+  var PLAN_BATCH = 50;  /* rows per render batch */
+  var PLAN_MAX   = 200; /* max rows to render */
+  var planRenderOffset = 0; /* how many rows rendered so far */
+  var planTodosFiltrados = []; /* full filtered list for batch rendering */
   var planEtiqActivas = {}; /* etiqueta text -> true if active filter */
 
   function planRenderCanalFiltros(filtrados) {
@@ -2095,6 +2099,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   var planUltimosFiltrados = [];
+
+  function planBuildRow(d) {
+    var etiqSeg = cache.etiqSeg || {};
+    var etiqPdv = cache.etiqPdv || {};
+    var eHtml = '';
+    var pe = etiqPdv[d.pdv] || [];
+    for (var pi = 0; pi < pe.length; pi++) {
+      eHtml += '<span class="etiq-pdv" style="font-size:10px;padding:2px 8px">' + escHtml(pe[pi]) + '</span> ';
+    }
+    var segsForPdv = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+    var shownSeg = {};
+    for (var si2 = 0; si2 < segsForPdv.length; si2++) {
+      var sk2 = segsForPdv[si2];
+      if (etiqSeg[sk2] && !shownSeg[etiqSeg[sk2]]) {
+        eHtml += '<span class="etiq-seg" style="font-size:10px;padding:2px 8px">' + escHtml(etiqSeg[sk2]) + '</span> ';
+        shownSeg[etiqSeg[sk2]] = true;
+      }
+    }
+    var cccMap = cache.etiqCcc || {};
+    var cccItems = cccMap[d.pdv] || [];
+    for (var ci3 = 0; ci3 < cccItems.length; ci3++) {
+      eHtml += '<span class="etiq-ccc" style="font-size:10px;padding:2px 8px">' + escHtml(cccItems[ci3]) + '</span> ';
+    }
+    var mapsHref = d.dom ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.dom + (d.loc ? ' ' + d.loc : '')) : '';
+    var row = '<tr>';
+    row += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="display:inline-block;background:rgba(0,61,165,.08);color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;padding:4px 10px;border-radius:8px;border:1.5px solid rgba(0,61,165,.15)">' + escHtml(d.pdv) + '</span></td>';
+    row += '<td>' + escHtml(d.rs) + '</td>';
+    row += '<td style="font-size:11px;font-weight:700;color:var(--txt-s)">' + escHtml(d.canal) + '</td>';
+    row += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
+    row += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
+    row += '<td>' + escHtml(d.loc) + '</td>';
+    row += '</tr>';
+    return row;
+  }
+
+  function planAppendRows(tbody, from, count) {
+    var list = planTodosFiltrados;
+    var end = Math.min(from + count, list.length, PLAN_MAX);
+    var html = '';
+    for (var i = from; i < end; i++) { html += planBuildRow(list[i]); }
+    tbody.insertAdjacentHTML('beforeend', html);
+    planRenderOffset = end;
+    /* Update count label */
+    var countEl = document.getElementById('plan-count');
+    if (countEl) {
+      var total = list.length;
+      var shown = Math.min(end, PLAN_MAX);
+      if (total === 0) { countEl.textContent = 'Sin resultados'; }
+      else if (total > PLAN_MAX) { countEl.textContent = 'Mostrando ' + shown + ' de ' + total + ' PDVs (max ' + PLAN_MAX + ')'; }
+      else if (shown < total) { countEl.textContent = 'Mostrando ' + shown + ' de ' + total + ' PDVs'; }
+      else { countEl.textContent = total + ' PDV' + (total !== 1 ? 's' : ''); }
+    }
+  }
 
   function planEnviarWA() {
     var filtrados = planUltimosFiltrados;
@@ -2302,7 +2359,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Update count and etiqueta filter bubbles */
     var countEl = document.getElementById('plan-count');
-    countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : 'Sin resultados';
+    countEl.textContent = filtrados.length > 0 ? filtrados.length + ' PDV' + (filtrados.length !== 1 ? 's' : '') : '';
     planRenderCanalFiltros(filtradosBase);
     planRenderEtiqFiltros(filtradosBase, filtrados);
     /* Show/hide WhatsApp button */
@@ -2321,43 +2378,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var etiqSeg = cache.etiqSeg || {};
     var etiqPdv = cache.etiqPdv || {};
 
-    var html = '';
-    for (var fi = 0; fi < filtrados.length; fi++) {
-      var d = filtrados[fi];
-      /* Build etiquetas */
-      var eHtml = '';
-      /* PDV etiquetas */
-      var pe = etiqPdv[d.pdv] || [];
-      for (var pi = 0; pi < pe.length; pi++) {
-        eHtml += '<span class="etiq-pdv" style="font-size:10px;padding:2px 8px">' + escHtml(pe[pi]) + '</span> ';
-      }
-      /* Segment etiquetas via accionesIndex */
-      var segsForPdv = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
-      var shownSeg = {};
-      for (var si2 = 0; si2 < segsForPdv.length; si2++) {
-        var sk2 = segsForPdv[si2];
-        if (etiqSeg[sk2] && !shownSeg[etiqSeg[sk2]]) {
-          eHtml += '<span class="etiq-seg" style="font-size:10px;padding:2px 8px">' + escHtml(etiqSeg[sk2]) + '</span> ';
-          shownSeg[etiqSeg[sk2]] = true;
-        }
-      }
-      /* CCC etiquetas in planificador */
-      var cccMap = cache.etiqCcc || {};
-      var cccItems = cccMap[d.pdv] || [];
-      for (var ci3 = 0; ci3 < cccItems.length; ci3++) {
-        eHtml += '<span class="etiq-ccc" style="font-size:10px;padding:2px 8px">' + escHtml(cccItems[ci3]) + '</span> ';
-      }
-      html += '<tr>';
-      html += '<td><span class="plan-pdv-link" data-pdv="' + escHtml(d.pdv) + '" style="display:inline-block;background:rgba(0,61,165,.08);color:var(--azul-m);font-weight:700;cursor:pointer;font-family:DM Mono,monospace;padding:4px 10px;border-radius:8px;border:1.5px solid rgba(0,61,165,.15)">' + escHtml(d.pdv) + '</span></td>';
-      html += '<td>' + escHtml(d.rs) + '</td>';
-      html += '<td style="font-size:11px;font-weight:700;color:var(--txt-s)">' + escHtml(d.canal) + '</td>';
-      html += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
-      var mapsHref = d.dom ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.dom + (d.loc ? ' ' + d.loc : '')) : '';
-      html += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
-      html += '<td>' + escHtml(d.loc) + '</td>';
-      html += '</tr>';
-    }
-    tbody.innerHTML = html;
+    planTodosFiltrados = filtrados;
+    planRenderOffset = 0;
+    tbody.innerHTML = '';
+    planAppendRows(tbody, 0, PLAN_BATCH);
   }
 
   document.getElementById('plan-tbody').addEventListener('click', function(e) {
@@ -2374,6 +2398,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-plan').addEventListener('click', planAbrir);
   document.getElementById('plan-overlay').addEventListener('click', planCerrar);
   document.getElementById('btn-plan-cerrar').addEventListener('click', planCerrar);
+  document.getElementById('plan-scroll').addEventListener('scroll', function() {
+    var el = this;
+    if (planRenderOffset >= Math.min(planTodosFiltrados.length, PLAN_MAX)) { return; }
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
+      planAppendRows(document.getElementById('plan-tbody'), planRenderOffset, PLAN_BATCH);
+    }
+  });
   document.getElementById('plan-sup').addEventListener('change', function() {
     planActualizarVendedores();
   });
