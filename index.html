@@ -967,6 +967,10 @@ document.addEventListener('DOMContentLoaded', function() {
       err.textContent = 'PIN incorrecto. Intentalo de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
       document.getElementById('p0').focus();
+      setTimeout(function() { err.textContent = ''; }, 3000);
+    }
+  }
+
   document.getElementById('btn-muro').addEventListener('click', function() {
     var pdv = document.getElementById('codinput').value.trim();
     var rrs = document.getElementById('rrs').textContent;
@@ -988,9 +992,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   /* Auto-refresh: interval check every 15 min while app is open */
   setInterval(autoRefreshIfNeeded, AUTO_REFRESH_MS);
-      setTimeout(function() { err.textContent = ''; }, 3000);
-    }
-  }
 
   function doLogout() {
     document.getElementById('app').style.display = 'none';
