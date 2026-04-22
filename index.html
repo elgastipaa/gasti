@@ -1190,32 +1190,36 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('muro-texto').value = '';
     document.getElementById('muro-sheet').classList.add('on');
     document.getElementById('muro-overlay').classList.add('on');
-    /* Fetch comments - follow redirects for Apps Script */
-    fetch(getMuroUrl() + '?pdv=' + encodeURIComponent(pdv), {
-      method: 'GET',
-      redirect: 'follow'
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (!data.ok || !data.data || data.data.length === 0) {
-          list.innerHTML = '<div class="muro-empty">Sin comentarios todav\u00eda.</div>';
-          return;
-        }
-        var html = '';
-        for (var i = 0; i < data.data.length; i++) {
-          var item = data.data[i];
-          html += '<div class="muro-comment">';
-          html += '<div class="muro-comment-text">' + escHtml(item.texto) + '</div>';
-          html += '<div class="muro-comment-meta">';
-          if (item.autor) { html += escHtml(item.autor) + ' &middot; '; }
-          html += escHtml(item.fecha) + '</div>';
-          html += '</div>';
-        }
-        list.innerHTML = html;
-      })
-      .catch(function() {
-        list.innerHTML = '<div class="muro-empty">Error al cargar. Verific\u00e1 la URL del Muro en Configuraci\u00f3n.</div>';
-      });
+    /* Fetch comments via script tag to avoid CORS */
+    var scriptId = 'muro-jsonp-' + Date.now();
+    window._muroCallback = function(data) {
+      var s = document.getElementById(scriptId);
+      if (s) { s.parentNode.removeChild(s); }
+      delete window._muroCallback;
+      if (!data.ok || !data.data || data.data.length === 0) {
+        list.innerHTML = '<div class="muro-empty">Sin comentarios todav\u00eda.</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < data.data.length; i++) {
+        var item = data.data[i];
+        html += '<div class="muro-comment">';
+        html += '<div class="muro-comment-text">' + escHtml(item.texto) + '</div>';
+        html += '<div class="muro-comment-meta">';
+        if (item.autor) { html += escHtml(item.autor) + ' &middot; '; }
+        html += escHtml(item.fecha) + '</div>';
+        html += '</div>';
+      }
+      list.innerHTML = html;
+    };
+    var s = document.createElement('script');
+    s.id = scriptId;
+    s.onerror = function() {
+      list.innerHTML = '<div class="muro-empty">Error al cargar comentarios.</div>';
+      delete window._muroCallback;
+    };
+    s.src = getMuroUrl() + '?pdv=' + encodeURIComponent(pdv) + '&callback=_muroCallback';
+    document.head.appendChild(s);
   }
 
   function muroEnviar() {
@@ -1234,25 +1238,23 @@ document.addEventListener('DOMContentLoaded', function() {
     var autor = cfg.autorNombre || '';
     fetch(getMuroUrl(), {
       method: 'POST',
-      redirect: 'follow',
+      mode: 'no-cors',
       body: JSON.stringify({ pdv: muroCurrentPdv, texto: texto, autor: autor }),
       headers: { 'Content-Type': 'text/plain' }
     })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+    .then(function() {
+      /* no-cors means we can't read response - assume ok */
       btn.disabled = false;
       btn.textContent = 'Guardar comentario';
-      if (data.ok) {
-        document.getElementById('muro-texto').value = '';
-        /* Reload comments */
-        var datoCliente = null;
-        for (var dp = 0; dp < cache.datosPdv.length; dp++) {
-          if (cache.datosPdv[dp].pdv === muroCurrentPdv) { datoCliente = cache.datosPdv[dp]; break; }
-        }
-        muroAbrir(muroCurrentPdv, datoCliente ? datoCliente.rs : '');
-      } else {
-        alert('Error al guardar: ' + (data.error || 'desconocido'));
+      document.getElementById('muro-texto').value = '';
+      var datoCliente = null;
+      for (var dp = 0; dp < cache.datosPdv.length; dp++) {
+        if (cache.datosPdv[dp].pdv === muroCurrentPdv) { datoCliente = cache.datosPdv[dp]; break; }
       }
+      /* Brief delay so Sheet has time to write */
+      setTimeout(function() {
+        muroAbrir(muroCurrentPdv, datoCliente ? datoCliente.rs : '');
+      }, 1500);
     })
     .catch(function() {
       btn.disabled = false;
