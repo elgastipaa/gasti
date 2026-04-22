@@ -642,7 +642,17 @@ document.addEventListener('DOMContentLoaded', function() {
     get: function() { return cfg.sheets[cfg.activeSheet] || ''; },
     enumerable: true
   });
-  function getMuroUrl() { return (cfg.muroUrls && cfg.muroUrls[cfg.activeSheet]) || ''; }
+  function getMuroUrl() {
+    /* Check in-memory cfg first, then localStorage as fallback */
+    var url = (cfg.muroUrls && cfg.muroUrls[cfg.activeSheet]) || '';
+    if (!url) {
+      try {
+        var saved = JSON.parse(localStorage.getItem(STORE) || '{}');
+        url = (saved.muroUrls && saved.muroUrls[saved.activeSheet !== undefined ? saved.activeSheet : 0]) || '';
+      } catch(e) {}
+    }
+    return url;
+  }
 
   /* -- CACHE (LDP, Precios, Config - se refresca manualmente) ------ */
   var cache = { ldp: null, precios: null, distri: 1, nombre: '', etiqSeg: {}, etiqPdv: {}, etiqCcc: {}, datosPdv: [], accionesIndex: null };
