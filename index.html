@@ -945,7 +945,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('cwhatsapp').value = cfg.whatsapp || '';
       for (var mi = 0; mi < 4; mi++) {
         var mEl = document.getElementById('cmuro' + mi);
-        if (mEl) { mEl.value = (muroUrls && muroUrls[mi]) || ''; }
+        if (mEl) { mEl.value = (cfg.muroUrls && cfg.muroUrls[mi]) || ''; }
       }
       var cautorEl = document.getElementById('cautor'); if (cautorEl) { cautorEl.value = cfg.autorNombre || ''; }
       cargarCacheEstaticoSiNecesario();
