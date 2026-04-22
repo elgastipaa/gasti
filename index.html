@@ -74,6 +74,31 @@
     .sinput::placeholder { color: var(--gris-b); font-weight: 400; font-size: 13px; letter-spacing: 0; }
     .sinput:focus { border-color: var(--azul-m); box-shadow: 0 0 0 3px rgba(0,61,165,.09); }
     .sbtn { background: var(--azul); color: #fff; border: none; border-radius: 12px; width: 46px; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .sbtn-gps { background: var(--azul); color: #fff; border: none; border-radius: 12px; width: 46px; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .sbtn-gps:active { transform: scale(.93); }
+    .sbtn-gps.loading { opacity: .6; pointer-events: none; }
+    /* Nearby overlay */
+    .nearby-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,.45); z-index:100; }
+    .nearby-overlay.on { display:block; }
+    .nearby-sheet { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:#fff; z-index:101; flex-direction:column; overflow:hidden; }
+    .nearby-sheet.on { display:flex; }
+    .nearby-header { background:var(--azul); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .nearby-title { flex:1; font-size:14px; font-weight:700; }
+    .nearby-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; padding:4px 8px; line-height:1; }
+    .nearby-list { flex:1; overflow-y:auto; padding:8px 0; }
+    .nearby-item { display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border-bottom:1px solid var(--gris-b); cursor:pointer; }
+    .nearby-item:active { background:var(--gris-f); }
+    .nearby-dist { font-size:13px; font-weight:700; color:var(--azul-m); font-family:'DM Mono',monospace; flex-shrink:0; width:54px; padding-top:2px; }
+    .nearby-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+    .nearby-row1 { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .nearby-rs { font-size:13px; font-weight:700; color:var(--txt); }
+    .nearby-canal { font-size:10px; font-weight:700; background:var(--gris-b); color:var(--txt-s); padding:1px 7px; border-radius:10px; white-space:nowrap; }
+    .nearby-dom { font-size:11px; color:var(--txt-s); }
+    .nearby-vend { font-size:11px; color:var(--txt-s); }
+    .nearby-etiqs { display:flex; flex-wrap:wrap; gap:4px; }
+    .nearby-actions { display:flex; gap:6px; margin-top:4px; }
+    .nearby-maps { background:rgba(0,61,165,.08); color:var(--azul-m); font-size:10px; font-weight:700; padding:4px 10px; border-radius:6px; text-decoration:none; white-space:nowrap; border:1.5px solid rgba(0,61,165,.15); }
+    .nearby-buscar { background:var(--azul); color:#fff; font-size:10px; font-weight:700; padding:4px 10px; border-radius:6px; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap; }
     .sbtn:active { transform: scale(.93); }
 
     /* ESTADOS */
@@ -100,6 +125,25 @@
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
     .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
     .etiq-seg { display: inline-block; background: #6DD49A; color: #0F5229; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    /* MURO */
+    .muro-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,.45); z-index:100; }
+    .muro-overlay.on { display:block; }
+    .muro-sheet { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:#fff; z-index:101; flex-direction:column; }
+    .muro-sheet.on { display:flex; }
+    .muro-header { background:var(--azul); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .muro-title { flex:1; font-size:14px; font-weight:700; }
+    .muro-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; padding:4px 8px; line-height:1; }
+    .muro-list { flex:1; overflow-y:auto; padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+    .muro-comment { background:var(--gris-f); border-radius:12px; padding:10px 14px; }
+    .muro-comment-text { font-size:13px; color:var(--txt); line-height:1.5; }
+    .muro-comment-meta { font-size:10px; color:var(--txt-s); margin-top:4px; }
+    .muro-empty { text-align:center; color:var(--txt-s); font-size:13px; padding:32px 0; font-style:italic; }
+    .muro-input-area { padding:12px 16px; border-top:1.5px solid var(--gris-b); flex-shrink:0; display:flex; flex-direction:column; gap:8px; }
+    .muro-textarea { width:100%; border:2px solid var(--gris-b); border-radius:12px; padding:10px 14px; font-size:14px; font-family:"DM Sans",sans-serif; color:var(--txt); resize:none; outline:none; min-height:72px; transition:border-color .18s; }
+    .muro-textarea:focus { border-color:var(--azul-m); }
+    .muro-send { background:var(--azul); color:#fff; border:none; border-radius:10px; padding:10px; font-size:13px; font-weight:700; font-family:"DM Sans",sans-serif; cursor:pointer; transition:all .15s; }
+    .muro-send:disabled { opacity:.5; pointer-events:none; }
+    .muro-btn { display:inline-block; background:rgba(255,255,255,.15); color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; text-decoration:none; white-space:nowrap; border:none; cursor:pointer; font-family:"DM Sans",sans-serif; }
     .etiq-ccc { display: inline-block; background: #FB923C; color: #431407; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; border: 1.5px solid #FB923C; }
     .tog-btn { margin-left: auto; background: rgba(255,255,255,.15); border: none; color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 8px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
     .tog-btn:active { background: rgba(255,255,255,.28); }
@@ -228,6 +272,8 @@
     .plan-canal-btn.active { background: #4A5568; color: #fff; border-color: #2D3748; box-shadow: 0 0 0 2px rgba(74,85,104,.3); }
     .plan-canal-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.4); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
     .plan-canal-btn.active .etiq-count { color: rgba(255,255,255,.7); background: rgba(255,255,255,.2); }
+    .plan-filter-clear { display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid #B0BAC8; border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; background: #fff; color: #B0BAC8; transition: all .15s; flex-shrink: 0; }
+    .plan-filter-clear:active { background: var(--gris-f); }
     .plan-etiq-btn { display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 20px; padding: 4px 11px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; }
     .plan-etiq-btn.pdv  { background: #FFE08A; color: #5A3A00; border: 1.5px solid #E8A800; }
     .plan-etiq-btn.seg  { background: #A8E8C4; color: #0A3D1F; border: 1.5px solid #3DB870; }
@@ -238,7 +284,9 @@
     .plan-etiq-btn .etiq-count { font-size: 10px; font-weight: 800; color: rgba(0,0,0,.45); background: rgba(255,255,255,.6); border-radius: 10px; padding: 0 5px; }
     .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); background: rgba(255,255,255,.4); }
     .plan-table { border-collapse: collapse; font-size: 12px; width: max-content; min-width: 100%; }
-    .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
+    .plan-table th { background: var(--azul); color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; position: sticky; top: 0; z-index: 2; cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .plan-table th.sort-asc::after  { content: ' \25B2'; font-size: 8px; opacity: .8; }
+    .plan-table th.sort-desc::after { content: ' \25BC'; font-size: 8px; opacity: .8; }
     .plan-table td { padding: 8px 10px; border-top: 1px solid var(--gris-b); vertical-align: middle; }
     .plan-table td:first-child { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--azul-m); white-space: nowrap; width: 82px; min-width: 82px; max-width: 82px; position: sticky; left: 0; background: #fff; z-index: 1; }
     .plan-table td:nth-child(2) { font-weight: 600; color: var(--txt); width: 110px; min-width: 110px; max-width: 110px; white-space: normal; word-break: break-word; position: sticky; left: 82px; background: #fff; z-index: 1; }
@@ -246,12 +294,16 @@
     .plan-table td:nth-child(4) { font-size: 11px; width: 100px; min-width: 100px; max-width: 100px; white-space: normal; }
     .plan-table td:nth-child(5) { font-size: 11px; width: 150px; min-width: 150px; max-width: 150px; white-space: normal; word-break: break-word; color: var(--txt-s); }
     .plan-table td:nth-child(6) { font-size: 11px; color: var(--txt-s); width: 100px; min-width: 100px; max-width: 100px; white-space: normal; word-break: break-word; }
+    .plan-table td:nth-child(7) { font-size: 11px; color: var(--txt-s); width: 110px; min-width: 110px; max-width: 110px; white-space: normal; word-break: break-word; }
+    .plan-table td:nth-child(8) { font-size: 11px; color: var(--txt-s); width: 110px; min-width: 110px; max-width: 110px; white-space: normal; word-break: break-word; }
     .plan-table th:first-child  { width: 82px; min-width: 82px; position: sticky; left: 0; z-index: 3; }
     .plan-table th:nth-child(2) { width: 110px; min-width: 110px; position: sticky; left: 82px; z-index: 3; }
     .plan-table th:nth-child(3) { width: 58px; min-width: 58px; text-align: center; }
     .plan-table th:nth-child(4) { width: 100px; min-width: 100px; }
     .plan-table th:nth-child(5) { width: 150px; min-width: 150px; }
     .plan-table th:nth-child(6) { width: 100px; min-width: 100px; }
+    .plan-table th:nth-child(7) { width: 110px; min-width: 110px; }
+    .plan-table th:nth-child(8) { width: 110px; min-width: 110px; }
     .plan-table tr:hover td:first-child,
     .plan-table tr:hover td:nth-child(2) { background: var(--gris-f); }
     .plan-table tr:hover td { background: var(--gris-f); }
@@ -332,7 +384,17 @@
     <div class="srow">
       <input class="sinput" id="codinput" type="text" inputmode="text" placeholder="Ej: 3485 o nombre..." autocomplete="off">
       <button class="sbtn" id="btn-buscar">&#128269;</button>
+      <button class="sbtn-gps" id="btn-gps" title="PDVs cercanos">&#128207;</button>
     </div>
+  <!-- NEARBY -->
+  <div class="nearby-overlay" id="nearby-overlay"></div>
+  <div class="nearby-sheet" id="nearby-sheet">
+    <div class="nearby-header">
+      <div class="nearby-title">&#128207; PDVs cercanos</div>
+      <button class="nearby-close" id="btn-nearby-cerrar">&#10005;</button>
+    </div>
+    <div class="nearby-list" id="nearby-list"></div>
+  </div>
     <div class="ssugg" id="ssugg"></div>
   </div>
   <div class="shist" id="shist"></div>
@@ -366,6 +428,7 @@
         </div>
       </div>
       <span class="offline-badge" id="offline-badge">Sin conexion</span>
+      <button class="muro-btn" id="btn-muro" style="display:none">&#128172; Muro</button>
       <button class="tog-btn" id="btn-tog" style="margin-left:auto">&#9660;&#9660;</button>
     </div>
     <div class="reshdr-row2">
@@ -464,12 +527,25 @@
     </div>
     <div class="plan-scroll" id="plan-scroll">
       <table class="plan-table" id="plan-table">
-        <thead><tr><th>PDV</th><th>Razon social</th><th>Canal</th><th>Etiquetas</th><th>Domicilio</th><th>Localidad</th></tr></thead>
+        <thead><tr><th data-col="pdv">PDV</th><th data-col="rs">Razon social</th><th data-col="canal">Canal</th><th>Etiquetas</th><th data-col="dom">Domicilio</th><th data-col="loc">Localidad</th><th data-col="sup">Supervisor</th><th data-col="vend">Vendedor</th></tr></thead>
         <tbody id="plan-tbody"></tbody>
       </table>
     </div>
   </div>
 
+  <!-- MURO -->
+  <div class="muro-overlay" id="muro-overlay"></div>
+  <div class="muro-sheet" id="muro-sheet">
+    <div class="muro-header">
+      <div class="muro-title">&#128172; Muro</div>
+      <button class="muro-close" id="btn-muro-cerrar">&#10005;</button>
+    </div>
+    <div class="muro-list" id="muro-list"></div>
+    <div class="muro-input-area">
+      <textarea class="muro-textarea" id="muro-texto" placeholder="Escribá un comentario..."></textarea>
+      <button class="muro-send" id="btn-muro-enviar">Guardar comentario</button>
+    </div>
+  </div>
   <div class="cfgwrap">
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="cfgtoggle" id="btn-cfg" style="flex:0 0 auto;width:40px;text-align:center;padding:8px">&#9881;</button>
@@ -513,6 +589,13 @@
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
       <label class="clbl">WhatsApp (con codigo de pais, sin + ni espacios)</label>
       <input class="cinput" id="cwhatsapp" inputmode="numeric" placeholder="Ej: 5492281123456">
+      <label class="clbl">URL Muro por distribuidor (Apps Script URL)</label>
+      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cmuro0" placeholder="URL Muro distri 1"></div>
+      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cmuro1" placeholder="URL Muro distri 2"></div>
+      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cmuro2" placeholder="URL Muro distri 3"></div>
+      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cmuro3" placeholder="URL Muro distri 4"></div>
+      <label class="clbl">Tu nombre (autor de comentarios en el Muro)</label>
+      <input class="cinput" id="cautor" placeholder="Ej: Juan Perez">
       <button class="csave" id="btn-save">Guardar</button>
       <div class="cfg-status" id="cfg-status"></div>
     </div>
@@ -526,7 +609,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var STORE = 'qac6';
   var STORE_HIST  = 'qac6_hist';   /* last 5 searches */
   var STORE_ACCS   = 'qac6_accs';   /* offline acciones cache */
-  var STORE_STATIC = 'qac6_static'; /* offline LDP+Precios+Config cache */
+  var STORE_STATIC = 'qac6_static';
+  function getMuroUrl() { return (muroUrls && muroUrls[cfg.activeSheet]) || ''; } /* offline LDP+Precios+Config cache */
+  var AUTO_REFRESH_MS = 15 * 60 * 1000; /* 15 minutes */
+  var lastRefreshTime = 0;
   var MAX_HIST    = 5;
   var MAX_OFFLINE = 30;             /* max PDVs cached for offline */
   var TODAY       = new Date().toDateString();
@@ -546,6 +632,8 @@ document.addEventListener('DOMContentLoaded', function() {
     tabEtiqCcc: saved.tabEtiqCcc || 'Etiq CCC',
     tabDatosPdv: saved.tabDatosPdv || 'Datos PDV',
     whatsapp:    saved.whatsapp    || '',
+    muroUrls:    saved.muroUrls    || ['','','',''],
+    autorNombre: saved.autorNombre || '',
     modoPTC:       saved.modoPTC       || false,
     markupIdx:     saved.markupIdx     !== undefined ? saved.markupIdx : 0,
     precioUnitario: saved.precioUnitario || false
@@ -855,6 +943,11 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('ctabdatospdv').value = cfg.tabDatosPdv;
       document.getElementById('cpin').value = cfg.pin;
       document.getElementById('cwhatsapp').value = cfg.whatsapp || '';
+      for (var mi = 0; mi < 4; mi++) {
+        var mEl = document.getElementById('cmuro' + mi);
+        if (mEl) { mEl.value = (muroUrls && muroUrls[mi]) || ''; }
+      }
+      var cautorEl = document.getElementById('cautor'); if (cautorEl) { cautorEl.value = cfg.autorNombre || ''; }
       cargarCacheEstaticoSiNecesario();
       syncPricingBtns();
       histRender();
@@ -864,6 +957,27 @@ document.addEventListener('DOMContentLoaded', function() {
       err.textContent = 'PIN incorrecto. Intentalo de nuevo.';
       pids.forEach(function(id) { document.getElementById(id).value = ''; });
       document.getElementById('p0').focus();
+  document.getElementById('btn-muro').addEventListener('click', function() {
+    var pdv = document.getElementById('codinput').value.trim();
+    var rrs = document.getElementById('rrs').textContent;
+    muroAbrir(pdv, rrs);
+  });
+  document.getElementById('btn-muro-cerrar').addEventListener('click', muroCerrar);
+  document.getElementById('muro-overlay').addEventListener('click', muroCerrar);
+  document.getElementById('btn-muro-enviar').addEventListener('click', muroEnviar);
+  document.getElementById('muro-texto').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { muroEnviar(); }
+  });
+  document.getElementById('btn-gps').addEventListener('click', nearbyAbrir);
+  document.getElementById('btn-nearby-cerrar').addEventListener('click', nearbyCerrar);
+  document.getElementById('nearby-overlay').addEventListener('click', nearbyCerrar);
+
+  /* Auto-refresh: on visibility change (user returns to tab/app) */
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') { autoRefreshIfNeeded(); }
+  });
+  /* Auto-refresh: interval check every 15 min while app is open */
+  setInterval(autoRefreshIfNeeded, AUTO_REFRESH_MS);
       setTimeout(function() { err.textContent = ''; }, 3000);
     }
   }
@@ -902,6 +1016,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pin.length === 4) { cfg.pin = pin; }
     var wa = document.getElementById('cwhatsapp').value.trim().replace(/[^0-9]/g,'');
     if (wa) { cfg.whatsapp = wa; }
+    var muroUrls = muroUrls || ['','','',''];
+    for (var msi = 0; msi < 4; msi++) {
+      var msEl = document.getElementById('cmuro' + msi);
+      if (msEl) { muroUrls[msi] = msEl.value.trim(); }
+    }
+    muroUrls = muroUrls;
+    var cautorEl2 = document.getElementById('cautor');
+    if (cautorEl2) { cfg.autorNombre = cautorEl2.value.trim(); }
     localStorage.setItem(STORE, JSON.stringify(cfg));
     cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
     cache.etiqSeg = {}; cache.etiqPdv = {}; cache.etiqCcc = {}; cache.datosPdv = [];
@@ -1016,6 +1138,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (results[2]) { parseConfig(results[2]); }
       /* Save raw CSVs for offline use */
       offlineSaveStatic(results[0], results[1], results[2] || '');
+      lastRefreshTime = Date.now();
       cache.etiqSeg  = results[3] ? parseEtiqSegmento(results[3]) : {};
       cache.etiqPdv  = results[4] ? parseEtiqPdv(results[4]) : {};
       cache.datosPdv      = results[5] ? parseDatosPdv(results[5]) : [];
@@ -1031,6 +1154,249 @@ document.addEventListener('DOMContentLoaded', function() {
       /* Mantener null para que el proximo buscar reintente */
       cache.ldp = null; cache.precios = null;
     });
+  }
+
+  function autoRefreshIfNeeded() {
+    /* Skip if not logged in, no sheetId, or refreshed recently */
+    if (!cfg.sheetId) { return; }
+    if (document.getElementById('app').style.display === 'none') { return; }
+    var elapsed = Date.now() - lastRefreshTime;
+    if (lastRefreshTime > 0 && elapsed < AUTO_REFRESH_MS) { return; }
+    /* Silent refresh - no spinner, no alert */
+    cache.ldp = null; cache.precios = null;
+    cargarCacheEstatico().then(function() {
+      var cod = document.getElementById('codinput').value.trim();
+      if (cod && document.getElementById('reshdr').classList.contains('on')) {
+        doBuscar(true);
+      }
+    }).catch(function() { /* silent fail - offline cache still works */ });
+  }
+
+  /* -- MURO ------------------------------------------------------- */
+  var muroCurrentPdv = '';
+
+  function muroCerrar() {
+    document.getElementById('muro-sheet').classList.remove('on');
+    document.getElementById('muro-overlay').classList.remove('on');
+  }
+
+  function muroAbrir(pdv, rs) {
+    if (!getMuroUrl()) {
+      alert('URL del Muro no configurada. Ir a Configuracion y pegar la URL del Apps Script.');
+      return;
+    }
+    muroCurrentPdv = pdv;
+    var title = document.querySelector('.muro-title');
+    if (title) { title.textContent = '\u00a0\u00a0Muro - ' + pdv + ' ' + (rs || ''); }
+    var list = document.getElementById('muro-list');
+    list.innerHTML = '<div class="muro-empty">Cargando...</div>';
+    document.getElementById('muro-texto').value = '';
+    document.getElementById('muro-sheet').classList.add('on');
+    document.getElementById('muro-overlay').classList.add('on');
+    /* Fetch comments */
+    fetch(getMuroUrl() + '?pdv=' + encodeURIComponent(pdv), { method: 'GET' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.ok || !data.data || data.data.length === 0) {
+          list.innerHTML = '<div class="muro-empty">Sin comentarios todav\u00eda.</div>';
+          return;
+        }
+        var html = '';
+        for (var i = 0; i < data.data.length; i++) {
+          var item = data.data[i];
+          html += '<div class="muro-comment">';
+          html += '<div class="muro-comment-text">' + escHtml(item.texto) + '</div>';
+          html += '<div class="muro-comment-meta">';
+          if (item.autor) { html += escHtml(item.autor) + ' &middot; '; }
+          html += escHtml(item.fecha) + '</div>';
+          html += '</div>';
+        }
+        list.innerHTML = html;
+      })
+      .catch(function() {
+        list.innerHTML = '<div class="muro-empty">Error al cargar. Verific\u00e1 la URL del Muro en Configuraci\u00f3n.</div>';
+      });
+  }
+
+  function muroEnviar() {
+    var texto = document.getElementById('muro-texto').value.trim();
+    if (!texto || !muroCurrentPdv || !getMuroUrl()) { return; }
+    if (!cfg.autorNombre) {
+      var nombre = (prompt('Como te llamas? (se guarda para futuros comentarios)') || '').trim();
+      if (!nombre) { return; }
+      cfg.autorNombre = nombre;
+      localStorage.setItem(STORE, JSON.stringify(cfg));
+      var cautorEl3 = document.getElementById('cautor'); if (cautorEl3) { cautorEl3.value = nombre; }
+    }
+    var btn = document.getElementById('btn-muro-enviar');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+    var autor = cfg.autorNombre || '';
+    fetch(getMuroUrl(), {
+      method: 'POST',
+      body: JSON.stringify({ pdv: muroCurrentPdv, texto: texto, autor: autor }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      btn.disabled = false;
+      btn.textContent = 'Guardar comentario';
+      if (data.ok) {
+        document.getElementById('muro-texto').value = '';
+        /* Reload comments */
+        var datoCliente = null;
+        for (var dp = 0; dp < cache.datosPdv.length; dp++) {
+          if (cache.datosPdv[dp].pdv === muroCurrentPdv) { datoCliente = cache.datosPdv[dp]; break; }
+        }
+        muroAbrir(muroCurrentPdv, datoCliente ? datoCliente.rs : '');
+      } else {
+        alert('Error al guardar: ' + (data.error || 'desconocido'));
+      }
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Guardar comentario';
+      alert('Error de conexi\u00f3n al guardar.');
+    });
+  }
+
+  /* -- HAVERSINE DISTANCE (meters) -------------------------------- */
+  function haversine(lat1, lng1, lat2, lng2) {
+    var R = 6371000;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function formatDist(m) {
+    if (m < 1000) { return Math.round(m) + ' m'; }
+    return (m / 1000).toFixed(1) + ' km';
+  }
+
+  function nearbyCerrar() {
+    document.getElementById('nearby-sheet').classList.remove('on');
+    document.getElementById('nearby-overlay').classList.remove('on');
+  }
+
+  function nearbyAbrir() {
+    var datos = cache.datosPdv || [];
+    /* Check if any PDV has coordinates */
+    var hasCoords = false;
+    for (var i = 0; i < datos.length; i++) {
+      if (datos[i].lat && datos[i].lng) { hasCoords = true; break; }
+    }
+    if (!hasCoords) {
+      document.getElementById('nearby-list').innerHTML = '<div style="padding:24px 16px;text-align:center;color:var(--txt-s);font-size:13px">No hay coordenadas cargadas.<br>Agrega columnas <b>Latitud</b> y <b>Longitud</b> a la hoja Datos PDV.</div>';
+      document.getElementById('nearby-sheet').classList.add('on');
+      document.getElementById('nearby-overlay').classList.add('on');
+      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      return;
+    }
+    var btn = document.getElementById('btn-gps');
+    btn.classList.add('loading');
+    btn.innerHTML = '&#8987;';
+    if (!navigator.geolocation) {
+      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      alert('Tu dispositivo no soporta GPS.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      var myLat = pos.coords.latitude;
+      var myLng = pos.coords.longitude;
+      /* Calculate distances and sort */
+      var withDist = [];
+      for (var di = 0; di < datos.length; di++) {
+        var d = datos[di];
+        if (!d.lat || !d.lng) { continue; }
+        var dist = haversine(myLat, myLng, d.lat, d.lng);
+        withDist.push({ d: d, dist: dist });
+      }
+      withDist.sort(function(a, b) { return a.dist - b.dist; });
+      var top = withDist.slice(0, 10);
+      if (top.length === 0) {
+        alert('No se encontraron PDVs con coordenadas.');
+        return;
+      }
+      /* Render list */
+      var etiqSegN = cache.etiqSeg || {};
+      var etiqPdvN = cache.etiqPdv || {};
+      var etiqCccN = cache.etiqCcc || {};
+      var html = '';
+      for (var ni = 0; ni < top.length; ni++) {
+        var item = top[ni];
+        var d = item.d;
+        var mapsHref = d.lat ? 'https://www.google.com/maps/dir/?api=1&destination=' + d.lat + ',' + d.lng : '';
+        /* Build etiquetas */
+        var eHtml = '';
+        var peN = etiqPdvN[d.pdv] || [];
+        for (var pni = 0; pni < peN.length; pni++) {
+          eHtml += '<span class="etiq-pdv" style="font-size:10px;padding:2px 7px">' + escHtml(peN[pni]) + '</span>';
+        }
+        var segsN = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+        var seenN = {};
+        for (var sni = 0; sni < segsN.length; sni++) {
+          var evN = etiqSegN[segsN[sni]];
+          if (evN && !seenN[evN]) { seenN[evN] = true; eHtml += '<span class="etiq-seg" style="font-size:10px;padding:2px 7px">' + escHtml(evN) + '</span>'; }
+        }
+        var cccN = etiqCccN[d.pdv] || [];
+        for (var cni = 0; cni < cccN.length; cni++) {
+          eHtml += '<span class="etiq-ccc" style="font-size:10px;padding:2px 7px">' + escHtml(cccN[cni]) + '</span>';
+        }
+        html += '<div class="nearby-item" data-pdv="' + escHtml(d.pdv) + '">';
+        html += '<div class="nearby-dist">' + formatDist(item.dist) + '</div>';
+        html += '<div class="nearby-info">';
+        /* Row 1: code + RS + canal */
+        html += '<div class="nearby-row1">';
+        html += '<span class="nearby-rs">' + escHtml(d.pdv) + ' - ' + escHtml(d.rs) + '</span>';
+        if (d.canal) { html += '<span class="nearby-canal">' + escHtml(d.canal) + '</span>'; }
+        html += '</div>';
+        /* Domicilio */
+        if (d.dom) { html += '<div class="nearby-dom">&#128205; ' + escHtml(d.dom) + (d.loc ? ' &middot; ' + escHtml(d.loc) : '') + '</div>'; }
+        /* Vendedor / Supervisor */
+        var vendLine = '';
+        if (d.vend) { vendLine += d.vend; }
+        if (d.sup)  { vendLine += (vendLine ? ' &middot; ' : '') + d.sup; }
+        if (vendLine) { html += '<div class="nearby-vend">&#128100; ' + vendLine + '</div>'; }
+        /* Etiquetas */
+        if (eHtml) { html += '<div class="nearby-etiqs">' + eHtml + '</div>'; }
+        /* Action buttons */
+        html += '<div class="nearby-actions">';
+        if (mapsHref) { html += '<a href="' + mapsHref + '" target="_blank" class="nearby-maps" onclick="event.stopPropagation()">&#128205; Maps</a>'; }
+        html += '<button class="nearby-buscar" data-pdv="' + escHtml(d.pdv) + '" onclick="event.stopPropagation()">&#128269; Acciones</button>';
+        html += '</div>';
+        html += '</div></div>';
+      }
+      document.getElementById('nearby-list').innerHTML = html;
+      document.getElementById('nearby-sheet').classList.add('on');
+      document.getElementById('nearby-overlay').classList.add('on');
+      /* Click on item -> search that PDV */
+      document.getElementById('nearby-list').addEventListener('click', function(e) {
+        /* Buscar button */
+        var buscarBtn = e.target.closest('.nearby-buscar');
+        if (buscarBtn) {
+          var pdv = buscarBtn.getAttribute('data-pdv');
+          nearbyCerrar();
+          document.getElementById('codinput').value = pdv;
+          doBuscar(false);
+          return;
+        }
+        /* Click on card (not maps/buscar) -> also search */
+        var item = e.target.closest('.nearby-item');
+        if (item && !e.target.closest('.nearby-maps') && !e.target.closest('.nearby-buscar')) {
+          var pdv2 = item.getAttribute('data-pdv');
+          nearbyCerrar();
+          document.getElementById('codinput').value = pdv2;
+          doBuscar(false);
+        }
+      });
+    }, function() {
+      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      alert('No se pudo obtener tu ubicacion. Verifica que el GPS este habilitado.');
+    }, { enableHighAccuracy: true, timeout: 10000 });
   }
 
   function doRefresh() {
@@ -1245,7 +1611,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rows.length < 2) { return []; }
     var hdr = rows[0].map(function(h) { return (h || '').toLowerCase().trim(); });
     /* Detect columns */
-    var iPdv = 0; var iRs = 1; var iCanal = -1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5;
+    var iPdv = 0; var iRs = 1; var iCanal = -1; var iDom = 2; var iLoc = -1; var iSup = 3; var iVend = 4; var iFrec = 5; var iLat = -1; var iLng = -1;
     for (var hi = 0; hi < hdr.length; hi++) {
       if (/^pdv$|^cod|^c.digo/.test(hdr[hi]))             { iPdv  = hi; }
       if (/razon|social|nombre/.test(hdr[hi]))             { iRs   = hi; }
@@ -1255,6 +1621,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (/supervisor/.test(hdr[hi]))                      { iSup  = hi; }
       if (/vendedor|promotor/.test(hdr[hi]))               { iVend = hi; }
       if (/frecuencia|dias|freq/.test(hdr[hi]))            { iFrec = hi; }
+      if (/^lat(itud)?$/.test(hdr[hi]))                     { iLat  = hi; }
+      if (/^l(o|n)g(itud)?$/.test(hdr[hi]))                 { iLng  = hi; }
     }
     /* Validate: first data row col 0 must be numeric PDV */
     var firstVal = (rows[1][iPdv] || '').toString().trim().replace(/\.0+$/, '');
@@ -1272,7 +1640,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loc:    iLoc >= 0 ? (row[iLoc] || '').trim() : '',
         sup:  (row[iSup]  || '').trim(),
         vend: (row[iVend] || '').trim(),
-        frec: (row[iFrec] || '').trim().toUpperCase()
+        frec: (row[iFrec] || '').trim().toUpperCase(),
+        lat:  iLat >= 0 ? parseFloat((row[iLat] || '').toString().replace(',','.')) || 0 : 0,
+        lng:  iLng >= 0 ? parseFloat((row[iLng] || '').toString().replace(',','.')) || 0 : 0
       });
     }
     return result;
@@ -1585,6 +1955,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     document.getElementById('rrs').textContent  = datoCliente ? datoCliente.rs  : '';
+    var btnMuro = document.getElementById('btn-muro');
+    if (btnMuro) { btnMuro.style.display = datoCliente && getMuroUrl() ? 'inline-block' : 'none'; }
     var rcEl = document.getElementById('rcanal');
     if (rcEl) {
       if (datoCliente && datoCliente.canal) {
@@ -1803,6 +2175,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('etiq-wrap').innerHTML = '';
     document.getElementById('rrs').textContent = '';
     var rcEl2 = document.getElementById('rcanal'); if (rcEl2) { rcEl2.style.display = 'none'; }
+    var bMuro = document.getElementById('btn-muro'); if (bMuro) { bMuro.style.display = 'none'; }
     document.getElementById('rdom').textContent = '';
     var bm = document.getElementById('btn-maps'); if (bm) { bm.style.display = 'none'; }
     allOpen = false;
@@ -1983,13 +2356,7 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('No hay datos de PDV cargados. Verifica que exista la hoja "' + cfg.tabDatosPdv + '" en el Sheet y toca Actualizar.');
       return;
     }
-    planCanalesActivos = {};
-    planEtiqActivas = {};
-    planUltimosFiltrados = [];
-    document.getElementById('plan-canal-filters').innerHTML = '';
-    document.getElementById('plan-etiq-filters').innerHTML = '';
-    var btnWa2 = document.getElementById('btn-plan-wa');
-    if (btnWa2) { btnWa2.style.display = 'none'; }
+    /* Keep filter state between open/close - reset only on logout/refresh */
     planPoblarFiltros();
     var sh = document.getElementById('plan-sheet');
     sh.classList.add('on');
@@ -2058,6 +2425,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   var planCanalesActivos = {}; /* canal -> true if active */
+  var planSortCol = ''; /* current sort column key */
+  var planSortDir = 1;  /* 1=asc, -1=desc */
   var PLAN_BATCH = 50;  /* rows per render batch */
   var PLAN_MAX   = 200; /* max rows to render */
   var planRenderOffset = 0; /* how many rows rendered so far */
@@ -2088,6 +2457,9 @@ document.addEventListener('DOMContentLoaded', function() {
       html += ' <span class="etiq-count">' + counts[canal] + '</span>';
       html += '</button>';
     }
+    /* X button - only when at least one canal active */
+    var hasActiveCanal = Object.keys(planCanalesActivos).length > 0;
+    if (hasActiveCanal) { html += '<button class="plan-filter-clear" id="btn-clear-canal">&#10005;</button>'; }
     wrap.innerHTML = html;
     var btns = wrap.querySelectorAll('.plan-canal-btn');
     for (var bi = 0; bi < btns.length; bi++) {
@@ -2095,6 +2467,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var canal2 = this.getAttribute('data-canal');
         if (planCanalesActivos[canal2]) { delete planCanalesActivos[canal2]; }
         else { planCanalesActivos[canal2] = true; }
+        planFiltrar();
+      });
+    }
+    var clearCanalBtn = document.getElementById('btn-clear-canal');
+    if (clearCanalBtn) {
+      clearCanalBtn.addEventListener('click', function() {
+        planCanalesActivos = {};
         planFiltrar();
       });
     }
@@ -2131,6 +2510,8 @@ document.addEventListener('DOMContentLoaded', function() {
     row += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
     row += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
     row += '<td>' + escHtml(d.loc) + '</td>';
+    row += '<td>' + escHtml(d.sup) + '</td>';
+    row += '<td>' + escHtml(d.vend) + '</td>';
     row += '</tr>';
     return row;
   }
@@ -2261,6 +2642,9 @@ document.addEventListener('DOMContentLoaded', function() {
       html += ' <span class="etiq-count">' + info.count + '</span>';
       html += '</button>';
     }
+    /* X button - only when at least one etiq active */
+    var hasActiveEtiq = Object.keys(planEtiqActivas).length > 0;
+    if (hasActiveEtiq) { html += '<button class="plan-filter-clear" id="btn-clear-etiq">&#10005;</button>'; }
     wrap.innerHTML = html;
     var btns = wrap.querySelectorAll('.plan-etiq-btn');
     for (var bi = 0; bi < btns.length; bi++) {
@@ -2271,6 +2655,46 @@ document.addEventListener('DOMContentLoaded', function() {
         planFiltrar();
       });
     }
+    var clearEtiqBtn = document.getElementById('btn-clear-etiq');
+    if (clearEtiqBtn) {
+      clearEtiqBtn.addEventListener('click', function() {
+        planEtiqActivas = {};
+        planFiltrar();
+      });
+    }
+  }
+
+  /* Remove active etiq/canal filters that have 0 results in new base */
+  function planLimpiarFiltrosHuerfanos(filtradosBase) {
+    var etiqSeg = cache.etiqSeg || {};
+    var etiqPdv2 = cache.etiqPdv || {};
+    /* Build set of etiquetas present in new base */
+    var etiqEnBase = {};
+    var canalEnBase = {};
+    for (var fi = 0; fi < filtradosBase.length; fi++) {
+      var d = filtradosBase[fi];
+      if (d.canal) { canalEnBase[d.canal] = true; }
+      var pe = etiqPdv2[d.pdv] || [];
+      for (var pi = 0; pi < pe.length; pi++) { etiqEnBase[pe[pi]] = true; }
+      var cccM = cache.etiqCcc || {};
+      var cccI = cccM[d.pdv] || [];
+      for (var ci = 0; ci < cccI.length; ci++) { etiqEnBase[cccI[ci]] = true; }
+      var segs = (cache.accionesIndex && cache.accionesIndex[d.pdv]) ? cache.accionesIndex[d.pdv] : [];
+      var seen = {};
+      for (var si = 0; si < segs.length; si++) {
+        var ev = etiqSeg[segs[si]];
+        if (ev && !seen[ev]) { seen[ev] = true; etiqEnBase[ev] = true; }
+      }
+    }
+    /* Remove active filters not present in base */
+    var changed = false;
+    Object.keys(planEtiqActivas).forEach(function(k) {
+      if (!etiqEnBase[k]) { delete planEtiqActivas[k]; changed = true; }
+    });
+    Object.keys(planCanalesActivos).forEach(function(k) {
+      if (!canalEnBase[k]) { delete planCanalesActivos[k]; changed = true; }
+    });
+    return changed;
   }
 
   function planFiltrar() {
@@ -2350,6 +2774,11 @@ document.addEventListener('DOMContentLoaded', function() {
       return true;
     });
 
+    /* Clean up orphaned etiq/canal filters before rendering */
+    planLimpiarFiltrosHuerfanos(filtradosBase);
+    /* Re-read after cleanup */
+    etiqFiltros = Object.keys(planEtiqActivas);
+    canalFiltros = Object.keys(planCanalesActivos);
     /* Update count and etiqueta filter bubbles */
     var countEl = document.getElementById('plan-count');
     countEl.innerHTML = '';
@@ -2364,13 +2793,26 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Build table rows */
     var tbody = document.getElementById('plan-tbody');
     if (filtrados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="plan-empty">Sin PDVs para los filtros seleccionados</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="plan-empty">Sin PDVs para los filtros seleccionados</td></tr>';
       return;
     }
 
     var etiqSeg = cache.etiqSeg || {};
     var etiqPdv = cache.etiqPdv || {};
 
+    /* Apply sort if active */
+    if (planSortCol) {
+      filtrados = filtrados.slice();
+      filtrados.sort(function(a, b) {
+        var av = (a[planSortCol] || '').toString().toLowerCase();
+        var bv = (b[planSortCol] || '').toString().toLowerCase();
+        /* Numeric sort for pdv */
+        if (planSortCol === 'pdv') { av = parseFloat(a.pdv) || 0; bv = parseFloat(b.pdv) || 0; }
+        if (av < bv) { return -1 * planSortDir; }
+        if (av > bv) { return  1 * planSortDir; }
+        return 0;
+      });
+    }
     planTodosFiltrados = filtrados;
     planRenderOffset = 0;
     tbody.innerHTML = '';
@@ -2391,6 +2833,23 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-plan').addEventListener('click', planAbrir);
   document.getElementById('plan-overlay').addEventListener('click', planCerrar);
   document.getElementById('btn-plan-cerrar').addEventListener('click', planCerrar);
+  document.querySelectorAll('#plan-table th[data-col]').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var col = this.getAttribute('data-col');
+      if (planSortCol === col) {
+        planSortDir = planSortDir * -1;
+      } else {
+        planSortCol = col;
+        planSortDir = 1;
+      }
+      /* Update header indicators */
+      document.querySelectorAll('#plan-table th').forEach(function(h) {
+        h.classList.remove('sort-asc', 'sort-desc');
+      });
+      this.classList.add(planSortDir === 1 ? 'sort-asc' : 'sort-desc');
+      planFiltrar();
+    });
+  });
   document.getElementById('plan-scroll').addEventListener('scroll', function() {
     var el = this;
     if (planRenderOffset >= Math.min(planTodosFiltrados.length, PLAN_MAX)) { return; }
