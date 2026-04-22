@@ -1016,12 +1016,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pin.length === 4) { cfg.pin = pin; }
     var wa = document.getElementById('cwhatsapp').value.trim().replace(/[^0-9]/g,'');
     if (wa) { cfg.whatsapp = wa; }
-    var muroUrls = muroUrls || ['','','',''];
+    var newMuroUrls = ['','','',''];
     for (var msi = 0; msi < 4; msi++) {
       var msEl = document.getElementById('cmuro' + msi);
-      if (msEl) { muroUrls[msi] = msEl.value.trim(); }
+      if (msEl) { newMuroUrls[msi] = msEl.value.trim(); }
     }
-    muroUrls = muroUrls;
+    cfg.muroUrls = newMuroUrls;
     var cautorEl2 = document.getElementById('cautor');
     if (cautorEl2) { cfg.autorNombre = cautorEl2.value.trim(); }
     localStorage.setItem(STORE, JSON.stringify(cfg));
@@ -1190,8 +1190,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('muro-texto').value = '';
     document.getElementById('muro-sheet').classList.add('on');
     document.getElementById('muro-overlay').classList.add('on');
-    /* Fetch comments */
-    fetch(getMuroUrl() + '?pdv=' + encodeURIComponent(pdv), { method: 'GET' })
+    /* Fetch comments - follow redirects for Apps Script */
+    fetch(getMuroUrl() + '?pdv=' + encodeURIComponent(pdv), {
+      method: 'GET',
+      redirect: 'follow'
+    })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (!data.ok || !data.data || data.data.length === 0) {
@@ -1231,8 +1234,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var autor = cfg.autorNombre || '';
     fetch(getMuroUrl(), {
       method: 'POST',
+      redirect: 'follow',
       body: JSON.stringify({ pdv: muroCurrentPdv, texto: texto, autor: autor }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'text/plain' }
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
