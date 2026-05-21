@@ -277,6 +277,11 @@
     .etiq-wrap { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
     .etiq-pdv { display: inline-block; background: var(--dorado); color: var(--azul); font-size: var(--fs-xs); font-weight: var(--fw-bold); padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill); white-space: nowrap; }
     .etiq-seg { display: inline-block; background: var(--tag-seg-bg); color: var(--tag-seg-fg); font-size: var(--fs-xs); font-weight: var(--fw-bold); padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill); white-space: nowrap; }
+    /* Quieter — first tag in the row keeps full saturation, the rest soften */
+    .etiq-wrap > :nth-child(n+2) {
+      filter: saturate(.55);
+      opacity: .85;
+    }
     /* MURO */
     .muro-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,.45); z-index:100; }
     .muro-overlay.on { display:block; }
@@ -429,7 +434,7 @@
     .plan-canal-filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-2); min-height: 0; }
     .plan-etiq-filters { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-2); min-height: 0; }
     .plan-canal-btn { display: inline-flex; align-items: center; gap: var(--sp-2); border: 1.5px solid var(--filter-bd); border-radius: var(--r-pill); padding: var(--sp-1) var(--sp-3); font-size: var(--fs-xs); font-weight: var(--fw-bold); cursor: pointer; background: var(--filter-bg); color: var(--filter-fg); transition: all var(--dur-fast); }
-    .plan-canal-btn.active { background: var(--filter-fg); color: #fff; border-color: var(--filter-active-bd); box-shadow: 0 0 0 2px rgba(74,85,104,.3); }
+    .plan-canal-btn.active { background: var(--filter-fg); color: #fff; border-color: var(--filter-active-bd); }
     .plan-canal-btn .etiq-count { font-size: var(--fs-xs); font-weight: var(--fw-bold); color: rgba(0,0,0,.4); background: rgba(255,255,255,.6); border-radius: var(--r-md); padding: 0 var(--sp-2); }
     .plan-canal-btn.active .etiq-count { color: rgba(255,255,255,.7); background: rgba(255,255,255,.2); }
     .plan-filter-clear { display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid var(--filter-bd); border-radius: var(--r-pill); padding: var(--sp-1) var(--sp-3); font-size: var(--fs-xs); font-weight: var(--fw-bold); cursor: pointer; background: #fff; color: var(--filter-bd); transition: all var(--dur-fast); flex-shrink: 0; }
@@ -437,10 +442,10 @@
     .plan-etiq-btn { display: inline-flex; align-items: center; gap: var(--sp-2); border: none; border-radius: var(--r-pill); padding: var(--sp-1) var(--sp-3); font-size: var(--fs-xs); font-weight: var(--fw-bold); cursor: pointer; transition: all var(--dur-fast); }
     .plan-etiq-btn.pdv  { background: var(--tag-pdv-soft-bg); color: var(--tag-pdv-soft-fg); border: 1.5px solid var(--tag-pdv-soft-bd); }
     .plan-etiq-btn.seg  { background: var(--tag-seg-soft-bg); color: var(--tag-seg-soft-fg); border: 1.5px solid var(--tag-seg-bd); }
-    .plan-etiq-btn.active.pdv { background: var(--dorado); color: var(--azul); border-color: var(--tag-pdv-bd); box-shadow: 0 0 0 2px rgba(245,168,0,.35); }
-    .plan-etiq-btn.active.seg { background: var(--tag-seg-bd); color: #fff; border-color: #2A9A55; box-shadow: 0 0 0 2px rgba(61,184,112,.35); }
+    .plan-etiq-btn.active.pdv { background: var(--dorado); color: var(--azul); border-color: var(--tag-pdv-bd); }
+    .plan-etiq-btn.active.seg { background: var(--tag-seg-bd); color: #fff; border-color: #2A9A55; }
     .plan-etiq-btn.ccc  { background: var(--tag-ccc-bg); color: var(--tag-ccc-fg); border: 1.5px solid var(--tag-ccc-bd); }
-    .plan-etiq-btn.active.ccc { background: var(--tag-ccc-bd); color: var(--tag-ccc-active-fg); border-color: var(--tag-ccc-active-bd); box-shadow: 0 0 0 2px rgba(251,146,60,.4); }
+    .plan-etiq-btn.active.ccc { background: var(--tag-ccc-bd); color: var(--tag-ccc-active-fg); border-color: var(--tag-ccc-active-bd); }
     .plan-etiq-btn .etiq-count { font-size: var(--fs-xs); font-weight: var(--fw-bold); color: rgba(0,0,0,.45); background: rgba(255,255,255,.6); border-radius: var(--r-md); padding: 0 var(--sp-2); }
     .plan-etiq-btn.active .etiq-count { color: rgba(0,0,0,.5); background: rgba(255,255,255,.4); }
     .plan-table { border-collapse: collapse; font-size: var(--fs-sm); width: max-content; min-width: 100%; }
