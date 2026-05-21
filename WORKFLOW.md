@@ -12,17 +12,17 @@ a `main` sin OK explícito del usuario** (la cutover en sí es escalada).
 
 | Fase | Status | Commit SHA | Notas |
 |------|--------|------------|-------|
-| 1 — Harden (a11y) | pending | — | |
-| 2 — Extract (tokens) | pending | — | |
-| 3 — Adapt (touch 44px) | pending | — | |
-| 4 — Typeset | pending | — | |
-| 5 — Layout | pending | — | |
-| 6 — Polish (íconos + fonts) | pending | — | |
-| 7 — Quieter (etiquetas) | pending | — | |
-| 8 — Critique (modal vs ruta) | pending | — | |
-| 9 — Animate + Clarify | pending | — | |
-| 10a — Final polish (sin cutover) | pending | — | |
-| 10b — Cutover a main | **BLOCKED — requiere OK humano** | — | |
+| 1 — Harden (a11y) | done | 9af7227 | inline-style extraction landed alongside semantic HTML |
+| 2 — Extract (tokens) | done | 5bd949b | full :root tokens + radii consolidation + shadows |
+| 3 — Adapt (touch 44px) | done | 0582e31 | 16 selectors use --tap-min |
+| 4 — Typeset | done | 9c66d8e | 107 declarations, 7 sizes |
+| 5 — Layout | done | f9ee359 | 237 declarations snap to 8-step scale |
+| 6 — Polish (íconos + fonts) | done | 18b1b03 | Lucide SVGs, font swap, 3+2 weights |
+| 7 — Quieter (etiquetas) | done | 5a0c9f1 | first-tag-wins via nth-child rule |
+| 8 — Critique (modal vs ruta) | done | 6636576 | ADR-001 documents, implementation deferred |
+| 9 — Animate + Clarify | done | 24c3953 | reduced-motion + empty state copy |
+| 10a — Final polish (sin cutover) | done | — | DESIGN.md refreshed + this status table |
+| 10b — Cutover a main | **BLOCKED — requiere OK humano** | — | merge to main always escalated |
 
 Status válidos: `pending`, `in_progress`, `done`, `blocked`, `skipped`.
 

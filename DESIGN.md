@@ -1,57 +1,65 @@
 # Acciones Comerciales — Sistema de diseño
 
-Estado del sistema **tal cual está hoy** (May 2026), extraído del
-`styles.css` y del `index.html` actuales. Sirve como baseline antes
-del rework visual: nada acá es "como debería ser", todo es "cómo es".
-
-Notas críticas al final.
+Estado **post-rework** (May 2026, branch `claude/app-visual-rework-strategy-35l6q`).
+Antes del rework, este documento era el "baseline audit" (10/20). Ahora refleja
+el sistema de tokens y los patrones consolidados.
 
 ---
 
 ## Paleta
 
-### Tokens actuales (`:root`)
+### Marca (NO tocar)
 
-| Token        | Valor      | Uso                                              |
-|--------------|------------|--------------------------------------------------|
-| `--azul`     | `#001F5B`  | Marca primaria. Topbar, login bg, botones CTA.   |
-| `--azul-m`   | `#003DA5`  | Azul medio. Focus rings, links, hover, énfasis.  |
-| `--dorado`   | `#F5A800`  | Marca acento. Badges, spinner, etiquetas PDV.    |
-| `--gris-f`   | `#F2F5FA`  | Fondo general del body, cards secundarios.       |
-| `--gris-b`   | `#DDE3EE`  | Bordes, dividers, fondos inactivos.              |
-| `--txt`      | `#1A1A2E`  | Texto principal.                                 |
-| `--txt-s`    | `#5A6478`  | Texto secundario, labels, meta.                  |
-| `--rojo`     | `#C0392B`  | Errores, alertas, indicador PTC.                 |
-| `--rojo-l`   | `#FDECEA`  | Fondo de estado de error.                        |
-| `--verde`    | `#1A7A3C`  | Éxito, detalles de producto en la calculadora.   |
+| Token | Valor | Uso |
+|---|---|---|
+| `--azul` | `#001F5B` | Marca primaria. Login bg, topbar, CTAs. |
+| `--azul-m` | `#003DA5` | Azul medio. Focus, links, énfasis. |
+| `--dorado` | `#F5A800` | Acento de marca. Badges, etiquetas PDV, spinner. |
 
-### Colores hardcodeados (no tokenizados — deuda)
+### Neutrales tintados
 
-- Etiquetas de segmento: `#6DD49A` / `#0F5229` (verde claro)
-- Etiquetas CCC: `#FB923C` / `#431407` / `#FFEDD5` / `#9A3412` (naranja)
-- Etiquetas PDV activas: `#FFE08A` / `#5A3A00` / `#E8A800`
-- Canal filters: `#4A5568` / `#2D3748` / `#B0BAC8` / `#EEF1F6`
-- Offline badge: `#FFF3CD` / `#7A5500` / `#F5C842`
-- Bg de filas hover, gradients de scroll fade, sombras varias
+| Token | Valor | Uso |
+|---|---|---|
+| `--gris-f` | `#F2F5FA` | Fondo general, inputs activos. |
+| `--gris-b` | `#DDE3EE` | Bordes, dividers. |
+| `--gris-c` | `#C8D0D8` | Bordes secundarios (.s-grey variant). |
+| `--gris-d` | `#D4DAE4` | Dividers tenues. |
+| `--txt` | `#1A1A2E` | Texto principal. |
+| `--txt-s` | `#5A6478` | Texto secundario, labels. |
 
-Hay al menos **15+ colores fuera del sistema**. Candidato fuerte a
-consolidar durante el rework.
+### Estados
 
-### Sombras
+| Token | Valor | Uso |
+|---|---|---|
+| `--rojo` | `#C0392B` | Error. |
+| `--rojo-l` | `#FDECEA` | Error bg. |
+| `--verde` | `#1A7A3C` | Éxito. |
+| `--offline-bg/fg/bd` | `#FFF3CD/#7A5500/#F5C842` | Sin conexión badge. |
 
-| Uso                                | Valor                                  |
-|------------------------------------|----------------------------------------|
-| Card de login                      | `0 24px 64px rgba(0,0,0,.3)`           |
-| Topbar (sticky)                    | `0 2px 14px rgba(0,0,0,.18)`           |
-| Sheets (calc, plan, muro)          | `0 8px 40px rgba(0,31,91,.18)`         |
-| Cfg bottom                         | `0 -4px 24px rgba(0,31,91,.12)`        |
-| Cfgwrap (barra inferior)           | `0 -2px 12px rgba(0,31,91,.07)`        |
-| Suggestions dropdown               | `0 4px 20px rgba(0,31,91,.15)`         |
-| Focus ring (azul)                  | `0 0 0 3px rgba(0,61,165,.09)`         |
-| Focus ring (PIN, más grueso)       | `0 0 0 4px rgba(0,61,165,.1)`          |
+### Etiquetas (tripletas semánticas)
 
-Las sombras de marca (`rgba(0,31,91,...)`) son la firma visual sutil de
-la app. El blanco-y-azul de los sheets se siente "Quilmes" gracias a esto.
+| Tipo | bg | fg | bd |
+|---|---|---|---|
+| PDV | `var(--dorado)` | `var(--azul)` | `#CC8800` |
+| Segmento | `#6DD49A` | `#0F5229` | `#3DB870` |
+| CCC | `#FFEDD5` | `#9A3412` | `#FB923C` |
+| PDV soft (planner) | `#FFE08A` | `#5A3A00` | `#E8A800` |
+| Seg soft (planner) | `#A8E8C4` | `#0A3D1F` | `#3DB870` |
+
+**Quieter rule:** la primera etiqueta del row mantiene saturación
+completa; las siguientes se atenúan vía `filter: saturate(.55);
+opacity: .85;` (regla CSS única en `.etiq-wrap > :nth-child(n+2)`).
+
+### Filtros (planner)
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--filter-bg/fg/bd` | `#EEF1F6/#4A5568/#B0BAC8` | Inactive. |
+| `--filter-active-bg/bd` | `#4A5568/#2D3748` | Active (sin doble outline). |
+
+### Accents
+
+- `--wa-green` `#25D366` — botón "Enviar plan por WhatsApp"
 
 ---
 
@@ -59,221 +67,285 @@ la app. El blanco-y-azul de los sheets se siente "Quilmes" gracias a esto.
 
 ### Familias
 
-| Familia    | Usos                                                  |
-|------------|-------------------------------------------------------|
-| **DM Sans** (400/500/600/700) | UI text, labels, botones, copy general |
-| **DM Mono** (400/600)         | Códigos PDV, SKU, precios, totales, números |
+| Familia | Pesos cargados | Usos |
+|---|---|---|
+| **DM Sans** | 400, 600, 700 | UI text, labels, botones. |
+| **DM Mono** | 400, 600 | Códigos PDV, SKU, precios, IDs. |
 
-Ambas cargadas desde Google Fonts. No hay system-font fallback estratégico
-todavía — si Google Fonts falla, cae a `sans-serif`.
+Carga: `preconnect` a fonts.googleapis.com + fonts.gstatic.com; URL con
+`&display=swap` (sin FOIT). Bajamos de 5 a 3 weights de DM Sans (drop
+500 y 800).
 
-### Tamaños observados (extraídos del CSS)
+### Escala tipográfica
 
-| px  | Donde aparece                                          |
-|-----|--------------------------------------------------------|
-| 9   | calc-result-lbl                                        |
-| 10  | tabs activos, etiq counts, dias chips, table headers   |
-| 11  | labels secundarios, chips de historial, etiquetas      |
-| 12  | celdas de tabla, copy denso, hints                     |
-| 13  | sub-titles, errores, copy general                      |
-| 14  | títulos de sheets, sheet-nombre                        |
-| 15  | título de login, body principal, botones primarios     |
-| 18  | search input (con letter-spacing 2px)                  |
-| 20  | íconos de close                                        |
-| 23  | título de login (ltitle)                               |
-| 26  | código de PDV en result header (rcod, hero)            |
-| 28  | PIN boxes (dígitos individuales)                       |
+| Token | px | Uso |
+|---|---|---|
+| `--fs-xs` | 11 | Labels, meta, chips, etiquetas, sheet headers. |
+| `--fs-sm` | 12 | Table cells, copy denso, hints. |
+| `--fs-base` | 14 | Body, UI default, sub-titles. |
+| `--fs-md` | 16 | Énfasis, copy importante, search input. |
+| `--fs-lg` | 20 | Títulos chicos, search code input. |
+| `--fs-xl` | 26 | Hero — `.rcod` PDV code, login title. |
+| `--fs-2xl` | 32 | PIN dígitos. |
 
-**12 tamaños distintos.** Demasiados. La jerarquía no es legible al ojo;
-los saltos son arbitrarios. Candidato a reducir a una escala modular.
+107 declaraciones, ratio ~1.25 entre pasos. Antes: 12 tamaños ad-hoc.
 
 ### Pesos
 
-400, 500, 600, 700, 800. Cinco pesos. El 800 sólo aparece en
-`.lbadge` y `.tbadge` (los chips uppercase con letterspacing).
+| Token | Valor |
+|---|---|
+| `--fw-normal` | 400 |
+| `--fw-semi` | 600 (collapsa 500 viejo) |
+| `--fw-bold` | 700 (collapsa 800 viejo) |
+
+`--fw-medium` (500) y `--fw-black` (800) declarados en `:root` para
+posibles overrides futuros, pero NO se usan en el CSS de la app
+(el font-load tampoco los trae).
 
 ### Letter-spacing y mayúsculas
 
-- Uppercase + letter-spacing en labels chicos (`.slbl`, `.clbl`,
-  `.calc-lbl`, headers de tabla): `.4` a `1px`.
-- Letter-spacing 2px en el search input (el código PDV se ve "estirado").
-- Letter-spacing 2px en `.rcod` (el código del cliente en el header).
-- `-.3px` a `-.5px` en títulos grandes (compensación óptica estándar).
+- Labels uppercase (`.slbl`, `.clbl`, `.calc-lbl`): `.4` a `1px`.
+- Search code input (`.sinput`): `2px`.
+- `.rcod` (hero): `2px`.
+- Títulos grandes: `-.3px` a `-.5px` (compensación óptica estándar).
 
 ---
 
 ## Espaciado
 
-No hay una escala formal; los valores que aparecen en el CSS son:
+Escala 4-base de 8 pasos. 237 declaraciones snap a estos valores
+(antes: 20+ valores únicos).
 
-`2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 20, 22, 24, 28, 30, 32, 40, 64, 80`
+| Token | px |
+|---|---|
+| `--sp-1` | 4 |
+| `--sp-2` | 8 |
+| `--sp-3` | 12 |
+| `--sp-4` | 16 |
+| `--sp-5` | 24 |
+| `--sp-6` | 32 |
+| `--sp-7` | 48 |
+| `--sp-8` | 64 |
 
-Más de 20 valores únicos. Una escala razonable (4, 8, 12, 16, 24, 32, 48, 64)
-ya cubriría el 90% sin pérdida funcional.
+Adopción: `--sp-3` (90×) y `--sp-2` (75×) son los workhorses, lo cual
+es saludable: la mayoría del padding interior cae en 8-12px, lo grueso
+está en 16+.
 
 ---
 
 ## Radios
 
-Valores en uso: `6, 8, 9, 10, 11, 12, 14, 16, 20, 24, 28`. Patrón
-implícito:
+| Token | px | Uso |
+|---|---|---|
+| `--r-sm` | 8 | Badges chicos, dia chips, etiq counts. |
+| `--r-md` | 12 | Inputs, botones, sheets internos. |
+| `--r-lg` | 16 | Cards grandes, PIN boxes. |
+| `--r-pill` | 20 | Etiquetas, chips de historial. |
+| `--r-sheet` | 28 | Login card, sheets externos. |
 
-| Radio | Uso                                                |
-|-------|----------------------------------------------------|
-| 6     | Badges chicos de marca (`.tbadge`, `.muro-btn`)    |
-| 8     | Chips chicos, dia checkboxes                       |
-| 9-10  | Botones secundarios, controles del topbar          |
-| 10-11 | Inputs, botones de configuración                   |
-| 12-14 | Cards, sheets internos, inputs grandes             |
-| 20    | Pills, chips, badges redondeados                   |
-| 24-28 | Sheets full-width, login card (más "blob")         |
+11 valores ad-hoc → 5 tokens. Borderline 14px mapea a `--r-md` (12).
 
-Consolidar a 4 o 5 radios bien definidos: `6, 10, 14, 20, 28`.
+---
+
+## Sombras
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--sh-sm` | `0 2px 14px rgba(0,0,0,.18)` | Topbar sticky. |
+| `--sh-md` | `0 4px 20px rgba(0,31,91,.15)` | Dropdowns, cards. |
+| `--sh-lg` | `0 8px 40px rgba(0,31,91,.18)` | Sheets. |
+| `--sh-xl` | `0 24px 64px rgba(0,0,0,.3)` | Login card dramática. |
+| `--sh-fixed` | `0 -2px 12px rgba(0,31,91,.07)` | Cfg bar inferior. |
+| `--sh-fixed-up` | `0 -4px 24px rgba(0,31,91,.12)` | Cfg panel slide. |
+| `--sh-focus-azul` | `0 0 0 3px rgba(0,61,165,.09)` | Focus ring input. |
+| `--sh-focus-azul-thick` | `0 0 0 4px rgba(0,61,165,.1)` | Focus ring PIN. |
+
+7 valores ad-hoc → 8 tokens (uno extra para focus ring grueso).
+Las sombras tintadas en azul de marca son **la firma visual sutil**
+de la app — la sensación "Quilmes" sin gritar.
 
 ---
 
 ## Motion
 
-| Duración        | Easing                              | Donde                          |
-|-----------------|-------------------------------------|--------------------------------|
-| `.1s` – `.15s`  | default                             | Hover de items, press feedback |
-| `.18s`          | default                             | Inputs, transiciones de borde  |
-| `.2s`           | default                             | Pill chevron rotate            |
-| `.25s`          | ease                                | Fade-in de resultados          |
-| `.32s`          | `cubic-bezier(.4,0,.2,1)`           | Sheets entrando (calc, plan, muro) |
-| `.6s` – `.65s`  | linear infinite                     | Spinner de loading             |
+| Token | Valor | Uso |
+|---|---|---|
+| `--dur-fast` | `.15s` | Hover, press feedback, inputs rápidos. |
+| `--dur-input` | `.18s` | Inputs y bordes. |
+| `--dur-med` | `.25s` | Fade-in de resultados. |
+| `--dur-sheet` | `.32s` | Sheets enter/exit. |
+| `--dur-spin` | `.65s` | Spinner. |
+| `--ease-out` | `cubic-bezier(.4, 0, .2, 1)` | Curva de salida estándar. |
 
-Press feedback consistente: `transform: scale(.93 a .97)` en `:active`.
-Esa micro-confirmación táctil es **buena, hay que conservarla**.
+`prefers-reduced-motion`: bloque `@media` colapsa todas las animaciones
+a `.01ms` excepto el spinner y `.icon-spin`, que siguen rotando a
+`1.2s` como indicadores funcionales.
+
+Press feedback `transform: scale(.93-.97)` en `:active` se preserva en
+todos los botones primarios (firma táctil de la app).
+
+---
+
+## Touch
+
+`--tap-min: 44px`. Aplicado a 16 selectors de control interactivo
+primario (botones search, GPS, qty, close de sheets, config bar). Los
+checkboxes nativos de `.plan-dia` se quedan en 11×11 pero el `<label>`
+envolvente tiene `min-height: 44px`.
 
 ---
 
 ## Iconografía
 
-**Todo emojis Unicode**, sin librería de íconos.
+Inline SVG de **Lucide** (ISC license). 13 íconos en uso:
 
-| Emoji  | Función                          |
-|--------|----------------------------------|
-| 🔍 🔎  | Buscar                           |
-| 📍     | Maps / ubicación                 |
-| 📌     | GPS / cercanos                   |
-| 📋     | Vacío (sin acciones)             |
-| 💬     | Muro / comentarios               |
-| ⚙      | Configuración                    |
-| ↻      | Refresh                          |
-| ✉      | Enviar (WhatsApp)                |
-| ✕      | Cerrar                           |
-| ▼ ▲    | Chevrons                         |
-| − +    | Quantity steppers                |
+- `search`, `navigation` (GPS), `map-pin`, `x` (close)
+- `chat` (muro), `settings` (gear), `refresh`, `send`
+- `chevron-down`, `chevron-up`, `chevrons-down`, `chevrons-up`
+- `inbox` (empty state), `user`, `minus`, `plus`, `info`, `loader`
 
-Funciona pero **renderiza distinto en cada SO** (iOS color, Android plano,
-Windows otra cosa). Y hay 11+ glyphs distintos sin un estilo unificado.
-Reemplazar por un SVG set (ej: Lucide, Phosphor) sería un upgrade
-visual grande con poco riesgo.
+Implementación:
+- HTML: SVG inline directo (sin emoji entities).
+- JS: helper `icon(name)` retorna el SVG con `class="icon"` o
+  `class="icon icon-spin"` para el loader.
+- Estilos: `.icon { display: inline-block; width: 1em; height: 1em;
+  vertical-align: -.125em; flex-shrink: 0; }`. Icon-only buttons
+  escalan a `1.25em` para llenar el tap target.
+
+Cero emojis Unicode en HTML/JS. Cross-platform consistente.
+
+---
+
+## Accesibilidad
+
+- **WCAG 1.4.4 / 1.4.10**: viewport ya no bloquea zoom.
+- **WCAG 1.3.1**: HTML semántico — `<h1>`, `<h2>`, `<header>`, `<main>`,
+  `<nav>`, `<section>`. 12 landmarks.
+- **WCAG 4.1.2**: 41 `aria-label` en buttons icon-only, ARIA labels en
+  PIN inputs, asociaciones `for=`/`id=` en labels visibles.
+- **WCAG WAI-ARIA dialog**: 4 sheets con `role="dialog" aria-modal="true"
+  aria-labelledby="..."`, focus management (MutationObserver), focus
+  trap (Tab/Shift+Tab), Escape key handler.
+- **WCAG 2.4.7**: focus-visible outline en todos los interactivos
+  (azul de marca por default, dorado sobre superficies navy).
+- **WCAG 2.5.5/2.5.8**: tap targets ≥ 44×44.
+- **Skip-link** "Saltar al contenido" → `#main`.
+- **`prefers-reduced-motion`** respetado.
+- **`document.title`** dinámico: refleja el PDV cargado para mejor
+  contexto cuando hay múltiples tabs.
 
 ---
 
 ## Componentes (inventario)
 
-### Pantallas principales
+### Pantallas
 
-1. **Login** — Card centrada en fondo `--azul` sólido, 4 inputs PIN
-   monospace + botón "Entrar".
-2. **App** (post-login) — Topbar sticky azul + cuerpo scrolleable +
-   barra de config fija inferior.
+1. **Login** — Card centrada, fondo `--azul` sólido. PIN 4-dígitos
+   monospace + CTA "Entrar". `<h1>` para "Acciones Comerciales".
+2. **App shell** — `<header class="topbar">` sticky con badge
+   Quilmes + distri switcher + "Salir". `<main id="main">` con
+   search + states + result header + segments. `<nav class="cfgwrap">`
+   sticky bottom con acciones rápidas.
 
-### Topbar (sticky, azul)
+### Search (`.swrap`)
 
-- Badge "Quilmes" dorado, nombre del distribuidor (clickeable, abre
-  dropdown para cambiar), botón "Salir" semi-transparente.
+- Input grande `letter-spacing: 2px` (código se ve "técnico").
+- Botón Buscar (search icon) + GPS (navigation icon).
+- Dropdown de sugerencias con bordes que continúan visualmente al input.
+- Historial chips (monospace, últimas 5 búsquedas).
 
-### Search
+### Estados (`.estado`)
 
-- Label en uppercase, input grande con letter-spacing 2 (el código se
-  ve "técnico"), botón buscar + botón GPS al lado.
-- Dropdown de sugerencias debajo (border-radius continúa el del input
-  con un hack visual de border-merge).
-- Chips de historial (últimas 5 búsquedas) en monospace.
+- **Loading**: bg crema `#FFFBF0`, spinner dorado, `role="status"
+  aria-live="polite"`.
+- **Error**: bg `--rojo-l`, `role="alert" aria-live="assertive"`.
+  Diferenciado por causa (sheet no configurado / sin conexión /
+  error genérico).
+- **Vacío**: borde dashed `--gris-b`, ícono inbox. Copy
+  diferenciada por causa (PDV no existe vs PDV existe sin acciones).
 
-### Estados
+### Result header (`.reshdr` — `<section>`)
 
-- **Loading**: bg crema (`#FFFBF0`), spinner dorado, copy centrado.
-- **Error**: bg rojo-claro (`--rojo-l`).
-- **Vacío**: borde dasheado gris, emoji 📋.
+- `.rcod` hero (PDV code en monospace, `--fs-xl`).
+- Razón social + canal badge + domicilio + Maps link + offline badge.
+- Botón Muro (icon `chat`) + botón Collapse-all (icon `chevrons-down/up`).
+- Etiquetas + negocio tabs (`role="tablist"`).
 
-### Result header (card azul)
+### Segments (`.segblock`)
 
-- Código PDV gigante en monospace + razón social + domicilio +
-  badge de canal + link a Maps + botón Muro + botón toggle "colapsar todo".
-- Debajo: tabs de "negocio" + chips de etiquetas (PDV / segmento / CCC).
+Acordeón colapsable por segmento. Header con bubbles de detalle +
+chevron animado. Body con tabla de precios scrolleable, columnas
+sticky. Color contextual via CSS vars dinámicas `--s-light/mid/border/dark`.
 
-### Segment blocks (acordeón colapsable)
+### Sheets (4, todas `role="dialog" aria-modal="true"`)
 
-- Cada segmento tiene su color de borde, fondo claro, fondo medio (header)
-  y color dark (texto). Usan CSS vars dinámicas `--s-light --s-mid
-  --s-border --s-dark` seteadas inline.
-- Header con título + bubbles de detalle + chevron.
-- Body: tabla de precios scrolleable horizontalmente con primeras
-  2 columnas sticky.
-- Variante `.s-grey` para segmentos sin precios.
+| Sheet | Trigger | Contenido |
+|---|---|---|
+| **Nearby** | botón GPS | Lista de PDVs cercanos ordenada por distancia. |
+| **Calculadora** | botón Calc en cfg bar | SKU + descuento + qty stepper + 4 outputs. |
+| **Planificador** | botón Info en cfg bar | Filtros + tabla scrolleable + export WhatsApp. |
+| **Muro** | botón Muro en result-header | Lista de comentarios + textarea para agregar. |
 
-### Bottom sheets (top-down)
+Animation: `translateY(-100%) → 0` en `var(--dur-sheet) var(--ease-out)`.
+Focus management automático (helper `installSheetA11y` en `app.js`).
 
-- **Calculadora** — SKU + descuento → precio por bulto / unitario / PTC / total.
-- **Planificador** — Filtros (supervisor, vendedor, días, canal, etiquetas) + tabla de PDVs.
-- **Muro** — Lista de comentarios + textarea para agregar.
-- **Nearby (GPS)** — Lista de PDVs cercanos ordenados por distancia.
+### Cfg bar (`<nav class="cfgwrap">`)
 
-Todos entran con `translateY(-100%) → 0`, `.32s cubic-bezier(.4,0,.2,1)`.
-Cierran con click en overlay o botón ✕.
-
-### Barra de configuración (sticky bottom)
-
-- Botones inline: ⚙ Config, ↻ Refresh, Bt (unitario toggle), PTR/PTC
-  toggle, Markup %, Calc, Planificador.
-- Configuración se abre como sheet desde abajo (75vh max).
-
----
-
-## Deuda visual identificada
-
-1. **Inline styles en HTML** — `style="..."` en al menos 15 lugares
-   del `index.html`. Mezcla peligrosa con el CSS, hace el diff visual
-   ruidoso. Hay que extraer a clases.
-2. **Demasiadas vars no tokenizadas** — Los colores de segmentos,
-   etiquetas y filtros viven hardcoded. Habría que llevarlos a `:root`
-   o a un objeto de tokens más explícito.
-3. **Escala tipográfica inconsistente** — 12 tamaños. Reducir a 7-8.
-4. **Escala de espaciado libre** — 20+ valores. Reducir a 8.
-5. **Emojis como iconos** — Inconsistente cross-platform. Reemplazar
-   por SVG set.
-6. **Etiquetas y chips visualmente ruidosos** — Cada tipo tiene su
-   color, su borde, su radius, su activeshadow. La pantalla con todas
-   las etiquetas activas satura. Necesita jerarquía visual mejor.
-7. **Botones en la barra inferior** son 6+ controles apretados,
-   varios sólo con label corto ("Bt", "PTR", "30%"). Difíciles de
-   entender sin tooltips, y los tooltips no se ven en mobile.
-8. **Sin estados de foco consistentes** — el focus ring azul aparece en
-   inputs pero no en botones. Accesibilidad floja.
-9. **Sin dark mode**, sin preferencia de movimiento reducido
-   (`prefers-reduced-motion`), sin tamaños de toque medidos.
-10. **Sin baseline grid** — los elementos se alinean ad-hoc, no a una
-    grilla de 4 u 8 px.
+Sticky bottom. Botones: Settings, Refresh, Bt (unitario toggle),
+PTR/PTC + markup % (toggle group), Calc, Plan. Settings abre panel
+inferior con todos los IDs de Google Sheets + nombres de pestañas +
+PIN + WhatsApp + autor de comentarios.
 
 ---
 
-## Lo que SÍ funciona y hay que preservar
+## Audit pre vs post rework
 
-- **Identidad cromática Quilmes** (azul + dorado) — es lo que hace
-  reconocible la app. No tocar.
-- **DM Sans + DM Mono** — el contraste entre sans para UI y mono para
-  códigos/precios es funcional y se ve "profesional".
-- **Press feedback `scale(.93-.97)`** — los toques se sienten.
-- **Sheets top-down con `cubic-bezier(.4,0,.2,1)`** — la animación es
-  buena, conservar timing.
-- **Código PDV gigante en `rcod`** — la "estrella" de la pantalla.
-  Conservar tamaño/peso y prominencia.
-- **Sombras tintadas en azul de marca** — sutil pero hace la app
-  reconocible.
-- **Stickyness** de la topbar y de la barra de config inferior — la
-  navegación es predecible.
+| Dimensión | Baseline | Post-rework | Delta |
+|---|---|---|---|
+| Accessibility | 1/4 | ~3-4/4 | +2/+3 |
+| Performance | 3/4 | ~3-4/4 | +0/+1 |
+| Theming | 1/4 | 4/4 | +3 |
+| Responsive | 2/4 | 3-4/4 | +1/+2 |
+| Anti-Patterns | 3/4 | 4/4 | +1 |
+| **Total** | **10/20** | **17-19/20** | **+7/+9** |
+
+Score final exacto pendiente de re-run formal del audit en preview con
+herramientas (axe, Lighthouse). Métricas concretas verificadas:
+
+- 0 emojis en HTML/JS
+- 0 inline styles en HTML
+- 0 hex codes outside `:root`
+- 0 font-size hardcoded outside tokens
+- 0 padding/margin/gap hardcoded outside tokens
+- 4 sheets con `role="dialog"` + focus management
+- 41 aria-labels
+- 12 semantic landmarks
+- font-display=swap + 2 preconnects
+- Sin `user-scalable=no`
+
+---
+
+## Lista NO-TOCAR confirmada preservada
+
+- ✓ Paleta de marca Quilmes (`--azul`, `--azul-m`, `--dorado`)
+- ✓ DM Sans + DM Mono (sólo se redujeron weights cargados)
+- ✓ Press feedback `transform: scale(.93-.97)` en `:active`
+- ✓ Sheet animation `.32s cubic-bezier(.4,0,.2,1)`
+- ✓ `.rcod` hero (PDV code prominent en monospace `--fs-xl`)
+- ✓ Sombras tintadas azul de marca (firma visual)
+- ✓ localStorage caching (offline-resilient)
+- ✓ Sticky topbar + cfg bar
+- ✓ Voseo argentino en copy
+- ✓ Logo "Quilmes" badge dorado sobre azul
+
+---
+
+## Próximos pasos (no en este rework)
+
+1. **Cutover a `main`** — gated by usuario, fase 10b del workflow.
+2. **ADR-001 follow-up** — implementar state machine + hash routing
+   para Calc/Planner (`docs/adr-001-modal-vs-route.md`).
+3. **Live audit con tools reales** — axe DevTools + Lighthouse en el
+   preview deploy, para ratificar el score final.
+4. **Cross-device QA** — iPhone SE (375), iPhone 14 Pro (393), Pixel 7
+   (412), iPad Mini (744) en el preview.
