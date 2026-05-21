@@ -1,0 +1,7 @@
+.git
+.claude
+*.md
+LICENSE
+wrangler.jsonc
+.assetsignore
+.gitignore
