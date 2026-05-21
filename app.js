@@ -1,5 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+  /* -- ICONS (Lucide, ISC license) --------------------------------- */
+  var ICON_PATHS = {
+    'search':       '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    'x':            '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    'navigation':   '<polygon points="3 11 22 2 13 21 11 13 3 11"/>',
+    'map-pin':      '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+    'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+    'chevron-up':   '<path d="m18 15-6-6-6 6"/>',
+    'chevrons-down':'<path d="m7 6 5 5 5-5"/><path d="m7 13 5 5 5-5"/>',
+    'chevrons-up':  '<path d="m17 11-5-5-5 5"/><path d="m17 18-5-5-5 5"/>',
+    'user':         '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    'loader':       '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>'
+  };
+  function icon(name) {
+    var spin = name === 'loader' ? ' icon-spin' : '';
+    return '<svg class="icon' + spin + '" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON_PATHS[name] || '') + '</svg>';
+  }
+
   /* -- STORE ------------------------------------------------------- */
   var STORE = 'qac6';
   var STORE_HIST  = 'qac6_hist';   /* last 5 searches */
@@ -322,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (allOpen) { blocks[b].classList.add('open'); }
       else { blocks[b].classList.remove('open'); }
     }
-    document.getElementById('btn-tog').innerHTML = allOpen ? '&#9650;&#9650;' : '&#9660;&#9660;';
+    document.getElementById('btn-tog').innerHTML = icon(allOpen ? 'chevrons-up' : 'chevrons-down');
   });
 
   var allOpen = false;
@@ -524,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('distri-dropdown').classList.remove('on');
     var chev = document.getElementById('tname-chevron');
-    if (chev) { chev.innerHTML = '&#9660;'; }
+    if (chev) { chev.innerHTML = icon('chevron-down'); }
     cache.ldp = null; cache.precios = null; cache.accionesIndex = null;
     cache.etiqSeg = {}; cache.etiqPdv = {}; cache.etiqCcc = {}; cache.datosPdv = [];
     resetUI();
@@ -709,19 +727,19 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('nearby-list').innerHTML = '<div style="padding:24px 16px;text-align:center;color:var(--txt-s);font-size:13px">No hay coordenadas cargadas.<br>Agrega columnas <b>Latitud</b> y <b>Longitud</b> a la hoja Datos PDV.</div>';
       document.getElementById('nearby-sheet').classList.add('on');
       document.getElementById('nearby-overlay').classList.add('on');
-      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      btn.classList.remove('loading'); btn.innerHTML = icon('navigation');
       return;
     }
     var btn = document.getElementById('btn-gps');
     btn.classList.add('loading');
-    btn.innerHTML = '&#8987;';
+    btn.innerHTML = icon('loader');
     if (!navigator.geolocation) {
-      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      btn.classList.remove('loading'); btn.innerHTML = icon('navigation');
       alert('Tu dispositivo no soporta GPS.');
       return;
     }
     navigator.geolocation.getCurrentPosition(function(pos) {
-      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      btn.classList.remove('loading'); btn.innerHTML = icon('navigation');
       var myLat = pos.coords.latitude;
       var myLng = pos.coords.longitude;
       /* Calculate distances and sort */
@@ -772,18 +790,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (d.canal) { html += '<span class="nearby-canal">' + escHtml(d.canal) + '</span>'; }
         html += '</div>';
         /* Domicilio */
-        if (d.dom) { html += '<div class="nearby-dom">&#128205; ' + escHtml(d.dom) + (d.loc ? ' &middot; ' + escHtml(d.loc) : '') + '</div>'; }
+        if (d.dom) { html += '<div class="nearby-dom">' + icon('map-pin') + ' ' + escHtml(d.dom) + (d.loc ? ' &middot; ' + escHtml(d.loc) : '') + '</div>'; }
         /* Vendedor / Supervisor */
         var vendLine = '';
         if (d.vend) { vendLine += d.vend; }
         if (d.sup)  { vendLine += (vendLine ? ' &middot; ' : '') + d.sup; }
-        if (vendLine) { html += '<div class="nearby-vend">&#128100; ' + vendLine + '</div>'; }
+        if (vendLine) { html += '<div class="nearby-vend">' + icon('user') + ' ' + vendLine + '</div>'; }
         /* Etiquetas */
         if (eHtml) { html += '<div class="nearby-etiqs">' + eHtml + '</div>'; }
         /* Action buttons */
         html += '<div class="nearby-actions">';
-        if (mapsHref) { html += '<a href="' + mapsHref + '" target="_blank" class="nearby-maps" onclick="event.stopPropagation()">&#128205; Maps</a>'; }
-        html += '<button class="nearby-buscar" data-pdv="' + escHtml(d.pdv) + '" onclick="event.stopPropagation()">&#128269; Acciones</button>';
+        if (mapsHref) { html += '<a href="' + mapsHref + '" target="_blank" class="nearby-maps" onclick="event.stopPropagation()">' + icon('map-pin') + ' Maps</a>'; }
+        html += '<button class="nearby-buscar" data-pdv="' + escHtml(d.pdv) + '" onclick="event.stopPropagation()">' + icon('search') + ' Acciones</button>';
         html += '</div>';
         html += '</div></div>';
       }
@@ -811,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     }, function() {
-      btn.classList.remove('loading'); btn.innerHTML = '&#128207;';
+      btn.classList.remove('loading'); btn.innerHTML = icon('navigation');
       alert('No se pudo obtener tu ubicacion. Verifica que el GPS este habilitado.');
     }, { enableHighAccuracy: true, timeout: 10000 });
   }
@@ -1480,7 +1498,7 @@ document.addEventListener('DOMContentLoaded', function() {
       html += '<div class="segpill" onclick="this.closest(\'.segblock\').classList.toggle(\'open\')">';
       html += '<div class="segtit">' + escHtml(acc.label) + '</div>';
       html += '<div class="detval">' + bubblesHtml + '</div>';
-      html += '<span class="pill-chevron">&#9660;</span>';
+      html += '<span class="pill-chevron">' + icon('chevron-down') + '</span>';
       html += '</div>';
       html += '<div class="price-table-wrap">';
       html += '<div class="price-scroll">' + tableHtml + '</div>';
@@ -1600,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', function() {
     allOpen = false;
     negocioActivo = '';
     segColorMap = {}; colorCounter = 1;
-    var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = '&#9660;&#9660;'; }
+    var tb = document.getElementById('btn-tog'); if (tb) { tb.innerHTML = icon('chevrons-down'); }
     /* Sync unitario button visual state */
     var bu = document.getElementById('btn-unitario');
     if (bu) {
@@ -1756,7 +1774,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var chev = document.getElementById('tname-chevron');
       var isOpen = dd.classList.contains('on');
       dd.classList.toggle('on');
-      if (chev) { chev.innerHTML = isOpen ? '&#9660;' : '&#9650;'; }
+      if (chev) { chev.innerHTML = icon(isOpen ? 'chevron-down' : 'chevron-up'); }
     });
   }
   document.addEventListener('click', function(e) {
@@ -1765,7 +1783,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (wrap && dd && !wrap.contains(e.target)) {
       dd.classList.remove('on');
       var chev = document.getElementById('tname-chevron');
-      if (chev) { chev.innerHTML = '&#9660;'; }
+      if (chev) { chev.innerHTML = icon('chevron-down'); }
     }
   });
 
@@ -1878,7 +1896,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     /* X button - only when at least one canal active */
     var hasActiveCanal = Object.keys(planCanalesActivos).length > 0;
-    if (hasActiveCanal) { html += '<button class="plan-filter-clear" id="btn-clear-canal">&#10005;</button>'; }
+    if (hasActiveCanal) { html += '<button class="plan-filter-clear" id="btn-clear-canal" aria-label="Limpiar canales">' + icon('x') + '</button>'; }
     wrap.innerHTML = html;
     var btns = wrap.querySelectorAll('.plan-canal-btn');
     for (var bi = 0; bi < btns.length; bi++) {
@@ -1927,7 +1945,7 @@ document.addEventListener('DOMContentLoaded', function() {
     row += '<td>' + escHtml(d.rs) + '</td>';
     row += '<td style="font-size:11px;font-weight:700;color:var(--txt-s)">' + escHtml(d.canal) + '</td>';
     row += '<td>' + (eHtml || '<span style="color:var(--gris-b)">-</span>') + '</td>';
-    row += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">&#128205;</a>' : '') + '</td>';
+    row += '<td>' + escHtml(d.dom) + (mapsHref ? ' <a href="' + mapsHref + '" target="_blank" style="display:inline-block;background:rgba(0,61,165,.1);color:var(--azul-m);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-decoration:none;white-space:nowrap">' + icon('map-pin') + '</a>' : '') + '</td>';
     row += '<td>' + escHtml(d.loc) + '</td>';
     row += '<td>' + escHtml(d.sup) + '</td>';
     row += '<td>' + escHtml(d.vend) + '</td>';
@@ -2063,7 +2081,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     /* X button - only when at least one etiq active */
     var hasActiveEtiq = Object.keys(planEtiqActivas).length > 0;
-    if (hasActiveEtiq) { html += '<button class="plan-filter-clear" id="btn-clear-etiq">&#10005;</button>'; }
+    if (hasActiveEtiq) { html += '<button class="plan-filter-clear" id="btn-clear-etiq" aria-label="Limpiar etiquetas">' + icon('x') + '</button>'; }
     wrap.innerHTML = html;
     var btns = wrap.querySelectorAll('.plan-etiq-btn');
     for (var bi = 0; bi < btns.length; bi++) {
