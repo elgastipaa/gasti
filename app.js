@@ -1541,7 +1541,19 @@ document.addEventListener('DOMContentLoaded', function() {
       var acciones = procesarAccionesCSV(rawAcciones, codigo);
       if (!acciones || acciones.length === 0) {
         showEst('vacio');
-        document.getElementById('evacsub').textContent = 'El cliente ' + codigo + ' no tiene acciones activas en el periodo actual.';
+        var datoCli = null;
+        if (cache.datosPdv && cache.datosPdv.length > 0) {
+          for (var dpi = 0; dpi < cache.datosPdv.length; dpi++) {
+            if (cache.datosPdv[dpi].pdv === codigo) { datoCli = cache.datosPdv[dpi]; break; }
+          }
+        }
+        if (datoCli) {
+          document.getElementById('evacsub').textContent =
+            datoCli.rs + ' no tiene acciones comerciales activas en este momento.';
+        } else {
+          document.getElementById('evacsub').textContent =
+            'No encontramos el cliente ' + codigo + '. Verificá el código o buscá por nombre.';
+        }
         return;
       }
       renderResultado(codigo, acciones);
@@ -1568,7 +1580,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('esub').textContent = '1. Toca el icono abajo (engranaje)  2. Pega el ID del Sheet  3. Toca Guardar  4. Volve a buscar.';
       } else if (/fetch|Failed|Load|network/i.test(e.message)) {
         document.getElementById('etitle').textContent = 'Sin conexion';
-        document.getElementById('esub').textContent = 'No hay datos guardados para este cliente. Busca otro cliente que hayas consultado antes.';
+        document.getElementById('esub').textContent = 'No pudimos conectar al servidor del distri. No hay datos guardados para este cliente. Probá con otro que hayas consultado antes, o esperá a tener señal.';
       } else {
         document.getElementById('etitle').textContent = 'Error al leer el Sheet';
         document.getElementById('esub').textContent = e.message;

@@ -159,6 +159,21 @@
     }
     .icon-xl { width: 2em; height: 2em; }
     .icon-spin { animation: spin var(--dur-spin) linear infinite; }
+
+    /* Reduced motion: collapse non-essential animations, keep spinner as a
+       functional indicator that the request is still going. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .spinner, .icon-spin {
+        animation-duration: 1.2s !important;
+        animation-iteration-count: infinite !important;
+      }
+    }
     .sbtn > .icon, .sbtn-gps > .icon, .nearby-close > .icon,
     .muro-close > .icon, .plan-close > .icon, .cfgtoggle > .icon,
     .calc-qty-btn > .icon, .tog-btn > .icon {
