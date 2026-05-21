@@ -2,133 +2,137 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Acciones Comerciales</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
 <!-- LOGIN -->
 <div id="login">
   <div class="lcard">
     <div class="lbadge">Quilmes Dist.</div>
-    <div class="ltitle">Acciones Comerciales</div>
+    <h1 class="ltitle">Acciones Comerciales</h1>
     <div class="lsub">Ingresa tu PIN para consultar las acciones de cada cliente.</div>
     <div class="pin-row">
-      <input class="pin-box" id="p0" type="password" inputmode="numeric" maxlength="1" autocomplete="off" autofocus>
-      <input class="pin-box" id="p1" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
-      <input class="pin-box" id="p2" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
-      <input class="pin-box" id="p3" type="password" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="pin-box" id="p0" type="password" inputmode="numeric" maxlength="1" autocomplete="off" autofocus aria-label="Dígito 1 del PIN">
+      <input class="pin-box" id="p1" type="password" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Dígito 2 del PIN">
+      <input class="pin-box" id="p2" type="password" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Dígito 3 del PIN">
+      <input class="pin-box" id="p3" type="password" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Dígito 4 del PIN">
     </div>
     <button class="btn-ok" id="btn-entrar">Entrar</button>
-    <div class="lerr" id="lerr"></div>
+    <div class="lerr" id="lerr" role="alert" aria-live="polite"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <div class="topbar">
+  <header class="topbar">
     <div class="trow">
       <div class="tbrand">
         <div class="tbadge">Quilmes</div>
-        <div class="tname-wrap" id="tname-wrap">
+        <div class="tname-wrap" id="tname-wrap" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-label="Cambiar distribuidor">
           <div class="tname" id="tdistri">Acciones Comerciales</div>
-          <span class="tname-chevron" id="tname-chevron">&#9660;</span>
+          <span class="tname-chevron" id="tname-chevron" aria-hidden="true">&#9660;</span>
         </div>
-        <div class="distri-dropdown" id="distri-dropdown"></div>
+        <div class="distri-dropdown" id="distri-dropdown" role="listbox"></div>
       </div>
       <button class="texit" id="btn-salir">Salir</button>
     </div>
-  </div>
+  </header>
 
+  <main id="main">
   <div class="swrap">
-    <div class="slbl">Codigo de cliente (PDV)</div>
+    <div class="slbl"><label for="codinput">Codigo de cliente (PDV)</label></div>
     <div class="srow">
       <input class="sinput" id="codinput" type="text" inputmode="text" placeholder="Ej: 3485 o nombre..." autocomplete="off">
-      <button class="sbtn" id="btn-buscar">&#128269;</button>
-      <button class="sbtn-gps" id="btn-gps" title="PDVs cercanos">&#128207;</button>
+      <button class="sbtn" id="btn-buscar" aria-label="Buscar"><span aria-hidden="true">&#128269;</span></button>
+      <button class="sbtn-gps" id="btn-gps" aria-label="Ver PDVs cercanos"><span aria-hidden="true">&#128207;</span></button>
     </div>
   <!-- NEARBY -->
   <div class="nearby-overlay" id="nearby-overlay"></div>
-  <div class="nearby-sheet" id="nearby-sheet">
+  <div class="nearby-sheet" id="nearby-sheet" role="dialog" aria-modal="true" aria-labelledby="nearby-title" aria-hidden="true">
     <div class="nearby-header">
-      <div class="nearby-title">&#128207; PDVs cercanos</div>
-      <button class="nearby-close" id="btn-nearby-cerrar">&#10005;</button>
+      <h2 class="nearby-title" id="nearby-title"><span aria-hidden="true">&#128207;</span> PDVs cercanos</h2>
+      <button class="nearby-close" id="btn-nearby-cerrar" aria-label="Cerrar"><span aria-hidden="true">&#10005;</span></button>
     </div>
     <div class="nearby-list" id="nearby-list"></div>
   </div>
-    <div class="ssugg" id="ssugg"></div>
+    <div class="ssugg" id="ssugg" role="listbox" aria-label="Sugerencias de búsqueda"></div>
   </div>
   <div class="shist" id="shist"></div>
 
-  <div class="estado eloading" id="st-loading">
-    <div class="spinner"></div>
-    <div class="etitle" id="loading-title">Buscando cliente...</div>
+  <div class="estado eloading" id="st-loading" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <h2 class="etitle" id="loading-title">Buscando cliente...</h2>
     <div class="esub" id="loading-sub">Consultando Google Sheets</div>
   </div>
-  <div class="estado eerror" id="st-error">
-    <div class="etitle" id="etitle">Error</div>
+  <div class="estado eerror" id="st-error" role="alert" aria-live="assertive">
+    <h2 class="etitle" id="etitle">Error</h2>
     <div class="esub" id="esub">-</div>
   </div>
   <div class="estado evacio" id="st-vacio">
-    <div style="font-size:32px;margin-bottom:10px">&#128203;</div>
-    <div class="etitle">Sin acciones asignadas</div>
+    <div class="evacio-icon" aria-hidden="true">&#128203;</div>
+    <h2 class="etitle">Sin acciones asignadas</h2>
     <div class="esub" id="evacsub">Este cliente no tiene acciones activas.</div>
   </div>
 
-  <div class="reshdr" id="reshdr">
+  <section class="reshdr" id="reshdr" aria-label="Información del cliente">
     <div class="reshdr-row1">
-      <div class="rcod" id="rcod">-</div>
+      <div class="rcod" id="rcod" aria-label="Código de cliente">-</div>
       <div class="rinfo">
-        <div style="display:flex;align-items:center;gap:5px;min-width:0;flex-wrap:nowrap">
-          <div class="rrs" id="rrs" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex-shrink:1"></div>
-          <span id="rcanal" style="display:none;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap"></span>
+        <div class="rinfo-line rinfo-line-nowrap">
+          <div class="rrs rinfo-rs" id="rrs"></div>
+          <span id="rcanal" class="rcanal-badge" hidden></span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px">
+        <div class="rinfo-line rinfo-line-gap6">
           <div class="rdom" id="rdom"></div>
-          <a id="btn-maps" href="#" target="_blank" style="display:none;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-decoration:none;white-space:nowrap">&#128205; Maps</a>
+          <a id="btn-maps" href="#" target="_blank" rel="noopener" class="rcanal-badge rcanal-badge-link" hidden aria-label="Abrir ubicación en Maps"><span aria-hidden="true">&#128205;</span> Maps</a>
         </div>
       </div>
-      <span class="offline-badge" id="offline-badge">Sin conexion</span>
-      <button class="muro-btn" id="btn-muro" style="display:none">&#128172; Muro</button>
-      <button class="tog-btn" id="btn-tog" style="margin-left:auto">&#9660;&#9660;</button>
+      <span class="offline-badge" id="offline-badge" role="status" aria-live="polite">Sin conexion</span>
+      <button class="muro-btn" id="btn-muro" hidden aria-label="Abrir Muro"><span aria-hidden="true">&#128172;</span> Muro</button>
+      <button class="tog-btn" id="btn-tog" aria-label="Colapsar todos los segmentos" aria-expanded="true"><span aria-hidden="true">&#9660;&#9660;</span></button>
     </div>
     <div class="reshdr-row2">
       <div class="etiq-wrap" id="etiq-wrap"></div>
-      <div class="negocio-tabs" id="negocio-tabs"></div>
+      <div class="negocio-tabs" id="negocio-tabs" role="tablist"></div>
     </div>
-  </div>
+  </section>
 
   <div class="segswrap" id="segswrap"></div>
+  </main>
 
   <!-- CALCULADORA -->
   <div class="calc-overlay" id="calc-overlay"></div>
-  <div class="calc-sheet" id="calc-sheet">
-    <div style="padding-top: env(safe-area-inset-top, 12px); padding-top: 12px;"></div>
-    <div class="calc-title" id="calc-title">Calculadora de precios<span id="calc-title-indicator" style="display:none;font-size:10px;font-weight:700;color:var(--rojo);margin-left:8px;vertical-align:middle;"></span></div>
+  <div class="calc-sheet" id="calc-sheet" role="dialog" aria-modal="true" aria-labelledby="calc-title" aria-hidden="true">
+    <div class="calc-safe-top"></div>
+    <h2 class="calc-title" id="calc-title">Calculadora de precios<span id="calc-title-indicator" class="calc-title-indicator" hidden></span></h2>
     <div class="calc-body">
       <div class="calc-row-2">
-        <div class="calc-field" style="flex:1">
-          <label class="calc-lbl">SKU</label>
+        <div class="calc-field calc-field-flex1">
+          <label class="calc-lbl" for="calc-sku">SKU</label>
           <input class="calc-input" id="calc-sku" type="text" inputmode="numeric" placeholder="Ej: 7634" autocomplete="off">
         </div>
-        <div class="calc-field" style="flex:1">
-          <label class="calc-lbl">Descuento (%)</label>
+        <div class="calc-field calc-field-flex1">
+          <label class="calc-lbl" for="calc-dto">Descuento (%)</label>
           <input class="calc-input" id="calc-dto" type="text" inputmode="numeric" placeholder="Ej: 7,5">
         </div>
       </div>
       <div class="calc-detalle-row">
-        <div style="flex:1;min-width:0">
+        <div class="calc-detalle-col">
           <div class="calc-lbl">Producto</div>
           <div class="calc-detalle" id="calc-detalle">-</div>
         </div>
-        <div style="flex:1;min-width:0">
+        <div class="calc-detalle-col">
           <div class="calc-lbl">Bultos</div>
           <div class="calc-qty-row">
-            <button class="calc-qty-btn" id="calc-qty-minus">&#8722;</button>
-            <input class="calc-input calc-qty-input" id="calc-qty" type="text" inputmode="numeric" value="1">
-            <button class="calc-qty-btn" id="calc-qty-plus">&#43;</button>
+            <button class="calc-qty-btn" id="calc-qty-minus" aria-label="Disminuir bultos"><span aria-hidden="true">&#8722;</span></button>
+            <input class="calc-input calc-qty-input" id="calc-qty" type="text" inputmode="numeric" value="1" aria-label="Cantidad de bultos">
+            <button class="calc-qty-btn" id="calc-qty-plus" aria-label="Aumentar bultos"><span aria-hidden="true">&#43;</span></button>
           </div>
         </div>
       </div>
@@ -142,7 +146,7 @@
           <div class="calc-result-val" id="calc-val-unit">-</div>
         </div>
         <div class="calc-result-box" id="calc-ptc-box">
-          <div class="calc-result-lbl">PTC unit. <button id="calc-btn-markup" style="font-size:9px;padding:1px 5px;border-radius:6px;border:1px solid var(--gris-b);background:var(--gris-f);cursor:pointer;font-family:DM Sans,sans-serif;font-weight:700;color:var(--azul)">30%</button></div>
+          <div class="calc-result-lbl">PTC unit. <button id="calc-btn-markup" class="calc-btn-markup" aria-label="Cambiar markup PTC">30%</button></div>
           <div class="calc-result-val" id="calc-val-ptc">-</div>
         </div>
         <div class="calc-result-box calc-result-total">
@@ -155,25 +159,25 @@
 
   <!-- PLANIFICADOR -->
   <div class="plan-overlay" id="plan-overlay"></div>
-  <div class="plan-sheet" id="plan-sheet">
+  <div class="plan-sheet" id="plan-sheet" role="dialog" aria-modal="true" aria-labelledby="plan-title" aria-hidden="true">
     <div class="plan-fixed">
-      <div style="display:flex;align-items:center;padding:10px 16px 6px">
-        <div style="flex:1;font-size:14px;font-weight:700;color:var(--azul);letter-spacing:-.3px">Planificador de visitas</div>
-        <button id="btn-plan-wa" style="display:none;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;font-family:DM Sans,sans-serif;padding:6px 12px;cursor:pointer;margin-right:6px">&#128232; Enviar</button>
-        <button id="btn-plan-cerrar" style="background:none;border:none;font-size:20px;color:var(--txt-s);cursor:pointer;padding:4px 8px;line-height:1">&#10005;</button>
+      <div class="plan-header-row">
+        <h2 class="plan-title" id="plan-title">Planificador de visitas</h2>
+        <button id="btn-plan-wa" class="plan-wa-btn" hidden aria-label="Enviar plan por WhatsApp"><span aria-hidden="true">&#128232;</span> Enviar</button>
+        <button id="btn-plan-cerrar" class="plan-close" aria-label="Cerrar planificador"><span aria-hidden="true">&#10005;</span></button>
       </div>
-      <div style="padding:0 16px">
+      <div class="plan-body-pad">
         <div class="plan-filters">
-          <div style="flex:1">
-            <div class="calc-lbl">Supervisor</div>
+          <div class="plan-filter-col">
+            <label class="calc-lbl" for="plan-sup">Supervisor</label>
             <select class="plan-select" id="plan-sup"><option value="">Todos</option></select>
           </div>
-          <div style="flex:1">
-            <div class="calc-lbl">Vendedor</div>
+          <div class="plan-filter-col">
+            <label class="calc-lbl" for="plan-vend">Vendedor</label>
             <select class="plan-select" id="plan-vend"><option value="">Todos</option></select>
           </div>
         </div>
-        <div class="calc-lbl" style="margin-top:8px">Dias de visita</div>
+        <div class="calc-lbl calc-lbl-spaced">Dias de visita</div>
         <div class="plan-dias" id="plan-dias">
           <label class="plan-dia"><input type="checkbox" value="LU"> LU</label>
           <label class="plan-dia"><input type="checkbox" value="MA"> MA</label>
@@ -185,12 +189,12 @@
         </div>
         <div class="plan-canal-filters" id="plan-canal-filters"></div>
         <div class="plan-etiq-filters" id="plan-etiq-filters"></div>
-        <div class="plan-count" id="plan-count"></div>
+        <div class="plan-count" id="plan-count" aria-live="polite"></div>
       </div>
     </div>
     <div class="plan-scroll" id="plan-scroll">
       <table class="plan-table" id="plan-table">
-        <thead><tr><th data-col="pdv">PDV</th><th data-col="rs">Razon social</th><th data-col="canal">Canal</th><th>Etiquetas</th><th data-col="dom">Domicilio</th><th data-col="loc">Localidad</th><th data-col="sup">Supervisor</th><th data-col="vend">Vendedor</th></tr></thead>
+        <thead><tr><th data-col="pdv" scope="col">PDV</th><th data-col="rs" scope="col">Razon social</th><th data-col="canal" scope="col">Canal</th><th scope="col">Etiquetas</th><th data-col="dom" scope="col">Domicilio</th><th data-col="loc" scope="col">Localidad</th><th data-col="sup" scope="col">Supervisor</th><th data-col="vend" scope="col">Vendedor</th></tr></thead>
         <tbody id="plan-tbody"></tbody>
       </table>
     </div>
@@ -198,72 +202,73 @@
 
   <!-- MURO -->
   <div class="muro-overlay" id="muro-overlay"></div>
-  <div class="muro-sheet" id="muro-sheet">
-    <div class="muro-handle" id="muro-handle"></div>
+  <div class="muro-sheet" id="muro-sheet" role="dialog" aria-modal="true" aria-labelledby="muro-title" aria-hidden="true">
+    <div class="muro-handle" id="muro-handle" aria-hidden="true"></div>
     <div class="muro-header">
-      <div class="muro-title">&#128172; Muro</div>
-      <button class="muro-close" id="btn-muro-cerrar">&#10005;</button>
+      <h2 class="muro-title" id="muro-title"><span aria-hidden="true">&#128172;</span> Muro</h2>
+      <button class="muro-close" id="btn-muro-cerrar" aria-label="Cerrar Muro"><span aria-hidden="true">&#10005;</span></button>
     </div>
     <div class="muro-list" id="muro-list"></div>
     <div class="muro-input-area">
+      <label class="visually-hidden" for="muro-texto">Comentario</label>
       <textarea class="muro-textarea" id="muro-texto" placeholder="Escribá un comentario..."></textarea>
       <button class="muro-send" id="btn-muro-enviar">Guardar comentario</button>
     </div>
   </div>
-  <div class="cfgwrap">
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="cfgtoggle" id="btn-cfg" style="flex:0 0 auto;width:40px;text-align:center;padding:8px">&#9881;</button>
-      <button class="crefresh" id="btn-refresh" title="Actualizar precios">&#8635;</button>
-      <button class="crefresh" id="btn-unitario" title="Precio por bulto / unitario">Bt</button>
-      <span style="display:inline-flex;border:1.5px solid var(--gris-b);border-radius:10px;overflow:hidden;height:36px">
-        <button id="btn-modo" title="Alternar PTR / PTC" style="background:var(--gris-f);color:var(--txt-s);border:none;border-right:1.5px solid var(--gris-b);padding:0 10px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;height:36px;white-space:nowrap">PTR</button>
-        <button id="btn-markup" title="Cambiar markup" style="background:var(--gris-f);color:var(--txt-s);border:none;padding:0 10px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;height:36px;white-space:nowrap">30%</button>
+  <nav class="cfgwrap" aria-label="Acciones">
+    <div class="cfg-row-top">
+      <button class="cfgtoggle" id="btn-cfg" aria-label="Configuración" aria-expanded="false"><span aria-hidden="true">&#9881;</span></button>
+      <button class="crefresh" id="btn-refresh" aria-label="Actualizar precios"><span aria-hidden="true">&#8635;</span></button>
+      <button class="crefresh" id="btn-unitario" aria-label="Cambiar precio por bulto o unidad" aria-pressed="false">Bt</button>
+      <span class="cfg-toggle-group">
+        <button id="btn-modo" class="cfg-toggle-mode" aria-label="Alternar modo PTR o PTC">PTR</button>
+        <button id="btn-markup" class="cfg-toggle-markup" aria-label="Cambiar markup">30%</button>
       </span>
-      <button class="crefresh" id="btn-calc" title="Calculadora de precios">Calc</button>
-      <button class="crefresh" id="btn-plan" title="Planificador">&#9432;</button>
+      <button class="crefresh" id="btn-calc" aria-label="Abrir calculadora de precios">Calc</button>
+      <button class="crefresh" id="btn-plan" aria-label="Abrir planificador"><span aria-hidden="true">&#9432;</span></button>
     </div>
     <div class="cfgbody" id="cfgbody">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <span style="font-size:13px;font-weight:700;color:var(--azul)">Configuracion</span>
-        <button class="csave" id="btn-save-top" style="width:auto;padding:5px 14px;font-size:11px;border-radius:8px">Guardar</button>
+      <div class="cfg-header">
+        <span class="cfg-header-label">Configuracion</span>
+        <button class="csave csave-inline" id="btn-save-top">Guardar</button>
       </div>
-      <label class="clbl">Sheets de distribuidores</label>
-      <div class="chint" style="margin-bottom:8px">ID del Sheet - string largo en la URL entre /d/ y /edit</div>
-      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cid0" placeholder="ID Sheet 1"><span class="sheet-nombre" id="snombre0">-</span><span class="sheet-active-dot" id="sdot0"></span></div>
-      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cid1" placeholder="ID Sheet 2"><span class="sheet-nombre" id="snombre1">-</span><span class="sheet-active-dot" id="sdot1"></span></div>
-      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cid2" placeholder="ID Sheet 3"><span class="sheet-nombre" id="snombre2">-</span><span class="sheet-active-dot" id="sdot2"></span></div>
-      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cid3" placeholder="ID Sheet 4"><span class="sheet-nombre" id="snombre3">-</span><span class="sheet-active-dot" id="sdot3"></span></div>
-      <label class="clbl">Nombre pestana Acciones</label>
+      <label class="clbl" for="cid0">Sheets de distribuidores</label>
+      <div class="chint chint-spaced">ID del Sheet - string largo en la URL entre /d/ y /edit</div>
+      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cid0" placeholder="ID Sheet 1" aria-label="ID Sheet distribuidor 1"><span class="sheet-nombre" id="snombre0">-</span><span class="sheet-active-dot" id="sdot0" aria-hidden="true"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cid1" placeholder="ID Sheet 2" aria-label="ID Sheet distribuidor 2"><span class="sheet-nombre" id="snombre1">-</span><span class="sheet-active-dot" id="sdot1" aria-hidden="true"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cid2" placeholder="ID Sheet 3" aria-label="ID Sheet distribuidor 3"><span class="sheet-nombre" id="snombre2">-</span><span class="sheet-active-dot" id="sdot2" aria-hidden="true"></span></div>
+      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cid3" placeholder="ID Sheet 4" aria-label="ID Sheet distribuidor 4"><span class="sheet-nombre" id="snombre3">-</span><span class="sheet-active-dot" id="sdot3" aria-hidden="true"></span></div>
+      <label class="clbl" for="ctab">Nombre pestana Acciones</label>
       <input class="cinput" id="ctab" placeholder="Acciones">
-      <label class="clbl">Nombre pestana Precios</label>
+      <label class="clbl" for="ctabprec">Nombre pestana Precios</label>
       <input class="cinput" id="ctabprec" placeholder="Precios">
-      <label class="clbl">Nombre pestana LDP</label>
+      <label class="clbl" for="ctabldp">Nombre pestana LDP</label>
       <input class="cinput" id="ctabldp" placeholder="LDP">
-      <label class="clbl">Nombre pestana Config</label>
+      <label class="clbl" for="ctabcfg">Nombre pestana Config</label>
       <input class="cinput" id="ctabcfg" placeholder="Config">
-      <label class="clbl">Nombre pestana Etiq Segmento</label>
+      <label class="clbl" for="ctabetiqseg">Nombre pestana Etiq Segmento</label>
       <input class="cinput" id="ctabetiqseg" placeholder="Etiq Segmento">
-      <label class="clbl">Nombre pestana Etiq PDV</label>
+      <label class="clbl" for="ctabetiqpdv">Nombre pestana Etiq PDV</label>
       <input class="cinput" id="ctabetiqpdv" placeholder="Etiq PDV">
-      <label class="clbl">Nombre pestana Etiq CCC</label>
+      <label class="clbl" for="ctabetiqccc">Nombre pestana Etiq CCC</label>
       <input class="cinput" id="ctabetiqccc" placeholder="Etiq CCC">
-      <label class="clbl">Nombre pestana Datos PDV</label>
+      <label class="clbl" for="ctabdatospdv">Nombre pestana Datos PDV</label>
       <input class="cinput" id="ctabdatospdv" placeholder="Datos PDV">
-      <label class="clbl">PIN (4 digitos)</label>
+      <label class="clbl" for="cpin">PIN (4 digitos)</label>
       <input class="cinput" id="cpin" inputmode="numeric" maxlength="4" placeholder="1234">
-      <label class="clbl">WhatsApp (con codigo de pais, sin + ni espacios)</label>
+      <label class="clbl" for="cwhatsapp">WhatsApp (con codigo de pais, sin + ni espacios)</label>
       <input class="cinput" id="cwhatsapp" inputmode="numeric" placeholder="Ej: 5492281123456">
       <label class="clbl">URL Muro por distribuidor (Apps Script URL)</label>
-      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cmuro0" placeholder="URL Muro distri 1"></div>
-      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cmuro1" placeholder="URL Muro distri 2"></div>
-      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cmuro2" placeholder="URL Muro distri 3"></div>
-      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cmuro3" placeholder="URL Muro distri 4"></div>
-      <label class="clbl">Tu nombre (autor de comentarios en el Muro)</label>
+      <div class="sheet-row"><span class="sheet-row-num">1</span><input class="cinput" id="cmuro0" placeholder="URL Muro distri 1" aria-label="URL Muro distribuidor 1"></div>
+      <div class="sheet-row"><span class="sheet-row-num">2</span><input class="cinput" id="cmuro1" placeholder="URL Muro distri 2" aria-label="URL Muro distribuidor 2"></div>
+      <div class="sheet-row"><span class="sheet-row-num">3</span><input class="cinput" id="cmuro2" placeholder="URL Muro distri 3" aria-label="URL Muro distribuidor 3"></div>
+      <div class="sheet-row"><span class="sheet-row-num">4</span><input class="cinput" id="cmuro3" placeholder="URL Muro distri 4" aria-label="URL Muro distribuidor 4"></div>
+      <label class="clbl" for="cautor">Tu nombre (autor de comentarios en el Muro)</label>
       <input class="cinput" id="cautor" placeholder="Ej: Juan Perez">
       <button class="csave" id="btn-save">Guardar</button>
-      <div class="cfg-status" id="cfg-status"></div>
+      <div class="cfg-status" id="cfg-status" role="status" aria-live="polite"></div>
     </div>
-  </div>
+  </nav>
 </div>
 
 <script src="app.js"></script>

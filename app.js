@@ -1372,6 +1372,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     document.getElementById('rrs').textContent  = datoCliente ? datoCliente.rs  : '';
+    setDocTitle(codigo, datoCliente ? datoCliente.rs : '');
     var btnMuro = document.getElementById('btn-muro');
     if (btnMuro) { btnMuro.style.display = datoCliente && getMuroUrl() ? 'inline-block' : 'none'; }
     var rcEl = document.getElementById('rcanal');
@@ -1591,6 +1592,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('segswrap').innerHTML = '';
     document.getElementById('etiq-wrap').innerHTML = '';
     document.getElementById('rrs').textContent = '';
+    setDocTitle('', '');
     var rcEl2 = document.getElementById('rcanal'); if (rcEl2) { rcEl2.style.display = 'none'; }
     var bMuro = document.getElementById('btn-muro'); if (bMuro) { bMuro.style.display = 'none'; }
     document.getElementById('rdom').textContent = '';
@@ -2281,6 +2283,120 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('#plan-dias input[type=checkbox]').forEach(function(cb) {
     cb.addEventListener('change', planFiltrar);
   });
+
+  /* -- A11Y: focus management + Escape + dialog state ---------------- */
+  function setDocTitle(codigo, rs) {
+    if (codigo) {
+      var rsShort = rs && rs.length > 30 ? rs.slice(0, 30) + '…' : (rs || '');
+      document.title = rsShort
+        ? codigo + ' — ' + rsShort + ' · Acciones Comerciales'
+        : codigo + ' · Acciones Comerciales';
+    } else {
+      document.title = 'Acciones Comerciales';
+    }
+  }
+
+  (function installSheetA11y() {
+    var sheets = [
+      { id: 'calc-sheet',   closer: 'calc-overlay' },
+      { id: 'plan-sheet',   closer: 'btn-plan-cerrar' },
+      { id: 'muro-sheet',   closer: 'btn-muro-cerrar' },
+      { id: 'nearby-sheet', closer: 'btn-nearby-cerrar' }
+    ];
+    var FOCUSABLE = 'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])';
+    var lastFocused = {};
+
+    sheets.forEach(function(s) {
+      var sheet = document.getElementById(s.id);
+      if (!sheet) { return; }
+
+      var observer = new MutationObserver(function() {
+        var isOpen = sheet.classList.contains('open');
+        if (isOpen && lastFocused[s.id] === undefined) {
+          lastFocused[s.id] = document.activeElement;
+          sheet.setAttribute('aria-hidden', 'false');
+          requestAnimationFrame(function() {
+            var first = sheet.querySelector(FOCUSABLE);
+            if (first) { first.focus(); }
+          });
+        } else if (!isOpen && lastFocused[s.id] !== undefined) {
+          sheet.setAttribute('aria-hidden', 'true');
+          var toRestore = lastFocused[s.id];
+          delete lastFocused[s.id];
+          setTimeout(function() {
+            if (toRestore && toRestore.focus && document.body.contains(toRestore)) {
+              toRestore.focus();
+            }
+          }, 350);
+        }
+      });
+      observer.observe(sheet, { attributes: true, attributeFilter: ['class'] });
+
+      sheet.addEventListener('keydown', function(e) {
+        if (!sheet.classList.contains('open')) { return; }
+        if (e.key !== 'Tab') { return; }
+        var fs = sheet.querySelectorAll(FOCUSABLE);
+        if (!fs.length) { return; }
+        var first = fs[0], last = fs[fs.length - 1];
+        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+      });
+    });
+
+    /* Global Escape: close topmost open sheet */
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Escape') { return; }
+      for (var i = sheets.length - 1; i >= 0; i--) {
+        var sh = document.getElementById(sheets[i].id);
+        if (sh && sh.classList.contains('open')) {
+          var cb = document.getElementById(sheets[i].closer);
+          if (cb) { cb.click(); }
+          return;
+        }
+      }
+    });
+  })();
+
+  /* tname-wrap: Enter/Space activate */
+  (function tnameKeyboard() {
+    var w = document.getElementById('tname-wrap');
+    if (!w) { return; }
+    w.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        w.click();
+      }
+    });
+  })();
+
+  /* aria-expanded sync on toggles */
+  (function ariaExpandedSync() {
+    var togBtn = document.getElementById('btn-tog');
+    if (togBtn) {
+      togBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() {
+          togBtn.setAttribute('aria-expanded', typeof allOpen !== 'undefined' ? String(!!allOpen) : 'true');
+        });
+      });
+    }
+    var cfgBtn = document.getElementById('btn-cfg');
+    if (cfgBtn) {
+      cfgBtn.addEventListener('click', function() {
+        requestAnimationFrame(function() {
+          var open = document.getElementById('cfgbody').classList.contains('open');
+          cfgBtn.setAttribute('aria-expanded', String(open));
+        });
+      });
+    }
+    var tnameWrap = document.getElementById('tname-wrap');
+    var distriDd = document.getElementById('distri-dropdown');
+    if (tnameWrap && distriDd) {
+      var ddObserver = new MutationObserver(function() {
+        tnameWrap.setAttribute('aria-expanded', String(distriDd.classList.contains('on')));
+      });
+      ddObserver.observe(distriDd, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
 
   document.getElementById('p0').focus();
 });
